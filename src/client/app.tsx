@@ -150,7 +150,7 @@ export const App = () => {
       {/* サイドバー */}
       {sidebarOpen && (
         <aside className="w-64 border-r border-border overflow-y-auto p-4 bg-secondary">
-          <h1 className="text-lg font-bold mb-4">mdv</h1>
+          <h1 className="text-lg font-bold mb-4">specv</h1>
           <FileTree
             files={files}
             selectedPath={selectedPath}
