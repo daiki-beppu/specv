@@ -1,11 +1,12 @@
 import { Highlight, themes } from "prism-react-renderer";
-import { useTheme } from "@/hooks/useTheme.js";
+
+import { useTheme } from "@/hooks/use-theme.js";
 
 interface SourceProps {
   content: string;
 }
 
-export function Source({ content }: SourceProps) {
+export const Source = ({ content }: SourceProps) => {
   const { theme } = useTheme();
   const prismTheme = theme === "dark" ? themes.vsDark : themes.github;
 
@@ -17,12 +18,15 @@ export function Source({ content }: SourceProps) {
           style={style}
         >
           {tokens.map((line, i) => (
-            <div key={i} {...getLineProps({ line })}>
+            <div key={`line-${String(i)}`} {...getLineProps({ line })}>
               <span className="inline-block w-8 text-right mr-4 text-muted-foreground select-none">
                 {i + 1}
               </span>
-              {line.map((token, key) => (
-                <span key={key} {...getTokenProps({ token })} />
+              {line.map((token, j) => (
+                <span
+                  key={`token-${String(j)}`}
+                  {...getTokenProps({ token })}
+                />
               ))}
             </div>
           ))}
@@ -30,4 +34,4 @@ export function Source({ content }: SourceProps) {
       )}
     </Highlight>
   );
-}
+};

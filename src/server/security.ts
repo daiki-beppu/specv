@@ -1,30 +1,43 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export function validatePath(filePath: string, baseDir: string): string {
-  const decoded = decodeURIComponent(filePath);
-  const resolved = path.resolve(baseDir, decoded);
+const isWithinBaseDir = (targetPath: string, baseDir: string): boolean =>
+  targetPath.startsWith(baseDir + path.sep) || targetPath === baseDir;
 
-  if (!resolved.startsWith(baseDir + path.sep) && resolved !== baseDir) {
-    throw new Error(`Path traversal detected: ${filePath}`);
-  }
-
-  if (!resolved.endsWith(".md")) {
+const validateExtension = (filePath: string): void => {
+  if (!filePath.endsWith(".md")) {
     throw new Error(`Only .md files are allowed: ${filePath}`);
   }
+};
 
-  // シンボリックリンク経由のトラバーサルを防止
+const resolveRealPath = (
+  resolved: string,
+  baseDir: string,
+  filePath: string
+): string => {
   try {
     const realPath = fs.realpathSync(resolved);
-    if (!realPath.startsWith(baseDir + path.sep) && realPath !== baseDir) {
+    if (!isWithinBaseDir(realPath, baseDir)) {
       throw new Error(`Path traversal detected: ${filePath}`);
     }
     return realPath;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes("traversal")) {
-      throw err;
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("traversal")) {
+      throw error;
     }
-    // ファイルが存在しない場合は resolved を返す（呼び出し側で ENOENT になる）
     return resolved;
   }
-}
+};
+
+export const validatePath = (filePath: string, baseDir: string): string => {
+  const decoded = decodeURIComponent(filePath);
+  const resolved = path.resolve(baseDir, decoded);
+
+  if (!isWithinBaseDir(resolved, baseDir)) {
+    throw new Error(`Path traversal detected: ${filePath}`);
+  }
+
+  validateExtension(filePath);
+
+  return resolveRealPath(resolved, baseDir, filePath);
+};

@@ -54,6 +54,7 @@ mdv/
 ### Task 1: プロジェクトスキャフォールド
 
 **Files:**
+
 - Create: `package.json`
 - Create: `tsconfig.json`
 - Create: `tsconfig.server.json`
@@ -88,9 +89,7 @@ package.json を以下の内容に編集:
     "test": "vitest run",
     "prepublishOnly": "pnpm build"
   },
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "keywords": ["markdown", "preview", "cli"],
   "license": "MIT"
 }
@@ -107,6 +106,7 @@ pnpm add -D typescript @types/react @types/react-dom @types/express @vitejs/plug
 - [ ] **Step 3: TypeScript 設定を作成**
 
 `tsconfig.json` (クライアント用):
+
 ```json
 {
   "compilerOptions": {
@@ -126,6 +126,7 @@ pnpm add -D typescript @types/react @types/react-dom @types/express @vitejs/plug
 ```
 
 `tsconfig.server.json` (サーバー用):
+
 ```json
 {
   "compilerOptions": {
@@ -145,6 +146,7 @@ pnpm add -D typescript @types/react @types/react-dom @types/express @vitejs/plug
 - [ ] **Step 4: Vite 設定を作成**
 
 `vite.config.ts` (Tailwind v4 は Vite プラグインとして統合、PostCSS 設定不要):
+
 ```ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -193,6 +195,7 @@ dist/
 - [ ] **Step 7: 共有型ファイルを作成**
 
 `src/shared/types.ts`:
+
 ```ts
 export interface FileNode {
   path: string;
@@ -213,12 +216,14 @@ git commit -m "chore: プロジェクトスキャフォールド (React + Vite 8
 ### Task 2: セキュリティユーティリティ (TDD)
 
 **Files:**
+
 - Create: `src/server/security.ts`
 - Create: `tests/security.test.ts`
 
 - [ ] **Step 1: テストを書く**
 
 `tests/security.test.ts`:
+
 ```ts
 import { describe, it, expect } from "vitest";
 import path from "node:path";
@@ -229,13 +234,13 @@ const baseDir = "/home/user/project";
 describe("validatePath", () => {
   it("正常な相対パスを許可する", () => {
     expect(validatePath("README.md", baseDir)).toBe(
-      path.join(baseDir, "README.md"),
+      path.join(baseDir, "README.md")
     );
   });
 
   it("ネストされたパスを許可する", () => {
     expect(validatePath("docs/guide.md", baseDir)).toBe(
-      path.join(baseDir, "docs/guide.md"),
+      path.join(baseDir, "docs/guide.md")
     );
   });
 
@@ -257,7 +262,7 @@ describe("validatePath", () => {
 
   it(".md 拡張子のファイルを許可する", () => {
     expect(validatePath("CHANGELOG.md", baseDir)).toBe(
-      path.join(baseDir, "CHANGELOG.md"),
+      path.join(baseDir, "CHANGELOG.md")
     );
   });
 });
@@ -268,11 +273,13 @@ describe("validatePath", () => {
 ```bash
 cd ~/01-dev/mdv && pnpm test -- tests/security.test.ts
 ```
+
 Expected: FAIL — `validatePath` が存在しない
 
 - [ ] **Step 3: 実装を書く**
 
 `src/server/security.ts`:
+
 ```ts
 import path from "node:path";
 
@@ -297,6 +304,7 @@ export function validatePath(filePath: string, baseDir: string): string {
 ```bash
 cd ~/01-dev/mdv && pnpm test -- tests/security.test.ts
 ```
+
 Expected: ALL PASS
 
 - [ ] **Step 5: コミット**
@@ -311,12 +319,14 @@ git commit -m "feat: パストラバーサル検証ユーティリティを追�
 ### Task 3: ファイルツリー走査 (TDD)
 
 **Files:**
+
 - Create: `src/server/files.ts`
 - Create: `tests/files.test.ts`
 
 - [ ] **Step 1: テストを書く**
 
 `tests/files.test.ts`:
+
 ```ts
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
@@ -406,11 +416,13 @@ describe("scanMarkdownFiles", () => {
 ```bash
 cd ~/01-dev/mdv && pnpm test -- tests/files.test.ts
 ```
+
 Expected: FAIL — `scanMarkdownFiles` が存在しない
 
 - [ ] **Step 3: 実装を書く**
 
 `src/server/files.ts`:
+
 ```ts
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -433,7 +445,7 @@ const MAX_DEPTH = 5;
 export async function scanMarkdownFiles(
   baseDir: string,
   relativePath = "",
-  depth = 0,
+  depth = 0
 ): Promise<FileNode[]> {
   if (depth >= MAX_DEPTH) return [];
 
@@ -454,7 +466,7 @@ export async function scanMarkdownFiles(
       const children = await scanMarkdownFiles(
         baseDir,
         path.join(relativePath, entry.name),
-        depth + 1,
+        depth + 1
       );
 
       if (children.length > 0) {
@@ -481,6 +493,7 @@ export async function scanMarkdownFiles(
 ```bash
 cd ~/01-dev/mdv && pnpm test -- tests/files.test.ts
 ```
+
 Expected: ALL PASS
 
 - [ ] **Step 5: コミット**
@@ -495,12 +508,14 @@ git commit -m "feat: .md ファイルツリー走査ユーティリティを追�
 ### Task 4: Express API + CLI エントリ
 
 **Files:**
+
 - Create: `src/server/api.ts`
 - Create: `src/server/cli.ts`
 
 - [ ] **Step 1: API ルートハンドラを実装**
 
 `src/server/api.ts`:
+
 ```ts
 import { Router } from "express";
 import fs from "node:fs/promises";
@@ -532,7 +547,10 @@ export function createApiRouter(baseDir: string): Router {
       res.type("text/plain; charset=utf-8").send(content);
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes("traversal") || error.message.includes("Only .md")) {
+        if (
+          error.message.includes("traversal") ||
+          error.message.includes("Only .md")
+        ) {
           res.status(400).json({ error: error.message });
           return;
         }
@@ -548,6 +566,7 @@ export function createApiRouter(baseDir: string): Router {
 - [ ] **Step 2: CLI エントリポイントを実装**
 
 `src/server/cli.ts`:
+
 ```ts
 #!/usr/bin/env node
 import { program } from "commander";
@@ -610,6 +629,7 @@ program.parse();
 ```bash
 cd ~/01-dev/mdv && pnpm dev:server
 ```
+
 Expected: `mdv running at http://localhost:4649` と表示される（Ctrl+C で停止）
 
 - [ ] **Step 4: コミット**
@@ -626,6 +646,7 @@ git commit -m "feat: Express API + CLI エントリポイントを追加"
 ### Task 5: React エントリ + レイアウト
 
 **Files:**
+
 - Create: `src/client/main.tsx`
 - Create: `src/client/App.tsx`
 - Create: `src/client/api.ts`
@@ -634,10 +655,13 @@ git commit -m "feat: Express API + CLI エントリポイントを追加"
 - [ ] **Step 1: CSS エントリを作成**
 
 `src/client/index.css`:
+
 ```css
 @import "tailwindcss";
-@import "github-markdown-css/github-markdown-light.css" (prefers-color-scheme: light);
-@import "github-markdown-css/github-markdown-dark.css" (prefers-color-scheme: dark);
+@import "github-markdown-css/github-markdown-light.css"
+  (prefers-color-scheme: light);
+@import "github-markdown-css/github-markdown-dark.css"
+  (prefers-color-scheme: dark);
 
 /* Manual dark mode toggle support */
 :root:not(.dark) .markdown-body {
@@ -652,6 +676,7 @@ git commit -m "feat: Express API + CLI エントリポイントを追加"
 - [ ] **Step 2: API クライアントを実装**
 
 `src/client/api.ts`:
+
 ```ts
 import type { FileNode } from "../shared/types.js";
 
@@ -671,6 +696,7 @@ export async function fetchFile(path: string): Promise<string> {
 - [ ] **Step 3: App コンポーネントを実装**
 
 `src/client/App.tsx`:
+
 ```tsx
 import { useState, useEffect } from "react";
 import type { FileNode } from "../shared/types.js";
@@ -767,6 +793,7 @@ function findFirstFile(files: FileNode[]): string | null {
 - [ ] **Step 4: React エントリを作成**
 
 `src/client/main.tsx`:
+
 ```tsx
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -776,7 +803,7 @@ import "./index.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 );
 ```
 
@@ -792,11 +819,13 @@ git commit -m "feat: React エントリ + App レイアウトを追加"
 ### Task 6: FileTree コンポーネント
 
 **Files:**
+
 - Create: `src/client/components/FileTree.tsx`
 
 - [ ] **Step 1: FileTree を実装**
 
 `src/client/components/FileTree.tsx`:
+
 ```tsx
 import { useState } from "react";
 import type { FileNode } from "../../shared/types.js";
@@ -890,11 +919,13 @@ git commit -m "feat: FileTree コンポーネントを追加"
 ### Task 7: Preview コンポーネント
 
 **Files:**
+
 - Create: `src/client/components/Preview.tsx`
 
 - [ ] **Step 1: Preview を実装**
 
 `src/client/components/Preview.tsx`:
+
 ```tsx
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -924,11 +955,13 @@ git commit -m "feat: Preview コンポーネント (react-markdown + remark-gfm)
 ### Task 8: Source コンポーネント
 
 **Files:**
+
 - Create: `src/client/components/Source.tsx`
 
 - [ ] **Step 1: Source を実装**
 
 `src/client/components/Source.tsx`:
+
 ```tsx
 import { Highlight, themes } from "prism-react-renderer";
 import { useTheme } from "../hooks/useTheme.js";
@@ -977,12 +1010,14 @@ git commit -m "feat: Source コンポーネント (prism-react-renderer) を追�
 ### Task 9: テーマ切替
 
 **Files:**
+
 - Create: `src/client/hooks/useTheme.ts`
 - Create: `src/client/components/ThemeToggle.tsx`
 
 - [ ] **Step 1: useTheme フックを実装**
 
 `src/client/hooks/useTheme.ts`:
+
 ```ts
 import { useState, useEffect } from "react";
 
@@ -1011,6 +1046,7 @@ export function useTheme() {
 - [ ] **Step 2: ThemeToggle コンポーネントを実装**
 
 `src/client/components/ThemeToggle.tsx`:
+
 ```tsx
 import { useTheme } from "../hooks/useTheme.js";
 
@@ -1043,6 +1079,7 @@ git commit -m "feat: ダーク/ライトモード切替を追加"
 ### Task 10: ビルドパイプライン + 動作確認
 
 **Files:**
+
 - Modify: `package.json` (必要に応じて調整)
 
 - [ ] **Step 1: クライアントをビルド**
@@ -1050,6 +1087,7 @@ git commit -m "feat: ダーク/ライトモード切替を追加"
 ```bash
 cd ~/01-dev/mdv && pnpm build:client
 ```
+
 Expected: `dist/client/` にビルド出力
 
 - [ ] **Step 2: サーバーをビルド**
@@ -1057,6 +1095,7 @@ Expected: `dist/client/` にビルド出力
 ```bash
 cd ~/01-dev/mdv && pnpm build:server
 ```
+
 Expected: `dist/server/cli.js` が生成
 
 - [ ] **Step 3: ビルド済みバイナリで動作確認**
@@ -1064,6 +1103,7 @@ Expected: `dist/server/cli.js` が生成
 ```bash
 cd ~/01-dev/mdv && node dist/server/cli.js
 ```
+
 Expected: ブラウザが開き、mdv リポジトリ内の .md ファイルが表示される
 
 - [ ] **Step 4: 他のプロジェクトで動作確認**
@@ -1071,6 +1111,7 @@ Expected: ブラウザが開き、mdv リポジトリ内の .md ファイルが�
 ```bash
 cd ~/01-dev/dotfiles && node ~/01-dev/mdv/dist/server/cli.js
 ```
+
 Expected: dotfiles リポジトリの .md ファイルが表示される
 
 - [ ] **Step 5: ビルド出力を .gitignore に追加済みか確認、最終コミット**

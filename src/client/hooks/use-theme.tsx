@@ -1,4 +1,11 @@
-import { useState, useEffect, useContext, createContext } from "react";
+import {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  useMemo,
+  useCallback,
+} from "react";
 import type { ReactNode } from "react";
 
 type Theme = "light" | "dark";
@@ -10,10 +17,12 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem("mdv-theme") as Theme | null;
-    if (saved) return saved;
+    if (saved) {
+      return saved;
+    }
     return window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
@@ -24,17 +33,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("mdv-theme", theme);
   }, [theme]);
 
-  const toggle = () => setTheme((t) => (t === "light" ? "dark" : "light"));
+  const toggle = useCallback(
+    () => setTheme((t) => (t === "light" ? "dark" : "light")),
+    []
+  );
+
+  const value = useMemo(() => ({ theme, toggle }), [theme, toggle]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggle }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
-}
+};
 
-export function useTheme(): ThemeContextValue {
+export const useTheme = (): ThemeContextValue => {
   const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+  if (!ctx) {
+    throw new Error("useTheme must be used within ThemeProvider");
+  }
   return ctx;
-}
+};

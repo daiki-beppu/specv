@@ -39,10 +39,10 @@ mdv -p 3000
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
+| Shortcut           | Action                    |
+| ------------------ | ------------------------- |
 | `Cmd+P` / `Ctrl+P` | Quick Open (ファイル検索) |
-| `Cmd+B` / `Ctrl+B` | サイドバー開閉 |
+| `Cmd+B` / `Ctrl+B` | サイドバー開閉            |
 
 ## Architecture
 

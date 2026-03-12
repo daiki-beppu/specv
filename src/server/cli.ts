@@ -1,40 +1,45 @@
 #!/usr/bin/env node
+import path from "node:path";
+
 import { program } from "commander";
 import express from "express";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+
 import { createApiRouter } from "./api.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const currentDir = import.meta.dirname;
+
+const openInBrowser = async (url: string): Promise<void> => {
+  const mod = await import("open");
+  await mod.default(url);
+};
 
 program
   .name("mdv")
   .description("Local Markdown preview with GitHub-style rendering")
   .version("0.1.0")
   .option("-p, --port <number>", "Port number", "4649")
-  .action(async (options) => {
+  .action((options) => {
     const baseDir = process.cwd();
-    const startPort = parseInt(options.port, 10);
+    const startPort = Number.parseInt(options.port, 10);
     const app = express();
 
     app.use(createApiRouter(baseDir));
 
     // Serve built client
-    const clientDir = path.join(__dirname, "../client");
+    const clientDir = path.join(currentDir, "../client");
     app.use(express.static(clientDir));
     app.get("/{*splat}", (_req, res) => {
       res.sendFile(path.join(clientDir, "index.html"));
     });
 
     const tryListen = (port: number): void => {
-      const server = app.listen(port, "127.0.0.1", async () => {
+      const server = app.listen(port, "127.0.0.1", () => {
         const url = `http://localhost:${port}`;
         console.log(`mdv running at ${url}`);
         console.log(`Serving: ${baseDir}`);
         console.log("Press Ctrl+C to stop");
 
-        const open = (await import("open")).default;
-        open(url);
+        openInBrowser(url);
       });
 
       server.on("error", (err: NodeJS.ErrnoException) => {

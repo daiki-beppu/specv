@@ -57,23 +57,23 @@ difit と同様の構成を採用。
 
 ### サーバー側
 
-| パーツ | ライブラリ | 理由 |
-|--------|-----------|------|
-| CLI | `commander` | difit と同じ、定番 |
-| サーバー | `express` | ルーティング・静的配信が簡潔 |
-| ブラウザ起動 | `open` | クロスプラットフォーム対応 |
+| パーツ       | ライブラリ  | 理由                         |
+| ------------ | ----------- | ---------------------------- |
+| CLI          | `commander` | difit と同じ、定番           |
+| サーバー     | `express`   | ルーティング・静的配信が簡潔 |
+| ブラウザ起動 | `open`      | クロスプラットフォーム対応   |
 
 ### フロントエンド (React SPA)
 
-| パーツ | ライブラリ | 理由 |
-|--------|-----------|------|
-| フレームワーク | `React 19` + `React DOM` | コンポーネント分割、状態管理 |
-| ビルド | `Vite 8` | 高速ビルド、HMR |
-| 言語 | `TypeScript` | 型安全 |
-| CSS | `Tailwind CSS` | ユーティリティファースト、difit 同様 |
-| Markdown | `react-markdown` + `remark-gfm` | React コンポーネントとして描画、GFM 対応 |
-| コードハイライト | `prism-react-renderer` | React 統合が楽、軽量 |
-| スタイル | `github-markdown-css` | GitHub と同じ見た目 |
+| パーツ           | ライブラリ                      | 理由                                     |
+| ---------------- | ------------------------------- | ---------------------------------------- |
+| フレームワーク   | `React 19` + `React DOM`        | コンポーネント分割、状態管理             |
+| ビルド           | `Vite 8`                        | 高速ビルド、HMR                          |
+| 言語             | `TypeScript`                    | 型安全                                   |
+| CSS              | `Tailwind CSS`                  | ユーティリティファースト、difit 同様     |
+| Markdown         | `react-markdown` + `remark-gfm` | React コンポーネントとして描画、GFM 対応 |
+| コードハイライト | `prism-react-renderer`          | React 統合が楽、軽量                     |
+| スタイル         | `github-markdown-css`           | GitHub と同じ見た目                      |
 
 ### ビルド・配信方式
 
@@ -95,9 +95,7 @@ difit と同様の構成を採用。
     {
       "path": "docs",
       "name": "docs",
-      "children": [
-        { "path": "docs/guide.md", "name": "guide.md" }
-      ]
+      "children": [{ "path": "docs/guide.md", "name": "guide.md" }]
     }
   ]
 }

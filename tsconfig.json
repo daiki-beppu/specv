@@ -12,8 +12,10 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/client/*"]
+      "@/*": ["./src/client/*"],
+      "@server/*": ["./src/server/*"],
+      "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src/client"]
+  "include": ["src"]
 }

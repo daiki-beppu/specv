@@ -1,0 +1,15 @@
+pre-commit:
+  jobs:
+    - name: ultracite
+      run: pnpm ultracite fix
+      glob:
+        - "**/*.js"
+        - "**/*.jsx"
+        - "**/*.ts"
+        - "**/*.tsx"
+        - "**/*.json"
+        - "**/*.jsonc"
+        - "**/*.css"
+      stage_fixed: true
+    - name: knip
+      run: pnpm knip

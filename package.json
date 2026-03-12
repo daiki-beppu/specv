@@ -2,10 +2,19 @@
   "name": "@daiki-beppu/mdv",
   "version": "0.1.0",
   "description": "Local Markdown preview with GitHub-style rendering",
-  "type": "module",
+  "keywords": [
+    "cli",
+    "markdown",
+    "preview"
+  ],
+  "license": "MIT",
   "bin": {
     "mdv": "./dist/server/cli.js"
   },
+  "files": [
+    "dist/"
+  ],
+  "type": "module",
   "scripts": {
     "dev:client": "vite",
     "dev:server": "tsx src/server/cli.ts",
@@ -13,18 +22,12 @@
     "build:server": "tsup src/server/cli.ts --format esm --out-dir dist/server --dts",
     "build": "nr build:client && nr build:server",
     "test": "vitest run",
-    "prepublishOnly": "nr build"
+    "prepublishOnly": "nr build",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "knip": "knip",
+    "prepare": "lefthook install"
   },
-  "files": [
-    "dist/"
-  ],
-  "keywords": [
-    "markdown",
-    "preview",
-    "cli"
-  ],
-  "license": "MIT",
-  "packageManager": "pnpm@10.32.1",
   "dependencies": {
     "@base-ui/react": "^1.2.0",
     "@tanstack/react-hotkeys": "^0.4.1",
@@ -51,11 +54,17 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
+    "knip": "^5.86.0",
+    "lefthook": "^2.1.3",
+    "oxfmt": "^0.39.0",
+    "oxlint": "^1.54.0",
     "tailwindcss": "^4.2.1",
     "tsup": "^8.5.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
+    "ultracite": "7.2.5",
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
-  }
+  },
+  "packageManager": "pnpm@10.32.1"
 }

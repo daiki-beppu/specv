@@ -1,17 +1,23 @@
 import path from "node:path";
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { fileURLToPath } from "node:url";
+
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  build: {
+    outDir: "dist/client",
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src/client"),
+      "@": path.resolve(currentDir, "./src/client"),
+      "@server": path.resolve(currentDir, "./src/server"),
+      "@shared": path.resolve(currentDir, "./src/shared"),
     },
-  },
-  build: {
-    outDir: "dist/client",
   },
   server: {
     proxy: {
@@ -20,5 +26,6 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    globals: true,
   },
 });
