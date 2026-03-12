@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@import "github-markdown-css/github-markdown-light.css" (prefers-color-scheme: light);
+@import "github-markdown-css/github-markdown-dark.css" (prefers-color-scheme: dark);
+
+/* Manual dark mode toggle support */
+:root:not(.dark) .markdown-body {
+  color-scheme: light;
+}
+.dark .markdown-body {
+  color-scheme: dark;
+  --bgColor-default: transparent;
+}
