@@ -65,9 +65,10 @@ CLI (cac)
 ### フロントエンド
 
 - フレームワークなし（Vanilla JS）
-- HTML/CSS/JS は サーバーから直接配信
-- markdown-it はブラウザ側で実行（CDN or バンドル）
-- shiki もブラウザ側で実行
+- HTML/CSS/JS は JS テンプレートリテラルとしてサーバーコードに埋め込み（単一パッケージで完結）
+- markdown-it: npm 依存としてバンドル、サーバー側で HTML に変換して配信
+- shiki: サーバー側で実行し、ハイライト済み HTML を返す（WASM のブラウザロード回避）
+- github-markdown-css: ビルド時に CSS を文字列として埋め込み
 
 ## API 設計
 
@@ -96,13 +97,27 @@ CLI (cac)
 指定されたファイルの生テキストを返す。
 
 - Content-Type: `text/plain; charset=utf-8`
-- パストラバーサル対策: ベースディレクトリ外へのアクセスを拒否
+- パストラバーサル対策: `path.resolve()` 後にベースディレクトリの prefix チェック
+
+### `GET /api/render?path=<relative-path>`
+
+指定されたファイルを markdown-it + shiki でレンダリングした HTML を返す。
+
+- Content-Type: `text/html; charset=utf-8`
+- Source モード用にハイライト済み HTML も含む
+
+### エラーレスポンス
+
+- `400`: 不正なパス（パストラバーサル検出）
+- `404`: ファイルが存在しない
+- `500`: サーバーエラー
+- 形式: `{ "error": "<メッセージ>" }`
 
 ## セキュリティ
 
-- `localhost` のみでリッスン（外部からアクセス不可）
-- パストラバーサル防止（`..` を含むパスを拒否）
-- .md ファイルのみ配信
+- `localhost` (127.0.0.1) のみでリッスン（外部からアクセス不可）
+- パストラバーサル防止: `path.resolve()` で正規化後、ベースディレクトリの prefix であることを検証（`..`、URL エンコード、シンボリックリンク対策）
+- .md 拡張子のファイルのみ配信
 
 ## ダーク/ライトモード
 
@@ -110,15 +125,34 @@ CLI (cac)
 - トグルボタンで手動切り替え可能
 - 選択は `localStorage` に保存
 
+## CLI オプション (v1)
+
+```
+Usage: mdv [options]
+
+Options:
+  -p, --port <number>  ポート番号 (default: 4649, 使用中なら自動インクリメント)
+  -h, --help           ヘルプを表示
+  -v, --version        バージョンを表示
+```
+
+## ファイルツリー走査ルール
+
+- `.gitignore` に含まれるパスを除外（`node_modules` 等）
+- `.git` ディレクトリを除外
+- 走査深度: 最大 5 階層
+- `.md` 拡張子のファイルのみ表示
+
 ## v1 スコープ
 
-- [x] `npx mdv` でカレントディレクトリの .md をプレビュー
-- [x] ファイルツリー表示（ネスト対応）
-- [x] GitHub 風レンダリング（github-markdown-css）
-- [x] Preview / Source 切替
-- [x] シンタックスハイライト（shiki）
-- [x] ダーク/ライトモード（OS 追従 + トグル）
-- [x] ブラウザ自動起動
+- `npx mdv` でカレントディレクトリの .md をプレビュー
+- ファイルツリー表示（ネスト対応、.gitignore 準拠）
+- GitHub 風レンダリング（github-markdown-css）
+- Preview / Source 切替
+- シンタックスハイライト（shiki、サーバー側レンダリング）
+- ダーク/ライトモード（OS 追従 + トグル）
+- ブラウザ自動起動
+- ポート自動選択（デフォルト 4649、衝突時インクリメント）
 
 ## v2（将来）
 
