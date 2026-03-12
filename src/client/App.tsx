@@ -40,10 +40,10 @@ export function App() {
   }, [selectedPath]);
 
   return (
-    <div className="flex h-screen bg-white text-gray-900 dark:bg-gh-bg-primary dark:text-gh-text-primary">
+    <div className="flex h-screen bg-background text-foreground">
       {/* サイドバー */}
       {sidebarOpen && (
-        <aside className="w-64 border-r border-gray-200 dark:border-gh-border overflow-y-auto p-4 dark:bg-gh-bg-secondary">
+        <aside className="w-64 border-r border-border overflow-y-auto p-4 bg-secondary">
           <h1 className="text-lg font-bold mb-4">mdv</h1>
           <FileTree
             files={files}
@@ -56,30 +56,30 @@ export function App() {
       {/* メインエリア */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* ヘッダー */}
-        <header className="flex items-center gap-2 border-b border-gray-200 dark:border-gh-border px-4 py-2 dark:bg-gh-bg-secondary">
+        <header className="flex items-center gap-2 border-b border-border px-4 py-2 bg-secondary">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary"
+            className="p-1.5 rounded-lg hover:bg-accent"
             title={sidebarOpen ? "Hide sidebar" : "Show sidebar"}
           >
             {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
           </button>
-          <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gh-border">
+          <div className="flex rounded-lg overflow-hidden border border-border">
             <button
-              className={`px-3 py-1 text-sm ${viewMode === "preview" ? "bg-gh-accent text-white" : "hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary"}`}
+              className={`px-3 py-1 text-sm ${viewMode === "preview" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
               onClick={() => setViewMode("preview")}
             >
               Preview
             </button>
             <button
-              className={`px-3 py-1 text-sm ${viewMode === "source" ? "bg-gh-accent text-white" : "hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary"}`}
+              className={`px-3 py-1 text-sm ${viewMode === "source" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
               onClick={() => setViewMode("source")}
             >
               Source
             </button>
           </div>
           <div className="flex-1" />
-          <span className="text-sm text-gh-text-secondary">{selectedPath}</span>
+          <span className="text-sm text-muted-foreground">{selectedPath}</span>
           <ThemeToggle />
         </header>
 
@@ -92,7 +92,7 @@ export function App() {
               <Source content={content} />
             )
           ) : (
-            <p className="text-gray-400">ファイルを選択してください</p>
+            <p className="text-muted-foreground">ファイルを選択してください</p>
           )}
         </div>
       </main>

@@ -27,7 +27,6 @@
   "packageManager": "pnpm@10.32.1",
   "dependencies": {
     "@base-ui/react": "^1.2.0",
-    "@fontsource-variable/geist": "^5.2.8",
     "@tanstack/react-hotkeys": "^0.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

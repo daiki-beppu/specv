@@ -1,5 +1,5 @@
 import { Highlight, themes } from "prism-react-renderer";
-import { useTheme } from "../hooks/useTheme.js";
+import { useTheme } from "@/hooks/useTheme.js";
 
 interface SourceProps {
   content: string;
@@ -18,7 +18,7 @@ export function Source({ content }: SourceProps) {
         >
           {tokens.map((line, i) => (
             <div key={i} {...getLineProps({ line })}>
-              <span className="inline-block w-8 text-right mr-4 text-gray-400 select-none">
+              <span className="inline-block w-8 text-right mr-4 text-muted-foreground select-none">
                 {i + 1}
               </span>
               {line.map((token, key) => (

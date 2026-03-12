@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Highlight, themes } from "prism-react-renderer";
-import { useTheme } from "../hooks/useTheme.js";
+import { useTheme } from "@/hooks/useTheme.js";
 import { useState, type ComponentPropsWithoutRef } from "react";
 import { Clipboard, Check } from "lucide-react";
 
@@ -22,7 +22,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="absolute top-2 right-2 p-1.5 rounded bg-gh-bg-tertiary text-gh-text-secondary hover:text-gh-text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+      className="absolute top-2 right-2 p-1.5 rounded bg-muted text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
       title="Copy"
     >
       {copied ? <Check size={16} /> : <Clipboard size={16} />}

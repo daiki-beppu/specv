@@ -30,13 +30,13 @@ export function FileTree({ files, selectedPath, onSelect }: FileTreeProps) {
   return (
     <div>
       <div className="relative mb-3">
-        <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-gh-text-muted" />
+        <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search files..."
-          className="w-full pl-7 pr-2 py-1 text-sm rounded border border-gray-300 dark:border-gh-border bg-transparent dark:bg-gh-bg-primary placeholder:text-gh-text-muted focus:outline-none focus:border-gh-accent"
+          className="w-full pl-7 pr-2 py-1 text-sm rounded border border-border bg-transparent placeholder:text-muted-foreground focus:outline-none focus:border-ring"
         />
       </div>
       <ul className="space-y-0.5">
@@ -74,7 +74,7 @@ function TreeNode({
     return (
       <li>
         <button
-          className="flex items-center gap-1 w-full text-left py-0.5 px-1 rounded hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary text-sm"
+          className="flex items-center gap-1 w-full text-left py-0.5 px-1 rounded hover:bg-accent text-sm"
           onClick={() => setExpanded(!expanded)}
         >
           <span className="text-xs">{isOpen ? "\u25BC" : "\u25B6"}</span>
@@ -102,8 +102,8 @@ function TreeNode({
       <button
         className={`flex items-center gap-1 w-full text-left py-0.5 px-1 rounded text-sm ${
           isSelected
-            ? "bg-blue-100 text-blue-800 dark:bg-gh-bg-tertiary dark:text-gh-text-primary"
-            : "hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary"
+            ? "bg-accent text-accent-foreground"
+            : "hover:bg-accent"
         }`}
         onClick={() => onSelect(node.path)}
       >

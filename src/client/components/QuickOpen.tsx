@@ -38,7 +38,7 @@ function HighlightChars({ str, indices }: { str: string; indices: Set<number> })
     <>
       {str.split("").map((char, i) =>
         indices.has(i) ? (
-          <span key={i} className="text-gh-text-primary font-semibold">{char}</span>
+          <span key={i} className="text-foreground font-semibold">{char}</span>
         ) : (
           <span key={i}>{char}</span>
         ),
@@ -105,7 +105,7 @@ export function QuickOpen({ files, open, onClose, onSelect }: QuickOpenProps) {
   return (
     <div className="fixed inset-0 z-50 flex justify-center pt-[12vh]" onClick={onClose}>
       <div
-        className="w-[600px] h-fit max-h-[50vh] flex flex-col bg-white dark:bg-[#1e1e1e] border border-gray-300 dark:border-gh-border rounded-md shadow-2xl overflow-hidden"
+        className="w-[600px] h-fit max-h-[50vh] flex flex-col bg-popover border border-border rounded-md shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center px-3 py-2">
@@ -116,19 +116,19 @@ export function QuickOpen({ files, open, onClose, onSelect }: QuickOpenProps) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Go to File"
-            className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-gh-text-muted"
+            className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground"
           />
-          <kbd className="text-[10px] text-gh-text-muted border border-gh-border rounded px-1 py-0.5 ml-2">ESC</kbd>
+          <kbd className="text-[10px] text-muted-foreground border border-border rounded px-1 py-0.5 ml-2">ESC</kbd>
         </div>
-        <div className="border-t border-gray-200 dark:border-gh-border" />
+        <div className="border-t border-border" />
         <div ref={listRef} className="overflow-y-auto py-1">
           {results.map(({ item: file, positions }, i) => (
             <button
               key={file.path}
               className={`w-full text-left px-3 py-1 text-sm flex items-center gap-2 ${
                 i === selectedIndex
-                  ? "bg-blue-100 dark:bg-gh-bg-tertiary"
-                  : "hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary/50"
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent/50"
               }`}
               onClick={() => {
                 onSelect(file.path);
@@ -136,8 +136,8 @@ export function QuickOpen({ files, open, onClose, onSelect }: QuickOpenProps) {
               }}
               onMouseEnter={() => setSelectedIndex(i)}
             >
-              <File size={14} className="shrink-0 text-gh-text-muted" />
-              <span className="truncate text-gh-text-secondary">
+              <File size={14} className="shrink-0 text-muted-foreground" />
+              <span className="truncate text-muted-foreground">
                 {query ? (
                   <HighlightChars str={file.name} indices={namePositions(file, positions)} />
                 ) : (
@@ -145,12 +145,12 @@ export function QuickOpen({ files, open, onClose, onSelect }: QuickOpenProps) {
                 )}
               </span>
               {file.dir && (
-                <span className="truncate text-xs text-gh-text-muted ml-auto">{file.dir}</span>
+                <span className="truncate text-xs text-muted-foreground ml-auto">{file.dir}</span>
               )}
             </button>
           ))}
           {results.length === 0 && (
-            <p className="px-3 py-4 text-sm text-gh-text-muted text-center">No matching files</p>
+            <p className="px-3 py-4 text-sm text-muted-foreground text-center">No matching files</p>
           )}
         </div>
       </div>
