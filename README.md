@@ -1,4 +1,4 @@
-# mdv
+# specv
 
 カレントディレクトリの Markdown ファイルを GitHub 風にブラウザプレビューする CLI ツール。
 
@@ -17,22 +17,17 @@
 ## Install
 
 ```bash
-# ローカルビルド
-git clone https://github.com/daiki-beppu/mdv.git
-cd mdv
-pnpm install
-pnpm build
-npm link
+npm install -g specv
 ```
 
 ## Usage
 
 ```bash
 # カレントディレクトリの .md をプレビュー
-mdv
+specv
 
 # ポート指定
-mdv -p 3000
+specv -p 3000
 ```
 
 ブラウザが自動で開き、Markdown ファイルを GitHub 風にレンダリング表示します。
@@ -54,7 +49,7 @@ Express Server (API) ─── React SPA (Vite build)
 
 - **Server:** Express 5 + commander (CLI)
 - **Client:** React 19 + Vite + Tailwind CSS v4
-- **Markdown:** react-markdown + remark-gfm + github-markdown-css
+- **Markdown:** react-markdown + remark-gfm
 - **Search:** fzf (fuzzy finder) + TanStack Hotkeys
 - **Security:** パストラバーサル検証、.md ファイルのみアクセス許可
 
