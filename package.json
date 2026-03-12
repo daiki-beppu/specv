@@ -1,0 +1,52 @@
+{
+  "name": "mdv",
+  "version": "0.1.0",
+  "description": "Local Markdown preview with GitHub-style rendering",
+  "type": "module",
+  "bin": {
+    "mdv": "./dist/server/cli.js"
+  },
+  "scripts": {
+    "dev:client": "vite",
+    "dev:server": "tsx src/server/cli.ts",
+    "build:client": "vite build",
+    "build:server": "tsup src/server/cli.ts --format esm --out-dir dist/server --dts",
+    "build": "nr build:client && nr build:server",
+    "test": "vitest run",
+    "prepublishOnly": "nr build"
+  },
+  "files": [
+    "dist/"
+  ],
+  "keywords": [
+    "markdown",
+    "preview",
+    "cli"
+  ],
+  "license": "MIT",
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "commander": "^14.0.3",
+    "express": "^5.2.1",
+    "github-markdown-css": "^5.9.0",
+    "open": "^11.0.0",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/express": "^5.0.6",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "tailwindcss": "^4.2.1",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  }
+}
