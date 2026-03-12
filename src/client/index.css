@@ -2,6 +2,18 @@
 @import "github-markdown-css/github-markdown-light.css" (prefers-color-scheme: light);
 @import "github-markdown-css/github-markdown-dark.css" (prefers-color-scheme: dark);
 
+/* GitHub dark theme palette (matching difit) */
+@theme {
+  --color-gh-bg-primary: #0d1117;
+  --color-gh-bg-secondary: #161b22;
+  --color-gh-bg-tertiary: #21262d;
+  --color-gh-border: #30363d;
+  --color-gh-text-primary: #f0f6fc;
+  --color-gh-text-secondary: #8b949e;
+  --color-gh-text-muted: #6e7681;
+  --color-gh-accent: #238636;
+}
+
 /* Manual dark mode toggle support */
 :root:not(.dark) .markdown-body {
   color-scheme: light;
@@ -9,4 +21,18 @@
 .dark .markdown-body {
   color-scheme: dark;
   --bgColor-default: transparent;
+}
+
+.markdown-body {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Code block padding */
+.markdown-body pre {
+  padding: 1rem;
+}
+.markdown-body code {
+  padding: 0.2em 0.4em;
 }

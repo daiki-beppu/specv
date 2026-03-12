@@ -39,7 +39,7 @@ function TreeNode({
     return (
       <li>
         <button
-          className="flex items-center gap-1 w-full text-left py-0.5 px-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
+          className="flex items-center gap-1 w-full text-left py-0.5 px-1 rounded hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary text-sm"
           onClick={() => setExpanded(!expanded)}
         >
           <span className="text-xs">{expanded ? "\u25BC" : "\u25B6"}</span>
@@ -66,8 +66,8 @@ function TreeNode({
       <button
         className={`flex items-center gap-1 w-full text-left py-0.5 px-1 rounded text-sm ${
           isSelected
-            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-            : "hover:bg-gray-100 dark:hover:bg-gray-800"
+            ? "bg-blue-100 text-blue-800 dark:bg-gh-bg-tertiary dark:text-gh-text-primary"
+            : "hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary"
         }`}
         onClick={() => onSelect(node.path)}
       >

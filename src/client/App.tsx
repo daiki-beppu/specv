@@ -29,9 +29,9 @@ export function App() {
   }, [selectedPath]);
 
   return (
-    <div className="flex h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div className="flex h-screen bg-white text-gray-900 dark:bg-gh-bg-primary dark:text-gh-text-primary">
       {/* サイドバー */}
-      <aside className="w-64 border-r border-gray-200 dark:border-gray-700 overflow-y-auto p-4">
+      <aside className="w-64 border-r border-gray-200 dark:border-gh-border overflow-y-auto p-4 dark:bg-gh-bg-secondary">
         <h1 className="text-lg font-bold mb-4">mdv</h1>
         <FileTree
           files={files}
@@ -43,28 +43,28 @@ export function App() {
       {/* メインエリア */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* ヘッダー */}
-        <header className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
-          <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
+        <header className="flex items-center gap-2 border-b border-gray-200 dark:border-gh-border px-4 py-2 dark:bg-gh-bg-secondary">
+          <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gh-border">
             <button
-              className={`px-3 py-1 text-sm ${viewMode === "preview" ? "bg-blue-500 text-white" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+              className={`px-3 py-1 text-sm ${viewMode === "preview" ? "bg-gh-accent text-white" : "hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary"}`}
               onClick={() => setViewMode("preview")}
             >
               Preview
             </button>
             <button
-              className={`px-3 py-1 text-sm ${viewMode === "source" ? "bg-blue-500 text-white" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+              className={`px-3 py-1 text-sm ${viewMode === "source" ? "bg-gh-accent text-white" : "hover:bg-gray-100 dark:hover:bg-gh-bg-tertiary"}`}
               onClick={() => setViewMode("source")}
             >
               Source
             </button>
           </div>
           <div className="flex-1" />
-          <span className="text-sm text-gray-500">{selectedPath}</span>
+          <span className="text-sm text-gh-text-secondary">{selectedPath}</span>
           <ThemeToggle />
         </header>
 
         {/* コンテンツ */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto px-8 py-8">
           {selectedPath ? (
             viewMode === "preview" ? (
               <Preview content={content} />
