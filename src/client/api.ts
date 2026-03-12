@@ -2,6 +2,7 @@ import type { FileNode } from "../shared/types.js";
 
 export async function fetchFiles(): Promise<FileNode[]> {
   const res = await fetch("/api/files");
+  if (!res.ok) throw new Error("Failed to fetch file list");
   const data = await res.json();
   return data.files;
 }

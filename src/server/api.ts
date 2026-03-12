@@ -16,8 +16,8 @@ export function createApiRouter(baseDir: string): Router {
   });
 
   router.get("/api/file", async (req, res) => {
-    const filePath = req.query.path as string;
-    if (!filePath) {
+    const filePath = req.query.path;
+    if (!filePath || typeof filePath !== "string") {
       res.status(400).json({ error: "path query parameter is required" });
       return;
     }

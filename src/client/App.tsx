@@ -23,17 +23,20 @@ export function App() {
   useHotkey("Mod+B", () => setSidebarOpen((v) => !v));
 
   useEffect(() => {
-    fetchFiles().then((f) => {
-      setFiles(f);
-      // 最初のファイルを自動選択
-      const first = findFirstFile(f);
-      if (first) setSelectedPath(first);
-    });
+    fetchFiles()
+      .then((f) => {
+        setFiles(f);
+        const first = findFirstFile(f);
+        if (first) setSelectedPath(first);
+      })
+      .catch((err) => console.error("Failed to load files:", err));
   }, []);
 
   useEffect(() => {
     if (!selectedPath) return;
-    fetchFile(selectedPath).then(setContent);
+    fetchFile(selectedPath)
+      .then(setContent)
+      .catch((err) => console.error("Failed to load file:", err));
   }, [selectedPath]);
 
   return (
