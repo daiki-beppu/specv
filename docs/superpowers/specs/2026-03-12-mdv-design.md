@@ -14,21 +14,21 @@ difit のような洗練された UI で、Preview / Source の切り替えが�
 ## アーキテクチャ
 
 ```
-CLI (cac)
+CLI (commander)
   │
-  ├── ローカル HTTP サーバー (node:http)
-  │     ├── GET /              → SPA (HTML/CSS/JS)
+  ├── Express サーバー
+  │     ├── GET /              → Vite ビルド済み SPA (dist/)
   │     ├── GET /api/files     → .md ファイルツリー (JSON)
   │     └── GET /api/file?path=→ ファイル内容 (raw text)
   │
   └── open (ブラウザ自動起動)
 
-ブラウザ側 (SPA, バンドルなし)
-  ├── ファイルツリー (左サイドバー)
-  ├── コンテンツエリア (右メイン)
-  │     ├── Preview モード: markdown-it でレンダリング
-  │     └── Source モード: 生テキスト + シンタックスハイライト
-  └── ヘッダー: Preview/Source 切替 + ダーク/ライト トグル
+React SPA (Vite + Tailwind)
+  ├── FileTree (左サイドバー)
+  ├── ContentArea (右メイン)
+  │     ├── Preview: react-markdown + remark-gfm
+  │     └── Source: prism-react-renderer
+  └── Header: Preview/Source 切替 + ダーク/ライト トグル
 ```
 
 ## 画面構成
@@ -53,22 +53,33 @@ CLI (cac)
 
 ## 技術スタック
 
+difit と同様の構成を採用。
+
+### サーバー側
+
 | パーツ | ライブラリ | 理由 |
 |--------|-----------|------|
-| CLI | `cac` | 軽量、TypeScript フレンドリー |
-| サーバー | `node:http` | 外部依存ゼロ |
-| MD パーサー | `markdown-it` | プラグイン豊富、高速 |
-| コードハイライト | `shiki` | VS Code 同等品質のハイライト |
-| スタイル | `github-markdown-css` | GitHub と同じ見た目 |
+| CLI | `commander` | difit と同じ、定番 |
+| サーバー | `express` | ルーティング・静的配信が簡潔 |
 | ブラウザ起動 | `open` | クロスプラットフォーム対応 |
 
-### フロントエンド
+### フロントエンド (React SPA)
 
-- フレームワークなし（Vanilla JS）
-- HTML/CSS/JS は JS テンプレートリテラルとしてサーバーコードに埋め込み（単一パッケージで完結）
-- markdown-it: npm 依存としてバンドル、サーバー側で HTML に変換して配信
-- shiki: サーバー側で実行し、ハイライト済み HTML を返す（WASM のブラウザロード回避）
-- github-markdown-css: ビルド時に CSS を文字列として埋め込み
+| パーツ | ライブラリ | 理由 |
+|--------|-----------|------|
+| フレームワーク | `React 19` + `React DOM` | コンポーネント分割、状態管理 |
+| ビルド | `Vite 8` | 高速ビルド、HMR |
+| 言語 | `TypeScript` | 型安全 |
+| CSS | `Tailwind CSS` | ユーティリティファースト、difit 同様 |
+| Markdown | `react-markdown` + `remark-gfm` | React コンポーネントとして描画、GFM 対応 |
+| コードハイライト | `prism-react-renderer` | React 統合が楽、軽量 |
+| スタイル | `github-markdown-css` | GitHub と同じ見た目 |
+
+### ビルド・配信方式
+
+- フロントエンドは Vite でビルドし `dist/` に出力
+- サーバーが `dist/` を静的ファイルとして配信
+- npm publish 時に `dist/` を含める（`prepublishOnly` でビルド）
 
 ## API 設計
 
@@ -98,13 +109,6 @@ CLI (cac)
 
 - Content-Type: `text/plain; charset=utf-8`
 - パストラバーサル対策: `path.resolve()` 後にベースディレクトリの prefix チェック
-
-### `GET /api/render?path=<relative-path>`
-
-指定されたファイルを markdown-it + shiki でレンダリングした HTML を返す。
-
-- Content-Type: `text/html; charset=utf-8`
-- Source モード用にハイライト済み HTML も含む
 
 ### エラーレスポンス
 
@@ -149,7 +153,7 @@ Options:
 - ファイルツリー表示（ネスト対応、.gitignore 準拠）
 - GitHub 風レンダリング（github-markdown-css）
 - Preview / Source 切替
-- シンタックスハイライト（shiki、サーバー側レンダリング）
+- シンタックスハイライト（prism-react-renderer）
 - ダーク/ライトモード（OS 追従 + トグル）
 - ブラウザ自動起動
 - ポート自動選択（デフォルト 4649、衝突時インクリメント）
