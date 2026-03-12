@@ -34,7 +34,7 @@ export function Preview({ content }: PreviewProps) {
   const { theme } = useTheme();
 
   return (
-    <div className="markdown-body">
+    <div className="prose dark:prose-invert max-w-[960px] mx-auto prose-pre:bg-[#f6f8fa] dark:prose-pre:bg-[#161b22] prose-pre:p-4 prose-code:before:content-none prose-code:after:content-none prose-h1:border-b prose-h1:border-border prose-h1:pb-2 prose-h2:border-b prose-h2:border-border prose-h2:pb-2">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

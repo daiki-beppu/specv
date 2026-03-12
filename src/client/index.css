@@ -1,8 +1,8 @@
 @import "tailwindcss";
-@import "github-markdown-css/github-markdown-light.css" (prefers-color-scheme: light);
-@import "github-markdown-css/github-markdown-dark.css" (prefers-color-scheme: dark);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -63,29 +63,6 @@
   --sidebar-accent-foreground: #f0f6fc;
   --sidebar-border: #30363d;
   --sidebar-ring: #388bfd;
-}
-
-/* Manual dark mode toggle support */
-:root:not(.dark) .markdown-body {
-  color-scheme: light;
-}
-.dark .markdown-body {
-  color-scheme: dark;
-  --bgColor-default: transparent;
-}
-
-.markdown-body {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-/* Code block padding */
-.markdown-body pre {
-  padding: 1rem;
-}
-.markdown-body code {
-  padding: 0.2em 0.4em;
 }
 
 @theme inline {
