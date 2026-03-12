@@ -1,12 +1,19 @@
 import fs from "node:fs";
 import path from "node:path";
 
+export class SecurityError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SecurityError";
+  }
+}
+
 const isWithinBaseDir = (targetPath: string, baseDir: string): boolean =>
   targetPath.startsWith(baseDir + path.sep) || targetPath === baseDir;
 
 const validateExtension = (filePath: string): void => {
   if (!filePath.endsWith(".md")) {
-    throw new Error(`Only .md files are allowed: ${filePath}`);
+    throw new SecurityError(`Only .md files are allowed: ${filePath}`);
   }
 };
 
@@ -18,11 +25,11 @@ const resolveRealPath = (
   try {
     const realPath = fs.realpathSync(resolved);
     if (!isWithinBaseDir(realPath, baseDir)) {
-      throw new Error(`Path traversal detected: ${filePath}`);
+      throw new SecurityError(`Path traversal detected: ${filePath}`);
     }
     return realPath;
   } catch (error) {
-    if (error instanceof Error && error.message.includes("traversal")) {
+    if (error instanceof SecurityError) {
       throw error;
     }
     return resolved;
@@ -34,10 +41,10 @@ export const validatePath = (filePath: string, baseDir: string): string => {
   const resolved = path.resolve(baseDir, decoded);
 
   if (!isWithinBaseDir(resolved, baseDir)) {
-    throw new Error(`Path traversal detected: ${filePath}`);
+    throw new SecurityError(`Path traversal detected: ${filePath}`);
   }
 
-  validateExtension(filePath);
+  validateExtension(decoded);
 
   return resolveRealPath(resolved, baseDir, filePath);
 };
