@@ -70,8 +70,8 @@ describe("scanMarkdownFiles", () => {
     expect(result).toEqual([]);
   });
 
-  it("深度制限（5階層）を超えない", async () => {
-    createFile("a/b/c/d/e/f/deep.md", "# Deep");
+  it("深度制限（10階層）を超えない", async () => {
+    createFile("a/b/c/d/e/f/g/h/i/j/k/deep.md", "# Deep");
 
     const result = await scanMarkdownFiles(tmpDir);
     const findDeep = JSON.stringify(result);

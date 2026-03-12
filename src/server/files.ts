@@ -14,7 +14,7 @@ const IGNORED_DIRS = new Set([
   ".nuxt",
 ]);
 
-const MAX_DEPTH = 5;
+const MAX_DEPTH = 10;
 
 export async function scanMarkdownFiles(
   baseDir: string,

@@ -1,5 +1,5 @@
 {
-  "name": "mdv",
+  "name": "@daiki-beppu/mdv",
   "version": "0.1.0",
   "description": "Local Markdown preview with GitHub-style rendering",
   "type": "module",
@@ -26,8 +26,10 @@
   "license": "MIT",
   "packageManager": "pnpm@10.32.1",
   "dependencies": {
+    "@tanstack/react-hotkeys": "^0.4.1",
     "commander": "^14.0.3",
     "express": "^5.2.1",
+    "fzf": "^0.5.2",
     "github-markdown-css": "^5.9.0",
     "lucide-react": "^0.577.0",
     "open": "^11.0.0",
