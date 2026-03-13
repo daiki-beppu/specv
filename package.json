@@ -7,7 +7,16 @@
     "markdown",
     "preview"
   ],
+  "homepage": "https://github.com/daiki-beppu/specv",
+  "bugs": {
+    "url": "https://github.com/daiki-beppu/specv/issues"
+  },
   "license": "MIT",
+  "author": "daiki-beppu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daiki-beppu/specv.git"
+  },
   "bin": {
     "specv": "./dist/server/cli.js"
   },
