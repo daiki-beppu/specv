@@ -9,7 +9,22 @@ import { useTheme } from "@/hooks/use-theme.js";
 
 interface PreviewProps {
   content: string;
+  selectedPath: string | null;
 }
+
+const isExternalUrl = (src: string): boolean =>
+  src.startsWith("http://") ||
+  src.startsWith("https://") ||
+  src.startsWith("data:");
+
+const resolveImageSrc = (src: string, selectedPath: string | null): string => {
+  if (isExternalUrl(src)) {
+    return src;
+  }
+  const dir = selectedPath ? selectedPath.replace(/[^/]+$/, "") : "";
+  const imagePath = dir + src.replace(/^\.\//, "");
+  return `/api/image?path=${encodeURIComponent(imagePath)}`;
+};
 
 const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false);
@@ -32,7 +47,7 @@ const CopyButton = ({ text }: { text: string }) => {
   );
 };
 
-export const Preview = ({ content }: PreviewProps) => {
+export const Preview = ({ content, selectedPath }: PreviewProps) => {
   const { theme } = useTheme();
 
   return (
@@ -89,6 +104,10 @@ export const Preview = ({ content }: PreviewProps) => {
                 )}
               </Highlight>
             );
+          },
+          img({ src, alt, ...props }: ComponentPropsWithoutRef<"img">) {
+            const resolvedSrc = src ? resolveImageSrc(src, selectedPath) : "";
+            return <img src={resolvedSrc} alt={alt ?? ""} {...props} />;
           },
           pre({ children, ...props }: ComponentPropsWithoutRef<"pre">) {
             const codeEl = Array.isArray(children) ? children[0] : children;
