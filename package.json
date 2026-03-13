@@ -20,12 +20,13 @@
     "dev:server": "tsx src/server/cli.ts",
     "build:client": "vite build",
     "build:server": "tsup src/server/cli.ts --format esm --out-dir dist/server --dts",
-    "build": "nr build:client && nr build:server",
+    "build": "pnpm run build:client && pnpm run build:server",
     "test": "vitest run",
-    "prepublishOnly": "nr build",
+    "prepublishOnly": "pnpm run build",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "knip": "knip",
+    "typecheck": "tsc --noEmit",
     "prepare": "lefthook install"
   },
   "dependencies": {
