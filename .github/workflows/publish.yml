@@ -21,6 +21,9 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - run: pnpm install --frozen-lockfile
 
       - name: Lint
