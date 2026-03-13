@@ -1,8 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "project": ["src/**/*.{ts,tsx}"],
+  "entry": ["src/server/cli.ts"],
   "ignore": ["src/client/components/ui/**", "src/client/lib/**"],
-  "ignoreBinaries": ["nr"],
   "ignoreDependencies": [
     "@base-ui/react",
     "class-variance-authority",
