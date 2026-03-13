@@ -1,8 +1,11 @@
 #!/usr/bin/env node
+import fs from "node:fs";
 import path from "node:path";
 
+import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { program } from "commander";
-import express from "express";
+import { Hono } from "hono";
 
 import { createApiRouter } from "./api.js";
 
@@ -21,26 +24,35 @@ program
   .action((options) => {
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
-    const app = express();
+    const clientDir = path.join(currentDir, "../client");
 
-    app.use(createApiRouter(baseDir));
+    const indexHtml = fs.readFileSync(
+      path.join(clientDir, "index.html"),
+      "utf8"
+    );
+    const app = new Hono();
+
+    // API routes
+    app.route("/", createApiRouter(baseDir));
 
     // Serve built client
-    const clientDir = path.join(currentDir, "../client");
-    app.use(express.static(clientDir));
-    app.get("/{*splat}", (_req, res) => {
-      res.sendFile(path.join(clientDir, "index.html"));
-    });
+    app.use("/*", serveStatic({ root: clientDir }));
+
+    // SPA fallback
+    app.get("/*", (c) => c.html(indexHtml));
 
     const tryListen = (port: number): void => {
-      const server = app.listen(port, "127.0.0.1", () => {
-        const url = `http://localhost:${port}`;
-        console.log(`specv running at ${url}`);
-        console.log(`Serving: ${baseDir}`);
-        console.log("Press Ctrl+C to stop");
+      const server = serve(
+        { fetch: app.fetch, hostname: "127.0.0.1", port },
+        (info) => {
+          const url = `http://localhost:${info.port}`;
+          console.log(`specv running at ${url}`);
+          console.log(`Serving: ${baseDir}`);
+          console.log("Press Ctrl+C to stop");
 
-        openInBrowser(url);
-      });
+          openInBrowser(url);
+        }
+      );
 
       server.on("error", (err: NodeJS.ErrnoException) => {
         if (err.code === "EADDRINUSE" && port < startPort + 10) {
