@@ -1,20 +1,6 @@
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
-
 import { scanMarkdownFiles } from "@server/files.js";
 
-const createTmpDir = () => fs.mkdtempSync(path.join(os.tmpdir(), "mdv-test-"));
-
-const removeTmpDir = (dir: string) => {
-  fs.rmSync(dir, { recursive: true });
-};
-
-const createFile = (tmpDir: string, relativePath: string, content = "") => {
-  const fullPath = path.join(tmpDir, relativePath);
-  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, content);
-};
+import { createFile, createTmpDir, removeTmpDir } from "./test-utils.js";
 
 describe("scanMarkdownFiles function", () => {
   it("ルートの .md ファイルを返す", async () => {

@@ -83,4 +83,8 @@ describe(resolvePath, () => {
   it(". セグメントを無視する", () => {
     expect(resolvePath("docs/readme.md", "./other.md")).toBe("docs/other.md");
   });
+
+  it("ルートを超える ../ はルートに留まる", () => {
+    expect(resolvePath("readme.md", "../../x.md")).toBe("x.md");
+  });
 });
