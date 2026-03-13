@@ -35,7 +35,7 @@ const renderContent = (
     return <p className="text-muted-foreground">ファイルを選択してください</p>;
   }
   if (viewMode === "preview") {
-    return <Preview content={content} />;
+    return <Preview content={content} selectedPath={selectedPath} />;
   }
   return <Source content={content} />;
 };

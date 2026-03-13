@@ -11,9 +11,25 @@ export class SecurityError extends Error {
 const isWithinBaseDir = (targetPath: string, baseDir: string): boolean =>
   targetPath.startsWith(baseDir + path.sep) || targetPath === baseDir;
 
+const ALLOWED_IMAGE_EXTENSIONS = new Set([
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".svg",
+  ".webp",
+]);
+
 const validateExtension = (filePath: string): void => {
   if (!filePath.endsWith(".md")) {
     throw new SecurityError(`Only .md files are allowed: ${filePath}`);
+  }
+};
+
+const validateImageExtension = (filePath: string): void => {
+  const ext = path.extname(filePath).toLowerCase();
+  if (!ALLOWED_IMAGE_EXTENSIONS.has(ext)) {
+    throw new SecurityError(`Unsupported image format: ${filePath}`);
   }
 };
 
@@ -45,6 +61,22 @@ export const validatePath = (filePath: string, baseDir: string): string => {
   }
 
   validateExtension(decoded);
+
+  return resolveRealPath(resolved, baseDir, filePath);
+};
+
+export const validateImagePath = (
+  filePath: string,
+  baseDir: string
+): string => {
+  const decoded = decodeURIComponent(filePath);
+  const resolved = path.resolve(baseDir, decoded);
+
+  if (!isWithinBaseDir(resolved, baseDir)) {
+    throw new SecurityError(`Path traversal detected: ${filePath}`);
+  }
+
+  validateImageExtension(decoded);
 
   return resolveRealPath(resolved, baseDir, filePath);
 };
