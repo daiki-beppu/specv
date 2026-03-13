@@ -7,7 +7,7 @@ import {
   FolderOpen,
   FileText,
 } from "lucide-react";
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 
 import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand.js";
 
@@ -133,8 +133,13 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(() =>
     computeAutoExpandPaths(files)
   );
+  const isMount = useRef(true);
 
   useEffect(() => {
+    if (isMount.current) {
+      isMount.current = false;
+      return;
+    }
     setExpandedPaths(computeAutoExpandPaths(files));
   }, [files]);
 
@@ -152,17 +157,16 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
 
   const onExpand = useCallback(
     (dirPath: string) => {
+      const node = findNode(files, dirPath);
+      const subPaths = node?.children
+        ? computeAutoExpandPaths(node.children)
+        : new Set<string>();
+
       setExpandedPaths((prev) => {
         if (prev.has(dirPath)) {
           return prev;
         }
-        const next = new Set([...prev, dirPath]);
-        const node = findNode(files, dirPath);
-        if (node?.children) {
-          for (const p of computeAutoExpandPaths(node.children)) {
-            next.add(p);
-          }
-        }
+        const next = new Set([...prev, dirPath, ...subPaths]);
         return next;
       });
     },
