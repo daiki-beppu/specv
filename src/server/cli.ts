@@ -14,9 +14,9 @@ const openInBrowser = async (url: string): Promise<void> => {
 };
 
 program
-  .name("mdv")
+  .name("specv")
   .description("Local Markdown preview with GitHub-style rendering")
-  .version("0.1.0")
+  .version("0.1.1")
   .option("-p, --port <number>", "Port number", "4649")
   .action((options) => {
     const baseDir = process.cwd();
@@ -35,7 +35,7 @@ program
     const tryListen = (port: number): void => {
       const server = app.listen(port, "127.0.0.1", () => {
         const url = `http://localhost:${port}`;
-        console.log(`mdv running at ${url}`);
+        console.log(`specv running at ${url}`);
         console.log(`Serving: ${baseDir}`);
         console.log("Press Ctrl+C to stop");
 

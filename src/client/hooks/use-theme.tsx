@@ -19,7 +19,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem("mdv-theme") as Theme | null;
+    const saved = localStorage.getItem("specv-theme") as Theme | null;
     if (saved) {
       return saved;
     }
@@ -30,7 +30,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("mdv-theme", theme);
+    localStorage.setItem("specv-theme", theme);
   }, [theme]);
 
   const toggle = useCallback(

@@ -8,33 +8,64 @@ importers:
 
   .:
     dependencies:
-      '@base-ui/react':
-        specifier: ^1.2.0
-        version: 1.2.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@tanstack/react-hotkeys':
-        specifier: ^0.4.1
-        version: 0.4.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       commander:
         specifier: ^14.0.3
         version: 14.0.3
       express:
         specifier: ^5.2.1
         version: 5.2.1
-      fzf:
-        specifier: ^0.5.2
-        version: 0.5.2
-      lucide-react:
-        specifier: ^0.577.0
-        version: 0.577.0(react@19.2.4)
       open:
         specifier: ^11.0.0
         version: 11.0.0
+    devDependencies:
+      '@base-ui/react':
+        specifier: ^1.2.0
+        version: 1.2.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@tailwindcss/typography':
+        specifier: ^0.5.19
+        version: 0.5.19(tailwindcss@4.2.1)
+      '@tailwindcss/vite':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+      '@tanstack/react-hotkeys':
+        specifier: ^0.4.1
+        version: 0.4.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: ^5.1.4
+        version: 5.1.4(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      fzf:
+        specifier: ^0.5.2
+        version: 0.5.2
+      knip:
+        specifier: ^5.86.0
+        version: 5.86.0(@types/node@25.4.0)(typescript@5.9.3)
+      lefthook:
+        specifier: ^2.1.3
+        version: 2.1.3
+      lucide-react:
+        specifier: ^0.577.0
+        version: 0.577.0(react@19.2.4)
+      oxfmt:
+        specifier: ^0.39.0
+        version: 0.39.0
+      oxlint:
+        specifier: ^1.54.0
+        version: 1.54.0
       prism-react-renderer:
         specifier: ^2.4.1
         version: 2.4.1(react@19.2.4)
@@ -56,40 +87,6 @@ importers:
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
-      tw-animate-css:
-        specifier: ^1.4.0
-        version: 1.4.0
-    devDependencies:
-      '@tailwindcss/typography':
-        specifier: ^0.5.19
-        version: 0.5.19(tailwindcss@4.2.1)
-      '@tailwindcss/vite':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
-      '@types/express':
-        specifier: ^5.0.6
-        version: 5.0.6
-      '@types/react':
-        specifier: ^19.2.14
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.14)
-      '@vitejs/plugin-react':
-        specifier: ^5.1.4
-        version: 5.1.4(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
-      knip:
-        specifier: ^5.86.0
-        version: 5.86.0(@types/node@25.4.0)(typescript@5.9.3)
-      lefthook:
-        specifier: ^2.1.3
-        version: 2.1.3
-      oxfmt:
-        specifier: ^0.39.0
-        version: 0.39.0
-      oxlint:
-        specifier: ^1.54.0
-        version: 1.54.0
       tailwindcss:
         specifier: ^4.2.1
         version: 4.2.1
@@ -99,6 +96,9 @@ importers:
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
