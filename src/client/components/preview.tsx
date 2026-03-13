@@ -1,6 +1,6 @@
 import { Check, Clipboard } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 import { useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -10,6 +10,7 @@ import { useTheme } from "@/hooks/use-theme.js";
 interface PreviewProps {
   content: string;
   selectedPath: string | null;
+  onNavigate: (path: string) => void;
 }
 
 const isExternalUrl = (src: string): boolean =>
@@ -47,14 +48,75 @@ const CopyButton = ({ text }: { text: string }) => {
   );
 };
 
-export const Preview = ({ content, selectedPath }: PreviewProps) => {
+const resolvePath = (from: string, relative: string): string => {
+  const dir = from.includes("/") ? from.slice(0, from.lastIndexOf("/")) : "";
+  const parts = dir ? dir.split("/") : [];
+
+  for (const segment of relative.split("/")) {
+    if (segment === "..") {
+      parts.pop();
+    } else if (segment !== "." && segment !== "") {
+      parts.push(segment);
+    }
+  }
+
+  return parts.join("/");
+};
+
+const MdLink = ({
+  href,
+  children,
+  selectedPath,
+  onNavigate,
+  ...props
+}: ComponentPropsWithoutRef<"a"> & {
+  selectedPath: string | null;
+  onNavigate: (path: string) => void;
+}) => {
+  const handleClick = useCallback(
+    (e: MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (selectedPath && href) {
+        onNavigate(resolvePath(selectedPath, href));
+      }
+    },
+    [selectedPath, href, onNavigate]
+  );
+
+  if (href?.endsWith(".md") && selectedPath) {
+    return (
+      <a {...props} href={href} onClick={handleClick}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+      {children}
+    </a>
+  );
+};
+
+export const Preview = ({
+  content,
+  selectedPath,
+  onNavigate,
+}: PreviewProps) => {
   const { theme } = useTheme();
+
+  const renderLink = useCallback(
+    (props: ComponentPropsWithoutRef<"a">) => (
+      <MdLink {...props} selectedPath={selectedPath} onNavigate={onNavigate} />
+    ),
+    [selectedPath, onNavigate]
+  );
 
   return (
     <div className="prose dark:prose-invert max-w-[960px] mx-auto prose-pre:bg-[#f6f8fa] dark:prose-pre:bg-[#161b22] prose-pre:p-4 prose-code:before:content-none prose-code:after:content-none prose-h1:border-b prose-h1:border-border prose-h1:pb-2 prose-h2:border-b prose-h2:border-border prose-h2:pb-2">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          a: renderLink,
           code({
             className,
             children,

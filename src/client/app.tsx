@@ -29,13 +29,20 @@ const findFirstFile = (files: FileNode[]): string | null => {
 const renderContent = (
   selectedPath: string | null,
   viewMode: ViewMode,
-  content: string
+  content: string,
+  onNavigate: (path: string) => void
 ) => {
   if (!selectedPath) {
     return <p className="text-muted-foreground">ファイルを選択してください</p>;
   }
   if (viewMode === "preview") {
-    return <Preview content={content} selectedPath={selectedPath} />;
+    return (
+      <Preview
+        content={content}
+        selectedPath={selectedPath}
+        onNavigate={onNavigate}
+      />
+    );
   }
   return <Source content={content} />;
 };
@@ -198,7 +205,7 @@ export const App = () => {
 
         {/* コンテンツ */}
         <div className="flex-1 overflow-y-auto px-8 py-8">
-          {renderContent(selectedPath, viewMode, content)}
+          {renderContent(selectedPath, viewMode, content, setSelectedPath)}
         </div>
       </main>
       <QuickOpen
