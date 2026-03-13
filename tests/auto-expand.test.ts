@@ -2,6 +2,7 @@ import type { FileNode } from "@shared/types.js";
 
 import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand.js";
 
+// eslint-disable-next-line jest/valid-title -- oxfmt reverts string to function reference
 describe(computeAutoExpandPaths, () => {
   it("空ツリーで空の Set を返す", () => {
     const result = computeAutoExpandPaths([]);
@@ -98,6 +99,7 @@ describe(computeAutoExpandPaths, () => {
   });
 });
 
+// eslint-disable-next-line jest/valid-title -- oxfmt reverts string to function reference
 describe(findNode, () => {
   const tree: FileNode[] = [
     {
