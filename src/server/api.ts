@@ -68,7 +68,7 @@ export const createApiRouter = (baseDir: string): Hono => {
 
     try {
       const { data, contentType } = await readImage(filePath, baseDir);
-      return c.body(data, 200, { "Content-Type": contentType });
+      return c.body(new Uint8Array(data), 200, { "Content-Type": contentType });
     } catch (error) {
       if (error instanceof SecurityError) {
         return c.json({ error: error.message }, 400);
