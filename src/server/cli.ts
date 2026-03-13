@@ -16,6 +16,23 @@ const openInBrowser = async (url: string): Promise<void> => {
   await mod.default(url);
 };
 
+const createApp = (baseDir: string, clientDir: string) => {
+  const indexHtmlPath = path.join(clientDir, "index.html");
+  const hasClient = fs.existsSync(indexHtmlPath);
+
+  const app = new Hono();
+
+  app.route("/", createApiRouter(baseDir));
+
+  if (hasClient) {
+    const indexHtml = fs.readFileSync(indexHtmlPath, "utf8");
+    app.use("/*", serveStatic({ root: clientDir }));
+    app.get("/*", (c) => c.html(indexHtml));
+  }
+
+  return app;
+};
+
 program
   .name("specv")
   .description("Local Markdown preview with GitHub-style rendering")
@@ -25,32 +42,22 @@ program
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
     const clientDir = path.join(currentDir, "../client");
-
-    const indexHtml = fs.readFileSync(
-      path.join(clientDir, "index.html"),
-      "utf8"
-    );
-    const app = new Hono();
-
-    // API routes
-    app.route("/", createApiRouter(baseDir));
-
-    // Serve built client
-    app.use("/*", serveStatic({ root: clientDir }));
-
-    // SPA fallback
-    app.get("/*", (c) => c.html(indexHtml));
+    const app = createApp(baseDir, clientDir);
 
     const tryListen = (port: number): void => {
       const server = serve(
         { fetch: app.fetch, hostname: "127.0.0.1", port },
-        (info) => {
+        async (info) => {
           const url = `http://localhost:${info.port}`;
           console.log(`specv running at ${url}`);
           console.log(`Serving: ${baseDir}`);
           console.log("Press Ctrl+C to stop");
 
-          openInBrowser(url);
+          try {
+            await openInBrowser(url);
+          } catch (error: unknown) {
+            console.error("Failed to open browser:", error);
+          }
         }
       );
 
