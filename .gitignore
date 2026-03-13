@@ -4,3 +4,7 @@ dist/
 # OS
 .DS_Store
 .worktrees/
+
+# Playwright
+test-results/
+playwright-report/

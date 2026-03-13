@@ -31,6 +31,7 @@
     "build:server": "tsup src/server/cli.ts --format esm --out-dir dist/server --dts",
     "build": "pnpm run build:client && pnpm run build:server",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "prepublishOnly": "pnpm run build",
     "check": "ultracite check",
     "fix": "ultracite fix",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@base-ui/react": "^1.2.0",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-hotkeys": "^0.4.1",

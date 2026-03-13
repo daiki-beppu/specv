@@ -6,26 +6,13 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { useTheme } from "@/hooks/use-theme.js";
+import { resolveImageSrc, resolvePath } from "@/lib/path-utils.js";
 
 interface PreviewProps {
   content: string;
   selectedPath: string | null;
   onNavigate: (path: string) => void;
 }
-
-const isExternalUrl = (src: string): boolean =>
-  src.startsWith("http://") ||
-  src.startsWith("https://") ||
-  src.startsWith("data:");
-
-const resolveImageSrc = (src: string, selectedPath: string | null): string => {
-  if (isExternalUrl(src)) {
-    return src;
-  }
-  const dir = selectedPath ? selectedPath.replace(/[^/]+$/, "") : "";
-  const imagePath = dir + src.replace(/^\.\//, "");
-  return `/api/image?path=${encodeURIComponent(imagePath)}`;
-};
 
 const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false);
@@ -46,21 +33,6 @@ const CopyButton = ({ text }: { text: string }) => {
       {copied ? <Check size={16} /> : <Clipboard size={16} />}
     </button>
   );
-};
-
-const resolvePath = (from: string, relative: string): string => {
-  const dir = from.includes("/") ? from.slice(0, from.lastIndexOf("/")) : "";
-  const parts = dir ? dir.split("/") : [];
-
-  for (const segment of relative.split("/")) {
-    if (segment === "..") {
-      parts.pop();
-    } else if (segment !== "." && segment !== "") {
-      parts.push(segment);
-    }
-  }
-
-  return parts.join("/");
 };
 
 const MdLink = ({
