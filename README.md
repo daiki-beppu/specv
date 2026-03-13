@@ -42,12 +42,12 @@ specv -p 3000
 ## Architecture
 
 ```
-Express Server (API) ─── React SPA (Vite build)
-  /api/files             FileTree + Preview + Source
-  /api/file?path=...     react-markdown + prism-react-renderer
+Hono Server (API) ─── React SPA (Vite build)
+  /api/files            FileTree + Preview + Source
+  /api/file?path=...    react-markdown + prism-react-renderer
 ```
 
-- **Server:** Express 5 + commander (CLI)
+- **Server:** Hono + @hono/node-server + commander (CLI)
 - **Client:** React 19 + Vite + Tailwind CSS v4
 - **Markdown:** react-markdown + remark-gfm
 - **Search:** fzf (fuzzy finder) + TanStack Hotkeys
@@ -68,6 +68,13 @@ pnpm test
 # ビルド
 pnpm build
 ```
+
+## CI/CD
+
+GitHub Actions で自動化:
+
+- **CI** — PR・main push 時に lint / knip / typecheck / test / build を実行
+- **Publish** — GitHub Release 作成時に npm publish（Trusted Publishing）
 
 ## License
 
