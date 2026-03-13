@@ -26,6 +26,7 @@
     "check": "ultracite check",
     "fix": "ultracite fix",
     "knip": "knip",
+    "typecheck": "tsc --noEmit",
     "prepare": "lefthook install"
   },
   "dependencies": {
