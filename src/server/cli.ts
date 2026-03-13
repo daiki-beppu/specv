@@ -19,7 +19,7 @@ const openInBrowser = async (url: string): Promise<void> => {
 program
   .name("specv")
   .description("Local Markdown preview with GitHub-style rendering")
-  .version("0.1.1")
+  .version("0.2.0")
   .option("-p, --port <number>", "Port number", "4649")
   .action((options) => {
     const baseDir = process.cwd();
