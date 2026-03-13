@@ -98,10 +98,10 @@ export const Preview = ({ content }: PreviewProps) => {
                 : "";
 
             return (
-              <pre {...props} className="group relative">
+              <div className="group relative">
                 <CopyButton text={code} />
-                {children}
-              </pre>
+                <pre {...props}>{children}</pre>
+              </div>
             );
           },
         }}
