@@ -1,12 +1,16 @@
 import { Check, Clipboard } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
-import { useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { useTheme } from "@/hooks/use-theme.js";
 import { resolveImageSrc, resolvePath } from "@/lib/path-utils.js";
+
+const MermaidBlock = lazy(() => import("@/components/mermaid-block.js"));
+
+const MERMAID_CLASS_RE = /language-mermaid/;
 
 interface PreviewProps {
   content: string;
@@ -105,6 +109,14 @@ export const Preview = ({
               );
             }
 
+            if (match[1] === "mermaid") {
+              return (
+                <Suspense>
+                  <MermaidBlock code={code} />
+                </Suspense>
+              );
+            }
+
             const prismTheme = theme === "dark" ? themes.vsDark : themes.github;
 
             return (
@@ -145,6 +157,17 @@ export const Preview = ({
           },
           pre({ children, ...props }: ComponentPropsWithoutRef<"pre">) {
             const codeEl = Array.isArray(children) ? children[0] : children;
+
+            const isMermaid =
+              codeEl &&
+              typeof codeEl === "object" &&
+              "props" in codeEl &&
+              MERMAID_CLASS_RE.test(codeEl.props.className || "");
+
+            if (isMermaid) {
+              return children;
+            }
+
             const code =
               codeEl && typeof codeEl === "object" && "props" in codeEl
                 ? String(codeEl.props.children).replace(/\n$/, "")
