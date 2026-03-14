@@ -16,26 +16,24 @@ const openInBrowser = async (url: string): Promise<void> => {
   await mod.default(url);
 };
 
-const HEARTBEAT_INTERVAL = 5000;
-const HEARTBEAT_TIMEOUT = 15_000;
+const registerLifecycle = (app: Hono, onDisconnect: () => void) => {
+  app.get("/api/lifecycle", (_c) => {
+    const stream = new ReadableStream({
+      cancel() {
+        onDisconnect();
+      },
+      start(controller) {
+        controller.enqueue("data: connected\n\n");
+      },
+    });
 
-const registerHeartbeat = (app: Hono, onDisconnect: () => void) => {
-  let lastHeartbeat = Date.now();
-  let timer: ReturnType<typeof setInterval> | null = null;
-
-  app.get("/api/heartbeat", (c) => {
-    lastHeartbeat = Date.now();
-    if (!timer) {
-      timer = setInterval(() => {
-        if (Date.now() - lastHeartbeat > HEARTBEAT_TIMEOUT) {
-          if (timer) {
-            clearInterval(timer);
-          }
-          onDisconnect();
-        }
-      }, HEARTBEAT_INTERVAL);
-    }
-    return c.json({ ok: true });
+    return new Response(stream, {
+      headers: {
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        "Content-Type": "text/event-stream",
+      },
+    });
   });
 };
 
@@ -48,7 +46,7 @@ const createApp = (
   const hasClient = fs.existsSync(indexHtmlPath);
   const app = new Hono();
 
-  registerHeartbeat(app, onDisconnect);
+  registerLifecycle(app, onDisconnect);
   app.route("/", createApiRouter(baseDir));
 
   if (hasClient) {

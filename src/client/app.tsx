@@ -130,19 +130,10 @@ const useSidebar = (
   };
 };
 
-const sendHeartbeat = async () => {
-  try {
-    await fetch("/api/heartbeat");
-  } catch {
-    // server unreachable
-  }
-};
-
-const useHeartbeat = () => {
+const useLifecycle = () => {
   useEffect(() => {
-    sendHeartbeat();
-    const id = setInterval(sendHeartbeat, 5000);
-    return () => clearInterval(id);
+    const es = new EventSource("/api/lifecycle");
+    return () => es.close();
   }, []);
 };
 
@@ -172,7 +163,7 @@ const useAppState = () => {
 };
 
 export const App = () => {
-  useHeartbeat();
+  useLifecycle();
 
   const {
     content,
