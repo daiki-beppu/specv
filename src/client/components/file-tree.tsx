@@ -7,7 +7,9 @@ import {
   FolderOpen,
   FileText,
 } from "lucide-react";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+
+import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand.js";
 
 interface FileTreeProps {
   files: FileNode[];
@@ -39,20 +41,29 @@ const TreeNode = ({
   selectedPath,
   onSelect,
   forceExpand,
+  expandedPaths,
+  onExpand,
+  onCollapse,
 }: {
   node: FileNode;
   selectedPath: string | null;
   onSelect: (path: string) => void;
   forceExpand: boolean;
+  expandedPaths: Set<string>;
+  onExpand: (dirPath: string) => void;
+  onCollapse: (dirPath: string) => void;
 }) => {
-  const [expanded, setExpanded] = useState(false);
   const isDir = !!node.children;
   const isSelected = node.path === selectedPath;
-  const isOpen = forceExpand || expanded;
+  const isOpen = forceExpand || expandedPaths.has(node.path);
 
   const handleToggleExpand = useCallback(() => {
-    setExpanded((prev) => !prev);
-  }, []);
+    if (isOpen && !forceExpand) {
+      onCollapse(node.path);
+    } else {
+      onExpand(node.path);
+    }
+  }, [isOpen, forceExpand, onCollapse, onExpand, node.path]);
 
   const handleSelect = useCallback(() => {
     onSelect(node.path);
@@ -90,6 +101,9 @@ const TreeNode = ({
                 selectedPath={selectedPath}
                 onSelect={onSelect}
                 forceExpand={forceExpand}
+                expandedPaths={expandedPaths}
+                onExpand={onExpand}
+                onCollapse={onCollapse}
               />
             ))}
           </ul>
@@ -116,6 +130,19 @@ const TreeNode = ({
 
 export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
   const [query, setQuery] = useState("");
+  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(() =>
+    computeAutoExpandPaths(files)
+  );
+  const isMount = useRef(true);
+
+  useEffect(() => {
+    if (isMount.current) {
+      isMount.current = false;
+      return;
+    }
+    setExpandedPaths(computeAutoExpandPaths(files));
+  }, [files]);
+
   const filtered = useMemo(
     () => (query ? filterTree(files, query) : files),
     [files, query]
@@ -127,6 +154,40 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
     },
     []
   );
+
+  const onExpand = useCallback(
+    (dirPath: string) => {
+      const node = findNode(files, dirPath);
+      const subPaths = node?.children
+        ? computeAutoExpandPaths(node.children)
+        : new Set<string>();
+
+      setExpandedPaths((prev) => {
+        if (prev.has(dirPath)) {
+          return prev;
+        }
+        const next = new Set([...prev, dirPath, ...subPaths]);
+        return next;
+      });
+    },
+    [files]
+  );
+
+  const onCollapse = useCallback((dirPath: string) => {
+    setExpandedPaths((prev) => {
+      if (!prev.has(dirPath)) {
+        return prev;
+      }
+      const next = new Set<string>();
+      const prefix = `${dirPath}/`;
+      for (const p of prev) {
+        if (p !== dirPath && !p.startsWith(prefix)) {
+          next.add(p);
+        }
+      }
+      return next;
+    });
+  }, []);
 
   return (
     <div>
@@ -155,6 +216,9 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
             selectedPath={selectedPath}
             onSelect={onSelect}
             forceExpand={!!query}
+            expandedPaths={expandedPaths}
+            onExpand={onExpand}
+            onCollapse={onCollapse}
           />
         ))}
       </ul>
