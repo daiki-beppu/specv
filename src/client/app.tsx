@@ -2,7 +2,7 @@ import type { FileNode } from "@shared/types.js";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchFile, fetchFiles } from "./api.js";
 import { FileTree } from "./components/file-tree.js";
@@ -10,6 +10,8 @@ import { Preview } from "./components/preview.js";
 import { QuickOpen } from "./components/quick-open.js";
 import { Source } from "./components/source.js";
 import { ThemeToggle } from "./components/theme-toggle.js";
+import { useResizable } from "./hooks/use-resizable.js";
+import { cn } from "./lib/utils.js";
 
 type ViewMode = "preview" | "source";
 
@@ -89,7 +91,6 @@ const useLoadContent = (
 };
 
 const useAppHandlers = (
-  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>,
   setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>,
   setQuickOpenVisible: React.Dispatch<React.SetStateAction<boolean>>
 ) => ({
@@ -99,10 +100,6 @@ const useAppHandlers = (
   ),
   handleSetPreview: useCallback(() => setViewMode("preview"), [setViewMode]),
   handleSetSource: useCallback(() => setViewMode("source"), [setViewMode]),
-  handleToggleSidebar: useCallback(
-    () => setSidebarOpen((v) => !v),
-    [setSidebarOpen]
-  ),
 });
 
 const useHotkeys = (
@@ -111,6 +108,26 @@ const useHotkeys = (
 ) => {
   useHotkey("Mod+P", () => setQuickOpenVisible(true));
   useHotkey("Mod+B", () => setSidebarOpen((v) => !v));
+};
+
+const useSidebar = (
+  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  const sidebarRef = useRef<HTMLElement>(null);
+  const { isDragging, onDoubleClick, onMouseDown, width } =
+    useResizable(sidebarRef);
+
+  return {
+    handleToggleSidebar: useCallback(
+      () => setSidebarOpen((v) => !v),
+      [setSidebarOpen]
+    ),
+    isDragging,
+    onDoubleClick,
+    onMouseDown,
+    sidebarRef,
+    sidebarWidth: width,
+  };
 };
 
 const useAppState = () => {
@@ -126,7 +143,8 @@ const useAppState = () => {
   useLoadContent(selectedPath, setContent);
 
   return {
-    ...useAppHandlers(setSidebarOpen, setViewMode, setQuickOpenVisible),
+    ...useAppHandlers(setViewMode, setQuickOpenVisible),
+    ...useSidebar(setSidebarOpen),
     content,
     files,
     quickOpenVisible,
@@ -145,25 +163,55 @@ export const App = () => {
     handleSetPreview,
     handleSetSource,
     handleToggleSidebar,
+    isDragging,
+    onDoubleClick,
+    onMouseDown,
     quickOpenVisible,
     selectedPath,
     setSelectedPath,
     sidebarOpen,
+    sidebarRef,
+    sidebarWidth,
     viewMode,
   } = useAppState();
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <div
+      className={cn(
+        "flex h-screen bg-background text-foreground",
+        isDragging && "select-none cursor-col-resize"
+      )}
+    >
       {/* サイドバー */}
       {sidebarOpen && (
-        <aside className="w-64 border-r border-border overflow-y-auto p-4 bg-secondary">
-          <h1 className="text-lg font-bold mb-4">specv</h1>
-          <FileTree
-            files={files}
-            selectedPath={selectedPath}
-            onSelect={setSelectedPath}
+        <>
+          <aside
+            ref={sidebarRef}
+            className={cn(
+              "shrink-0 border-r border-border overflow-y-auto p-4 bg-secondary transition-[width] duration-200",
+              isDragging && "!transition-none"
+            )}
+            style={{ width: sidebarWidth }}
+          >
+            <h1 className="text-lg font-bold mb-4">specv</h1>
+            <FileTree
+              files={files}
+              selectedPath={selectedPath}
+              onSelect={setSelectedPath}
+            />
+          </aside>
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            className={cn(
+              "relative w-1 shrink-0 cursor-col-resize hover:bg-ring transition-colors",
+              "before:absolute before:inset-y-0 before:-left-1 before:-right-1",
+              isDragging && "bg-ring"
+            )}
+            onDoubleClick={onDoubleClick}
+            onMouseDown={onMouseDown}
           />
-        </aside>
+        </>
       )}
 
       {/* メインエリア */}
