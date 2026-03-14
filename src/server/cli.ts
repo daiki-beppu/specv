@@ -17,10 +17,17 @@ const openInBrowser = async (url: string): Promise<void> => {
 };
 
 const registerLifecycle = (app: Hono, onDisconnect: () => void) => {
+  let connections = 0;
+
   app.get("/api/lifecycle", (_c) => {
+    connections += 1;
+
     const stream = new ReadableStream({
       cancel() {
-        onDisconnect();
+        connections -= 1;
+        if (connections === 0) {
+          onDisconnect();
+        }
       },
       start(controller) {
         controller.enqueue("data: connected\n\n");
@@ -37,23 +44,27 @@ const registerLifecycle = (app: Hono, onDisconnect: () => void) => {
   });
 };
 
-const createApp = (
-  baseDir: string,
-  clientDir: string,
-  onDisconnect: () => void
-) => {
+const serveClient = (app: Hono, clientDir: string) => {
   const indexHtmlPath = path.join(clientDir, "index.html");
-  const hasClient = fs.existsSync(indexHtmlPath);
-  const app = new Hono();
-
-  registerLifecycle(app, onDisconnect);
-  app.route("/", createApiRouter(baseDir));
-
-  if (hasClient) {
+  if (fs.existsSync(indexHtmlPath)) {
     const indexHtml = fs.readFileSync(indexHtmlPath, "utf8");
     app.use("/*", serveStatic({ root: clientDir }));
     app.get("/*", (c) => c.html(indexHtml));
   }
+};
+
+const createApp = (
+  baseDir: string,
+  clientDir: string,
+  onDisconnect?: () => void
+) => {
+  const app = new Hono();
+
+  if (onDisconnect) {
+    registerLifecycle(app, onDisconnect);
+  }
+  app.route("/", createApiRouter(baseDir));
+  serveClient(app, clientDir);
 
   return app;
 };
@@ -63,14 +74,21 @@ program
   .description("Local Markdown preview with GitHub-style rendering")
   .version("0.2.0")
   .option("-p, --port <number>", "Port number", "4649")
+  .option("--no-auto-close", "Disable auto-close on client disconnect")
   .action((options) => {
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
     const clientDir = path.join(currentDir, "../client");
-    const app = createApp(baseDir, clientDir, () => {
-      console.log("Client disconnected, shutting down server...");
-      process.exit(0);
-    });
+    const app = createApp(
+      baseDir,
+      clientDir,
+      options.autoClose
+        ? () => {
+            console.log("Client disconnected, shutting down server...");
+            process.exit(0);
+          }
+        : undefined
+    );
 
     const tryListen = (port: number): void => {
       const server = serve(

@@ -13,6 +13,7 @@
 ## Commands
 
 ```bash
+nr dev               # client + server 同時起動
 nr dev:client        # Vite dev server (localhost:5173)
 nr dev:server        # API server (localhost:4649)
 nr build             # Build client + server
@@ -31,6 +32,7 @@ src/
 │   ├── api.ts        # API client (fetch wrapper)
 │   ├── components/   # UI components (file-tree, preview, quick-open)
 │   │   ├── ui/       # Base UI components (button)
+│   │   ├── mermaid-block.tsx  # Mermaid diagram renderer (lazy loaded)
 │   │   ├── source.tsx
 │   │   └── theme-toggle.tsx
 │   ├── hooks/        # Custom React hooks
@@ -47,6 +49,7 @@ src/
 │   └── types.ts      # Shared types (FileNode)
 tests/                # Unit tests (Vitest)
 e2e/                  # E2E tests (Playwright)
+fixtures/             # Manual testing markdown files
 ```
 
 ## Path Aliases
@@ -57,6 +60,8 @@ e2e/                  # E2E tests (Playwright)
 
 ## Gotchas
 
+- `preview.tsx` は remark/rehype プラグインを使用: remarkGfm, remarkMath, remarkAlert, rehypeKatex, rehypeSlug, rehypeAutolinkHeadings
+- ブラウザを閉じるとサーバーが自動停止する（SSE `/api/lifecycle` による切断検知）
 - `sort-keys` ルールが有効: オブジェクトキーはアルファベット順に記述すること
 - `no-relative-parent-imports` が有効: `../` ではなくパスエイリアスを使う
 - E2E テストは `nr build` 後に実行する必要がある（ビルド済みサーバーを使用）
