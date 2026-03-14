@@ -14,7 +14,7 @@
 
 ## Images
 
-![Placeholder](https://via.placeholder.com/300x100?text=specv+test+image)
+![Placeholder](https://placehold.co/300x100?text=specv+test+image)
 
 ## Mixed
 
