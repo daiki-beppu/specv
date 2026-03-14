@@ -130,6 +130,22 @@ const useSidebar = (
   };
 };
 
+const sendHeartbeat = async () => {
+  try {
+    await fetch("/api/heartbeat");
+  } catch {
+    // server unreachable
+  }
+};
+
+const useHeartbeat = () => {
+  useEffect(() => {
+    sendHeartbeat();
+    const id = setInterval(sendHeartbeat, 5000);
+    return () => clearInterval(id);
+  }, []);
+};
+
 const useAppState = () => {
   const [files, setFiles] = useState<FileNode[]>([]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
@@ -156,6 +172,8 @@ const useAppState = () => {
 };
 
 export const App = () => {
+  useHeartbeat();
+
   const {
     content,
     files,

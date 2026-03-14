@@ -16,12 +16,39 @@ const openInBrowser = async (url: string): Promise<void> => {
   await mod.default(url);
 };
 
-const createApp = (baseDir: string, clientDir: string) => {
+const HEARTBEAT_INTERVAL = 5000;
+const HEARTBEAT_TIMEOUT = 15_000;
+
+const registerHeartbeat = (app: Hono, onDisconnect: () => void) => {
+  let lastHeartbeat = Date.now();
+  let timer: ReturnType<typeof setInterval> | null = null;
+
+  app.get("/api/heartbeat", (c) => {
+    lastHeartbeat = Date.now();
+    if (!timer) {
+      timer = setInterval(() => {
+        if (Date.now() - lastHeartbeat > HEARTBEAT_TIMEOUT) {
+          if (timer) {
+            clearInterval(timer);
+          }
+          onDisconnect();
+        }
+      }, HEARTBEAT_INTERVAL);
+    }
+    return c.json({ ok: true });
+  });
+};
+
+const createApp = (
+  baseDir: string,
+  clientDir: string,
+  onDisconnect: () => void
+) => {
   const indexHtmlPath = path.join(clientDir, "index.html");
   const hasClient = fs.existsSync(indexHtmlPath);
-
   const app = new Hono();
 
+  registerHeartbeat(app, onDisconnect);
   app.route("/", createApiRouter(baseDir));
 
   if (hasClient) {
@@ -42,7 +69,10 @@ program
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
     const clientDir = path.join(currentDir, "../client");
-    const app = createApp(baseDir, clientDir);
+    const app = createApp(baseDir, clientDir, () => {
+      console.log("Client disconnected, shutting down server...");
+      process.exit(0);
+    });
 
     const tryListen = (port: number): void => {
       const server = serve(
