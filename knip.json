@@ -1,20 +1,14 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "project": ["src/**/*.{ts,tsx}"],
-  "ignore": ["src/client/components/ui/**", "src/client/lib/**"],
+  "ignore": ["src/client/components/ui/**"],
   "ignoreDependencies": [
     "@base-ui/react",
     "class-variance-authority",
-    "clsx",
-    "tailwind-merge",
     "tw-animate-css",
     "shadcn",
     "@tailwindcss/typography",
     "tailwindcss",
-    "oxfmt",
-    "rehype-stringify",
-    "remark-parse",
-    "remark-rehype",
-    "unified"
+    "oxfmt"
   ]
 }
