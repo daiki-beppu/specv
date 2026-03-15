@@ -3,7 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 
 import { Preview } from "@/components/preview";
 
-vi.mock(import("@/hooks/use-theme.js"), () => ({
+vi.mock(import("@/hooks/use-theme"), () => ({
   useTheme: () => ({ theme: "light" as const, toggle: vi.fn() }),
 }));
 
