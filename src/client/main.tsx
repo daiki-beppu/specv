@@ -1,9 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { ThemeProvider } from "@/hooks/use-theme.js";
+import { ThemeProvider } from "@/hooks/use-theme";
 
-import { App } from "./app.js";
+import { App } from "./app";
 
 import "./index.css";
 

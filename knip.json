@@ -11,6 +11,10 @@
     "shadcn",
     "@tailwindcss/typography",
     "tailwindcss",
-    "oxfmt"
+    "oxfmt",
+    "rehype-stringify",
+    "remark-parse",
+    "remark-rehype",
+    "unified"
   ]
 }

@@ -7,7 +7,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { program } from "commander";
 import { Hono } from "hono";
 
-import { createApiRouter } from "./api.js";
+import { createApiRouter } from "./api";
 
 const currentDir = import.meta.dirname;
 

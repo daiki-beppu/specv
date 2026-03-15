@@ -1,6 +1,6 @@
-import { createApiRouter } from "@server/api.js";
+import { createApiRouter } from "@server/api";
 
-import { createFile, withTmpDir } from "./test-utils.js";
+import { createFile, withTmpDir } from "./test-utils";
 
 // 1x1 transparent PNG
 const TINY_PNG = Buffer.from(

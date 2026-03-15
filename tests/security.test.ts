@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { validateImagePath, validatePath } from "@server/security.js";
+import { validateImagePath, validatePath } from "@server/security";
 
 const baseDir = "/home/user/project";
 
