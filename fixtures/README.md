@@ -10,3 +10,4 @@ specv の動作確認用ドキュメント集。`nr dev` で起動してファ�
 | [math.md](math.md)               | 数式（インライン・ブロック・行列）               |
 | [alerts.md](alerts.md)           | GitHub アラート記法（NOTE, WARNING 等）          |
 | [links.md](links.md)             | 内部リンク・外部リンク・画像                     |
+| [html-tags.md](html-tags.md)     | HTML タグ（kbd, details, sub, sup, abbr）        |

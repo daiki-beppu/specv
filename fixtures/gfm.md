@@ -77,3 +77,9 @@ specv は GitHub スタイルのレンダリングをサポートしています
 **Bold text** and _italic text_ and **_bold italic text_**
 
 `inline code` is also supported.
+
+## Emoji Shortcodes
+
+:smile: :rocket: :tada: :warning: :memo:
+
+:heart: :+1: :-1: :eyes: :fire:
