@@ -9,6 +9,12 @@
 | Strikethrough |   OK   |       取り消し線 |
 | Autolinks     |   OK   |   URL 自動リンク |
 
+## Wide Table (横スクロール確認用)
+
+| Column 1                 | Column 2          | Column 3          | Column 4       | Column 5   | Column 6   | Column 7     | Column 8    | Column 9 | Column 10 |
+| ------------------------ | ----------------- | ----------------- | -------------- | ---------- | ---------- | ------------ | ----------- | -------- | --------- |
+| This is a long text cell | Another long text | More content here | Even more text | Keep going | Still more | Almost there | Nearly done | One more | Last one  |
+
 ## Task List
 
 - [x] Markdown パース

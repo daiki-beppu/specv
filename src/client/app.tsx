@@ -130,6 +130,13 @@ const useSidebar = (
   };
 };
 
+const useLifecycle = () => {
+  useEffect(() => {
+    const es = new EventSource("/api/lifecycle");
+    return () => es.close();
+  }, []);
+};
+
 const useAppState = () => {
   const [files, setFiles] = useState<FileNode[]>([]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
@@ -156,6 +163,8 @@ const useAppState = () => {
 };
 
 export const App = () => {
+  useLifecycle();
+
   const {
     content,
     files,

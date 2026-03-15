@@ -1,9 +1,16 @@
+import "katex/dist/katex.min.css";
+import "remark-github-blockquote-alert/alert.css";
 import { Check, Clipboard } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 import { lazy, Suspense, useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeKatex from "rehype-katex";
+import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
+import { remarkAlert } from "remark-github-blockquote-alert";
+import remarkMath from "remark-math";
 
 import { useTheme } from "@/hooks/use-theme.js";
 import { resolveImageSrc, resolvePath } from "@/lib/path-utils.js";
@@ -11,6 +18,8 @@ import { resolveImageSrc, resolvePath } from "@/lib/path-utils.js";
 const MermaidBlock = lazy(() => import("@/components/mermaid-block.js"));
 
 const MERMAID_CLASS_RE = /language-mermaid/;
+const REMARK_PLUGINS = [remarkAlert, remarkGfm, remarkMath];
+const REHYPE_PLUGINS = [rehypeKatex, rehypeSlug, rehypeAutolinkHeadings];
 
 interface PreviewProps {
   content: string;
@@ -90,7 +99,8 @@ export const Preview = ({
   return (
     <div className="prose dark:prose-invert max-w-[960px] mx-auto prose-pre:bg-[#f6f8fa] dark:prose-pre:bg-[#161b22] prose-pre:p-4 prose-code:before:content-none prose-code:after:content-none prose-h1:border-b prose-h1:border-border prose-h1:pb-2 prose-h2:border-b prose-h2:border-border prose-h2:pb-2">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={REMARK_PLUGINS}
+        rehypePlugins={REHYPE_PLUGINS}
         components={{
           a: renderLink,
           code({
@@ -177,6 +187,13 @@ export const Preview = ({
               <div className="group relative">
                 <CopyButton text={code} />
                 <pre {...props}>{children}</pre>
+              </div>
+            );
+          },
+          table({ children, ...props }: ComponentPropsWithoutRef<"table">) {
+            return (
+              <div className="overflow-x-auto">
+                <table {...props}>{children}</table>
               </div>
             );
           },

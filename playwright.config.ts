@@ -20,7 +20,7 @@ export default defineConfig({
     baseURL: "http://localhost:4650",
   },
   webServer: {
-    command: `node ${cliPath} -p 4650`,
+    command: `node ${cliPath} -p 4650 --no-auto-close`,
     cwd: fixturesDir,
     port: 4650,
     reuseExistingServer: !process.env.CI,
