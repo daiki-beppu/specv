@@ -58,6 +58,10 @@ fixtures/             # Manual testing markdown files
 - `@server/*` → `src/server/*`
 - `@shared/*` → `src/shared/*`
 
+## Development Style
+
+- TDD（テスト駆動開発）で実装する: テストを先に書き、Red → Green → Refactor のサイクルで進める
+
 ## Gotchas
 
 - `preview.tsx` は remark/rehype プラグインを使用: remarkGfm, remarkMath, remarkAlert, rehypeKatex, rehypeSlug, rehypeAutolinkHeadings

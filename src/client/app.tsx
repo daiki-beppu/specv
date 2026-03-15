@@ -11,22 +11,12 @@ import { QuickOpen } from "./components/quick-open";
 import { Source } from "./components/source";
 import { ThemeToggle } from "./components/theme-toggle";
 import { useResizable } from "./hooks/use-resizable";
+import { useScrollRestore } from "./hooks/use-scroll-restore";
+import { useWatch } from "./hooks/use-watch";
 import { cn } from "./lib/utils";
+import { findFirstFile } from "./utils/auto-expand";
 
 type ViewMode = "preview" | "source";
-
-const findFirstFile = (files: FileNode[]): string | null => {
-  for (const f of files) {
-    if (!f.children) {
-      return f.path;
-    }
-    const child = findFirstFile(f.children);
-    if (child) {
-      return child;
-    }
-  }
-  return null;
-};
 
 const renderContent = (
   selectedPath: string | null,
@@ -137,26 +127,32 @@ const useLifecycle = () => {
   }, []);
 };
 
-const useAppState = () => {
+const useContentState = () => {
   const [files, setFiles] = useState<FileNode[]>([]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [content, setContent] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useLoadFiles(setFiles, setSelectedPath);
+  useLoadContent(selectedPath, setContent);
+  useWatch(selectedPath, setContent, setFiles, setSelectedPath);
+  useScrollRestore(scrollRef, selectedPath);
+
+  return { content, files, scrollRef, selectedPath, setSelectedPath };
+};
+
+const useAppState = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [quickOpenVisible, setQuickOpenVisible] = useState(false);
 
   useHotkeys(setQuickOpenVisible, setSidebarOpen);
-  useLoadFiles(setFiles, setSelectedPath);
-  useLoadContent(selectedPath, setContent);
 
   return {
     ...useAppHandlers(setViewMode, setQuickOpenVisible),
+    ...useContentState(),
     ...useSidebar(setSidebarOpen),
-    content,
-    files,
     quickOpenVisible,
-    selectedPath,
-    setSelectedPath,
     sidebarOpen,
     viewMode,
   };
@@ -176,6 +172,7 @@ export const App = () => {
     onDoubleClick,
     onMouseDown,
     quickOpenVisible,
+    scrollRef,
     selectedPath,
     setSelectedPath,
     sidebarOpen,
@@ -261,7 +258,7 @@ export const App = () => {
         </header>
 
         {/* コンテンツ */}
-        <div className="flex-1 overflow-y-auto px-8 py-8">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-8 py-8">
           {renderContent(selectedPath, viewMode, content, setSelectedPath)}
         </div>
       </main>

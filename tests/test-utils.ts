@@ -29,3 +29,5 @@ export const withTmpDir = async (
     removeTmpDir(tmpDir);
   }
 };
+
+export { setTimeout as delay } from "node:timers/promises";

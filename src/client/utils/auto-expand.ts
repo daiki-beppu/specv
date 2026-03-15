@@ -18,6 +18,19 @@ export const computeAutoExpandPaths = (nodes: FileNode[]): Set<string> => {
   return paths;
 };
 
+export const findFirstFile = (nodes: FileNode[]): string | null => {
+  for (const node of nodes) {
+    if (!node.children) {
+      return node.path;
+    }
+    const child = findFirstFile(node.children);
+    if (child) {
+      return child;
+    }
+  }
+  return null;
+};
+
 export const findNode = (
   nodes: FileNode[],
   path: string

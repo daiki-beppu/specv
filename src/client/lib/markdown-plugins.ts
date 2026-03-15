@@ -11,15 +11,37 @@ import type { PluggableList } from "unified";
 
 const SANITIZE_SCHEMA = {
   ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    div: [
+      ...(defaultSchema.attributes?.div ?? []),
+      "className",
+      "dataType",
+      "dir",
+    ],
+    p: [...(defaultSchema.attributes?.p ?? []), "className", "dir"],
+    path: ["d", "fill"],
+    svg: [
+      "ariaHidden",
+      "className",
+      "fill",
+      "height",
+      "viewBox",
+      "width",
+      "xmlns",
+    ],
+  },
   tagNames: [
     ...(defaultSchema.tagNames ?? []),
     "abbr",
     "br",
     "details",
     "kbd",
+    "path",
     "sub",
     "summary",
     "sup",
+    "svg",
   ],
 };
 
