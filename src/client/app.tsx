@@ -1,17 +1,17 @@
-import type { FileNode } from "@shared/types.js";
+import type { FileNode } from "@shared/types";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchFile, fetchFiles } from "./api.js";
-import { FileTree } from "./components/file-tree.js";
-import { Preview } from "./components/preview.js";
-import { QuickOpen } from "./components/quick-open.js";
-import { Source } from "./components/source.js";
-import { ThemeToggle } from "./components/theme-toggle.js";
-import { useResizable } from "./hooks/use-resizable.js";
-import { cn } from "./lib/utils.js";
+import { fetchFile, fetchFiles } from "./api";
+import { FileTree } from "./components/file-tree";
+import { Preview } from "./components/preview";
+import { QuickOpen } from "./components/quick-open";
+import { Source } from "./components/source";
+import { ThemeToggle } from "./components/theme-toggle";
+import { useResizable } from "./hooks/use-resizable";
+import { cn } from "./lib/utils";
 
 type ViewMode = "preview" | "source";
 

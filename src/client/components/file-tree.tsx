@@ -1,4 +1,4 @@
-import type { FileNode } from "@shared/types.js";
+import type { FileNode } from "@shared/types";
 import {
   Search,
   ChevronRight,
@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 
-import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand.js";
+import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand";
 
 interface FileTreeProps {
   files: FileNode[];

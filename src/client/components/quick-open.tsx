@@ -1,4 +1,4 @@
-import type { FileNode } from "@shared/types.js";
+import type { FileNode } from "@shared/types";
 import { Fzf } from "fzf";
 import { FileText } from "lucide-react";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";

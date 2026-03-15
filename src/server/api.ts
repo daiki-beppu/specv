@@ -3,8 +3,8 @@ import path from "node:path";
 
 import { Hono } from "hono";
 
-import { scanMarkdownFiles } from "./files.js";
-import { SecurityError, validateImagePath, validatePath } from "./security.js";
+import { scanMarkdownFiles } from "./files";
+import { SecurityError, validateImagePath, validatePath } from "./security";
 
 const IMAGE_CONTENT_TYPES: Record<string, string> = {
   ".gif": "image/gif",

@@ -1,6 +1,6 @@
 import { Highlight, themes } from "prism-react-renderer";
 
-import { useTheme } from "@/hooks/use-theme.js";
+import { useTheme } from "@/hooks/use-theme";
 
 interface SourceProps {
   content: string;

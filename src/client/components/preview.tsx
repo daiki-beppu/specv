@@ -12,8 +12,8 @@ import remarkGfm from "remark-gfm";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 
-import { useTheme } from "@/hooks/use-theme.js";
-import { resolveImageSrc, resolvePath } from "@/lib/path-utils.js";
+import { useTheme } from "@/hooks/use-theme";
+import { resolveImageSrc, resolvePath } from "@/lib/path-utils";
 
 const MermaidBlock = lazy(() => import("@/components/mermaid-block.js"));
 

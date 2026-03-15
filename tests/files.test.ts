@@ -1,6 +1,6 @@
-import { scanMarkdownFiles } from "@server/files.js";
+import { scanMarkdownFiles } from "@server/files";
 
-import { createFile, createTmpDir, removeTmpDir } from "./test-utils.js";
+import { createFile, createTmpDir, removeTmpDir } from "./test-utils";
 
 describe("scanMarkdownFiles function", () => {
   it("ルートの .md ファイルを返す", async () => {
