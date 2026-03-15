@@ -13,3 +13,5 @@ pre-commit:
       stage_fixed: true
     - name: knip
       run: pnpm knip
+    - name: typecheck
+      run: pnpm tsc --noEmit
