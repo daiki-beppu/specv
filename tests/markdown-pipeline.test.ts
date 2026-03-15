@@ -98,6 +98,26 @@ describe("markdown pipeline", () => {
     });
   });
 
+  describe("gitHub Alerts", () => {
+    it("[!NOTE] アラートがレンダリングされる", async () => {
+      const html = await renderMarkdown("> [!NOTE]\n> これは補足情報です。");
+      expect(html).toContain("markdown-alert");
+      expect(html).toContain("markdown-alert-note");
+    });
+
+    it("[!WARNING] アラートがレンダリングされる", async () => {
+      const html = await renderMarkdown(
+        "> [!WARNING]\n> 注意が必要な情報です。"
+      );
+      expect(html).toContain("markdown-alert-warning");
+    });
+
+    it("アラートの SVG アイコンが保持される", async () => {
+      const html = await renderMarkdown("> [!NOTE]\n> テスト");
+      expect(html).toContain("<svg");
+    });
+  });
+
   describe("脚注 (#3)", () => {
     it("脚注が doc-endnotes セクションとしてレンダリングされる", async () => {
       const html = await renderMarkdown("テキスト[^1]\n\n[^1]: 脚注の内容");
