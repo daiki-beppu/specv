@@ -16,17 +16,28 @@ const openInBrowser = async (url: string): Promise<void> => {
   await mod.default(url);
 };
 
+const DISCONNECT_GRACE_MS = 2000;
+
 const registerLifecycle = (app: Hono, onDisconnect: () => void) => {
   let connections = 0;
+  let graceTimer: ReturnType<typeof setTimeout> | null = null;
 
   app.get("/api/lifecycle", (_c) => {
     connections += 1;
+    if (graceTimer) {
+      clearTimeout(graceTimer);
+      graceTimer = null;
+    }
 
     const stream = new ReadableStream({
       cancel() {
         connections -= 1;
         if (connections === 0) {
-          onDisconnect();
+          graceTimer = setTimeout(() => {
+            if (connections === 0) {
+              onDisconnect();
+            }
+          }, DISCONNECT_GRACE_MS);
         }
       },
       start(controller) {

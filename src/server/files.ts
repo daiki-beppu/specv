@@ -4,7 +4,7 @@ import path from "node:path";
 
 import type { FileNode } from "@shared/types";
 
-const IGNORED_DIRS = new Set([
+export const IGNORED_DIRS = new Set([
   "node_modules",
   ".git",
   ".hg",

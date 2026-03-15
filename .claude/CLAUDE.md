@@ -8,7 +8,7 @@
 - **Backend**: Hono + @hono/node-server
 - **Test**: Vitest (unit) + Playwright (E2E)
 - **Lint**: Ultracite (Oxlint + Oxfmt) + Knip
-- **Git hooks**: lefthook (pre-commit: ultracite + knip)
+- **Git hooks**: lefthook (pre-commit: ultracite + knip + typecheck)
 
 ## Commands
 
@@ -42,9 +42,10 @@ src/
 │   └── app.tsx       # Main App component
 ├── server/
 │   ├── cli.ts        # CLI entry (Hono + Node server)
-│   ├── api.ts        # API routes (/api/files, /api/file, /api/image)
+│   ├── api.ts        # API routes (/api/files, /api/file, /api/image, /api/watch)
 │   ├── files.ts      # scanMarkdownFiles (recursive .md scanner)
-│   └── security.ts   # Path traversal protection
+│   ├── security.ts   # Path traversal protection
+│   └── watcher.ts    # File watcher (hot reload)
 ├── shared/
 │   └── types.ts      # Shared types (FileNode)
 tests/                # Unit tests (Vitest)
@@ -57,6 +58,10 @@ fixtures/             # Manual testing markdown files
 - `@/*` → `src/client/*`
 - `@server/*` → `src/server/*`
 - `@shared/*` → `src/shared/*`
+
+## Development Style
+
+- TDD（テスト駆動開発）で実装する: テストを先に書き、Red → Green → Refactor のサイクルで進める
 
 ## Gotchas
 
