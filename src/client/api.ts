@@ -1,4 +1,4 @@
-import type { FileNode } from "@shared/types.js";
+import type { FileNode } from "@shared/types";
 
 export const fetchFiles = async (): Promise<FileNode[]> => {
   const res = await fetch("/api/files");

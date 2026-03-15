@@ -1,7 +1,7 @@
 import mermaid from "mermaid";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { useTheme } from "@/hooks/use-theme.js";
+import { useTheme } from "@/hooks/use-theme";
 
 interface MermaidBlockProps {
   code: string;

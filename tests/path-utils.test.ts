@@ -1,8 +1,4 @@
-import {
-  isExternalUrl,
-  resolveImageSrc,
-  resolvePath,
-} from "@/lib/path-utils.js";
+import { isExternalUrl, resolveImageSrc, resolvePath } from "@/lib/path-utils";
 
 // eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference
 describe(isExternalUrl, () => {

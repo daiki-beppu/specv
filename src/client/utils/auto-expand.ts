@@ -1,4 +1,4 @@
-import type { FileNode } from "@shared/types.js";
+import type { FileNode } from "@shared/types";
 
 export const computeAutoExpandPaths = (nodes: FileNode[]): Set<string> => {
   const paths = new Set<string>();

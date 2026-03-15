@@ -2,7 +2,7 @@ import type { Dirent } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import type { FileNode } from "@shared/types.js";
+import type { FileNode } from "@shared/types";
 
 const IGNORED_DIRS = new Set([
   "node_modules",

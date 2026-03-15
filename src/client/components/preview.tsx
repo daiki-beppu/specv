@@ -5,21 +5,14 @@ import { Highlight, themes } from "prism-react-renderer";
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 import { lazy, Suspense, useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeKatex from "rehype-katex";
-import rehypeSlug from "rehype-slug";
-import remarkGfm from "remark-gfm";
-import { remarkAlert } from "remark-github-blockquote-alert";
-import remarkMath from "remark-math";
 
-import { useTheme } from "@/hooks/use-theme.js";
-import { resolveImageSrc, resolvePath } from "@/lib/path-utils.js";
+import { useTheme } from "@/hooks/use-theme";
+import { REHYPE_PLUGINS, REMARK_PLUGINS } from "@/lib/markdown-plugins";
+import { resolveImageSrc, resolvePath } from "@/lib/path-utils";
 
-const MermaidBlock = lazy(() => import("@/components/mermaid-block.js"));
+const MermaidBlock = lazy(() => import("@/components/mermaid-block"));
 
 const MERMAID_CLASS_RE = /language-mermaid/;
-const REMARK_PLUGINS = [remarkAlert, remarkGfm, remarkMath];
-const REHYPE_PLUGINS = [rehypeKatex, rehypeSlug, rehypeAutolinkHeadings];
 
 interface PreviewProps {
   content: string;
