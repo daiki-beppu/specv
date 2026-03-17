@@ -8,13 +8,9 @@ import { program } from "commander";
 import { Hono } from "hono";
 
 import { createApiRouter } from "./api";
+import { openInBrowser } from "./open-browser";
 
 const currentDir = import.meta.dirname;
-
-const openInBrowser = async (url: string): Promise<void> => {
-  const mod = await import("open");
-  await mod.default(url);
-};
 
 const DISCONNECT_GRACE_MS = 2000;
 
