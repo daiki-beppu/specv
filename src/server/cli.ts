@@ -108,8 +108,8 @@ program
 
           try {
             await openInBrowser(url);
-          } catch (error: unknown) {
-            console.error("Failed to open browser:", error);
+          } catch {
+            console.log(`Open ${url} in your browser`);
           }
         }
       );

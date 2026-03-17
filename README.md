@@ -14,20 +14,14 @@ A CLI tool that previews Markdown files in the current directory with GitHub-sty
 - GitHub dark theme color scheme
 - Automatic port detection (tries next port on conflict)
 
-## Install
-
-```bash
-npm install -g specv
-```
-
 ## Usage
 
 ```bash
 # Preview .md files in the current directory
-specv
+npx specv@latest
 
 # Specify a port
-specv -p 3000
+npx specv@latest -p 3000
 ```
 
 A browser window opens automatically, rendering your Markdown files with GitHub-style formatting.
