@@ -10,6 +10,7 @@ import { Preview } from "./components/preview";
 import { QuickOpen } from "./components/quick-open";
 import { Source } from "./components/source";
 import { ThemeToggle } from "./components/theme-toggle";
+import { Button } from "./components/ui/button";
 import { useResizable } from "./hooks/use-resizable";
 import { useScrollRestore } from "./hooks/use-scroll-restore";
 import { useWatch } from "./hooks/use-watch";
@@ -224,10 +225,10 @@ export const App = () => {
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* ヘッダー */}
         <header className="flex items-center gap-2 border-b border-border px-4 py-2 bg-secondary">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleToggleSidebar}
-            className="p-1.5 rounded-lg hover:bg-accent"
             title={`${sidebarOpen ? "Hide sidebar" : "Show sidebar"} (⌘B)`}
           >
             {sidebarOpen ? (
@@ -235,22 +236,31 @@ export const App = () => {
             ) : (
               <PanelLeftOpen size={16} />
             )}
-          </button>
-          <div className="flex rounded-lg overflow-hidden border border-border">
-            <button
-              type="button"
-              className={`px-3 py-1 text-sm ${viewMode === "preview" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+          </Button>
+          <div
+            className="flex rounded-lg overflow-hidden border border-border"
+            role="tablist"
+          >
+            <Button
+              variant={viewMode === "preview" ? "default" : "ghost"}
+              size="sm"
+              role="tab"
+              aria-selected={viewMode === "preview"}
+              className="rounded-none"
               onClick={handleSetPreview}
             >
               Preview
-            </button>
-            <button
-              type="button"
-              className={`px-3 py-1 text-sm ${viewMode === "source" ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}
+            </Button>
+            <Button
+              variant={viewMode === "source" ? "default" : "ghost"}
+              size="sm"
+              role="tab"
+              aria-selected={viewMode === "source"}
+              className="rounded-none"
               onClick={handleSetSource}
             >
               Source
-            </button>
+            </Button>
           </div>
           <div className="flex-1" />
           <span className="text-sm text-muted-foreground">{selectedPath}</span>

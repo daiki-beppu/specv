@@ -1,0 +1,2 @@
+src/client/components/ui/**
+!src/client/components/ui/tree.tsx

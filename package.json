@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.11",
+    "cmdk": "^1.1.1",
     "commander": "^14.0.3",
     "hono": "^4.12.7",
     "katex": "^0.16.38",
