@@ -6,6 +6,7 @@ import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 import { lazy, Suspense, useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
+import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import { REHYPE_PLUGINS, REMARK_PLUGINS } from "@/lib/markdown-plugins";
 import { resolveImageSrc, resolvePath } from "@/lib/path-utils";
@@ -30,14 +31,15 @@ const CopyButton = ({ text }: { text: string }) => {
   }, [text]);
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={handleCopy}
-      className="absolute top-2 right-2 p-1.5 rounded bg-muted text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-      title="Copy"
+      className="absolute top-2 right-2 bg-muted opacity-0 group-hover:opacity-100 transition-opacity"
+      title={copied ? "Copied!" : "Copy"}
     >
       {copied ? <Check size={16} /> : <Clipboard size={16} />}
-    </button>
+    </Button>
   );
 };
 

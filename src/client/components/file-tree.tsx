@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 
+import { Input } from "@/components/ui/input";
+import { Kbd } from "@/components/ui/kbd";
+import { Tree, TreeItem, TreeLeaf } from "@/components/ui/tree";
 import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand";
 
 interface FileTreeProps {
@@ -36,7 +39,7 @@ const filterTree = (nodes: FileNode[], query: string): FileNode[] => {
   return result;
 };
 
-const TreeNode = ({
+const FileTreeNode = ({
   node,
   selectedPath,
   onSelect,
@@ -54,7 +57,6 @@ const TreeNode = ({
   onCollapse: (dirPath: string) => void;
 }) => {
   const isDir = !!node.children;
-  const isSelected = node.path === selectedPath;
   const isOpen = forceExpand || expandedPaths.has(node.path);
 
   const handleToggleExpand = useCallback(() => {
@@ -71,60 +73,54 @@ const TreeNode = ({
 
   if (isDir) {
     return (
-      <li>
-        <button
-          type="button"
-          className="flex items-center gap-1 w-full text-left py-0.5 px-1 rounded hover:bg-accent text-sm"
-          onClick={handleToggleExpand}
-        >
-          {isOpen ? (
-            <ChevronDown size={14} className="shrink-0 text-muted-foreground" />
-          ) : (
-            <ChevronRight
-              size={14}
-              className="shrink-0 text-muted-foreground"
-            />
-          )}
-          {isOpen ? (
-            <FolderOpen size={14} className="shrink-0 text-amber-500" />
-          ) : (
-            <Folder size={14} className="shrink-0 text-amber-500" />
-          )}
-          <span className="truncate">{node.name}</span>
-        </button>
-        {isOpen && node.children && (
-          <ul className="ml-3 space-y-0.5">
-            {node.children.map((child) => (
-              <TreeNode
-                key={child.path}
-                node={child}
-                selectedPath={selectedPath}
-                onSelect={onSelect}
-                forceExpand={forceExpand}
-                expandedPaths={expandedPaths}
-                onExpand={onExpand}
-                onCollapse={onCollapse}
+      <TreeItem
+        expanded={isOpen}
+        icon={
+          <>
+            {isOpen ? (
+              <ChevronDown
+                size={14}
+                className="shrink-0 text-muted-foreground"
               />
-            ))}
-          </ul>
-        )}
-      </li>
+            ) : (
+              <ChevronRight
+                size={14}
+                className="shrink-0 text-muted-foreground"
+              />
+            )}
+            {isOpen ? (
+              <FolderOpen size={14} className="shrink-0 text-amber-500" />
+            ) : (
+              <Folder size={14} className="shrink-0 text-amber-500" />
+            )}
+          </>
+        }
+        name={node.name}
+        onToggle={handleToggleExpand}
+      >
+        {node.children?.map((child) => (
+          <FileTreeNode
+            key={child.path}
+            node={child}
+            selectedPath={selectedPath}
+            onSelect={onSelect}
+            forceExpand={forceExpand}
+            expandedPaths={expandedPaths}
+            onExpand={onExpand}
+            onCollapse={onCollapse}
+          />
+        ))}
+      </TreeItem>
     );
   }
 
   return (
-    <li>
-      <button
-        type="button"
-        className={`flex items-center gap-1 w-full text-left py-0.5 px-1 rounded text-sm ${
-          isSelected ? "bg-accent text-accent-foreground" : "hover:bg-accent"
-        }`}
-        onClick={handleSelect}
-      >
-        <FileText size={14} className="shrink-0 text-blue-500" />
-        <span className="truncate">{node.name}</span>
-      </button>
-    </li>
+    <TreeLeaf
+      icon={<FileText size={14} className="shrink-0 text-blue-500" />}
+      name={node.name}
+      onSelect={handleSelect}
+      selected={node.path === selectedPath}
+    />
   );
 };
 
@@ -196,21 +192,21 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
           size={14}
           className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
-        <input
+        <Input
           type="text"
           value={query}
           onChange={handleQueryChange}
           placeholder="Search files..."
-          className="w-full pl-7 pr-12 py-1 text-sm rounded border border-border bg-transparent placeholder:text-muted-foreground focus:outline-none focus:border-ring"
+          className="pl-7 pr-12 py-1 text-sm"
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 text-xs text-muted-foreground">
-          <kbd className="border border-border rounded px-1.5 py-0.5">⌘</kbd>
-          <kbd className="border border-border rounded px-1.5 py-0.5">P</kbd>
+          <Kbd>⌘</Kbd>
+          <Kbd>P</Kbd>
         </div>
       </div>
-      <ul className="space-y-0.5">
+      <Tree>
         {filtered.map((node) => (
-          <TreeNode
+          <FileTreeNode
             key={node.path}
             node={node}
             selectedPath={selectedPath}
@@ -221,7 +217,7 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
             onCollapse={onCollapse}
           />
         ))}
-      </ul>
+      </Tree>
     </div>
   );
 };

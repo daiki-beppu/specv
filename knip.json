@@ -1,10 +1,9 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/server/cli.ts"],
   "project": ["src/**/*.{ts,tsx}"],
   "ignore": ["src/client/components/ui/**"],
   "ignoreDependencies": [
-    "@base-ui/react",
-    "class-variance-authority",
     "tw-animate-css",
     "shadcn",
     "@tailwindcss/typography",
