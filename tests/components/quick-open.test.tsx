@@ -153,7 +153,7 @@ describe("quick-open", () => {
     fireEvent.click(readme!);
 
     expect(onSelect).toHaveBeenCalledWith("README.md");
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledOnce();
   });
 
   it("eSC キーでダイアログが閉じる", () => {
@@ -171,7 +171,7 @@ describe("quick-open", () => {
     const input = screen.getByPlaceholderText("Go to File");
     fireEvent.keyDown(input, { key: "Escape" });
 
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledOnce();
   });
 
   // jsdom では cmdk のキーボードナビゲーション + focus 管理が
@@ -216,7 +216,7 @@ describe("quick-open", () => {
     fireEvent.keyDown(input, { key: "Enter" });
 
     expect(onSelect).toHaveBeenCalledWith("README.md");
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledOnce();
   });
 
   it("結果が0件のとき 'No matching files' が表示される", () => {

@@ -26,7 +26,7 @@ describe("theme-toggle", () => {
     render(<ThemeToggle />);
 
     fireEvent.click(screen.getByRole("button"));
-    expect(mockToggle).toHaveBeenCalledTimes(1);
+    expect(mockToggle).toHaveBeenCalledOnce();
   });
 
   it("ライトモードで「ダークモードに切り替える」旨の title が表示される", () => {

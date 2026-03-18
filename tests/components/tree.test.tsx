@@ -48,7 +48,7 @@ describe("tree", () => {
     );
 
     fireEvent.click(screen.getByText("docs"));
-    expect(onToggle).toHaveBeenCalledTimes(1);
+    expect(onToggle).toHaveBeenCalledOnce();
   });
 
   it("ファイルノードをクリックすると onSelect が呼ばれる", () => {
@@ -61,7 +61,7 @@ describe("tree", () => {
     );
 
     fireEvent.click(screen.getByText("README.md"));
-    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledOnce();
   });
 
   it("展開中のディレクトリは aria-expanded='true' で子要素が表示される", () => {
