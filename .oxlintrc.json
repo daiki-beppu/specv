@@ -8,12 +8,18 @@
   ],
   "extends": [
     "./node_modules/ultracite/config/oxlint/core/.oxlintrc.json",
-    "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json"
+    "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json",
+    "./node_modules/ultracite/config/oxlint/vitest/.oxlintrc.json"
   ],
   "rules": {
     "import/extensions": [
       "error",
-      { "js": "never", "ts": "never", "tsx": "never", "ignorePackages": true }
+      {
+        "js": "never",
+        "ts": "never",
+        "tsx": "never",
+        "ignorePackages": true
+      }
     ],
     "react/no-array-index-key": "off"
   }
