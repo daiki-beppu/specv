@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
@@ -11,6 +12,14 @@ import { createApiRouter } from "./api";
 import { getLocalIpAddress } from "./network";
 import { openInBrowser } from "./open-browser";
 import { displayQrCode } from "./qr-display";
+
+const packageJsonPath = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../package.json"
+);
+const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as {
+  version: string;
+};
 
 const currentDir = import.meta.dirname;
 
@@ -86,7 +95,7 @@ export const getNetworkConfig = (options: { host: boolean }) => ({
 program
   .name("specv")
   .description("Local Markdown preview with GitHub-style rendering")
-  .version("0.2.0")
+  .version(pkg.version)
   .option("-p, --port <number>", "Port number", "4649")
   .option("--host", "Expose to local network (enables QR code)")
   .option("--no-auto-close", "Disable auto-close on client disconnect")
