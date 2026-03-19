@@ -5,10 +5,16 @@ import {
   FileText,
   Folder,
   FolderOpen,
+  Search,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { FileTreeSearch } from "@/components/file-tree-search";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { Kbd } from "@/components/ui/kbd";
 import { Tree, TreeItem, TreeLeaf } from "@/components/ui/tree";
 import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand";
 
@@ -185,7 +191,22 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
 
   return (
     <div>
-      <FileTreeSearch query={query} onChange={handleQueryChange} />
+      <InputGroup className="mb-3">
+        <InputGroupAddon align="inline-start">
+          <Search size={14} />
+        </InputGroupAddon>
+        <InputGroupInput
+          type="text"
+          value={query}
+          onChange={handleQueryChange}
+          placeholder="Search files..."
+          className="py-1 text-sm"
+        />
+        <InputGroupAddon align="inline-end">
+          <Kbd>⌘</Kbd>
+          <Kbd>P</Kbd>
+        </InputGroupAddon>
+      </InputGroup>
       <Tree>
         {filtered.map((node) => (
           <FileTreeNode

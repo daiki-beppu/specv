@@ -11,11 +11,18 @@ import { QuickOpen } from "./components/quick-open";
 import { Source } from "./components/source";
 import { ThemeToggle } from "./components/theme-toggle";
 import { Button } from "./components/ui/button";
-import { useIsMobile } from "./hooks/use-is-mobile";
-import { useResizable } from "./hooks/use-resizable";
+import { ButtonGroup } from "./components/ui/button-group";
+import {
+  SIDEBAR_DEFAULT_WIDTH,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarProvider,
+  SidebarRail,
+  useSidebar,
+} from "./components/ui/sidebar";
 import { useScrollRestore } from "./hooks/use-scroll-restore";
 import { useWatch } from "./hooks/use-watch";
-import { cn } from "./lib/utils";
 import { findFirstFile } from "./utils/auto-expand";
 
 type ViewMode = "preview" | "source";
@@ -95,36 +102,9 @@ const useAppHandlers = (
 });
 
 const useHotkeys = (
-  setQuickOpenVisible: React.Dispatch<React.SetStateAction<boolean>>,
-  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setQuickOpenVisible: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   useHotkey("Mod+P", () => setQuickOpenVisible(true));
-  useHotkey("Mod+B", () => setSidebarOpen((v) => !v));
-};
-
-const useSidebar = (
-  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  isMobile: boolean
-) => {
-  const sidebarRef = useRef<HTMLElement>(null);
-  const { isDragging, onDoubleClick, onMouseDown, width } =
-    useResizable(sidebarRef);
-
-  return {
-    handleCloseSidebar: useCallback(
-      () => setSidebarOpen(false),
-      [setSidebarOpen]
-    ),
-    handleToggleSidebar: useCallback(
-      () => setSidebarOpen((v) => !v),
-      [setSidebarOpen]
-    ),
-    isDragging: isMobile ? false : isDragging,
-    onDoubleClick,
-    onMouseDown,
-    sidebarRef,
-    sidebarWidth: width,
-  };
 };
 
 const useLifecycle = () => {
@@ -149,46 +129,32 @@ const useContentState = () => {
 };
 
 const useAppState = () => {
-  const isMobile = useIsMobile();
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const [quickOpenVisible, setQuickOpenVisible] = useState(false);
 
-  useHotkeys(setQuickOpenVisible, setSidebarOpen);
+  useHotkeys(setQuickOpenVisible);
 
   return {
     ...useAppHandlers(setViewMode, setQuickOpenVisible),
     ...useContentState(),
-    ...useSidebar(setSidebarOpen, isMobile),
-    isMobile,
     quickOpenVisible,
-    sidebarOpen,
     viewMode,
   };
 };
 
-export const App = () => {
-  useLifecycle();
+const AppContent = () => {
+  const { isMobile, open, toggleSidebar } = useSidebar();
 
   const {
     content,
     files,
-    handleCloseSidebar,
     handleCloseQuickOpen,
     handleSetPreview,
     handleSetSource,
-    handleToggleSidebar,
-    isDragging,
-    isMobile,
-    onDoubleClick,
-    onMouseDown,
     quickOpenVisible,
     scrollRef,
     selectedPath,
     setSelectedPath,
-    sidebarOpen,
-    sidebarRef,
-    sidebarWidth,
     viewMode,
   } = useAppState();
 
@@ -196,87 +162,28 @@ export const App = () => {
     (path: string) => {
       setSelectedPath(path);
       if (isMobile) {
-        handleCloseSidebar();
+        toggleSidebar();
       }
     },
-    [setSelectedPath, isMobile, handleCloseSidebar]
+    [setSelectedPath, isMobile, toggleSidebar]
   );
 
   return (
-    <div
-      className={cn(
-        "flex h-screen bg-background text-foreground",
-        isDragging && "select-none cursor-col-resize"
-      )}
-    >
-      {/* バックドロップ（モバイル） */}
-      {isMobile && sidebarOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-30 bg-black/50 border-none p-0 cursor-default"
-          data-testid="sidebar-backdrop"
-          onClick={handleCloseSidebar}
-          aria-label="Close sidebar"
-        />
-      )}
-
+    <>
       {/* サイドバー */}
-      {sidebarOpen && (
-        <>
-          <aside
-            ref={sidebarRef}
-            className={cn(
-              "shrink-0 border-r border-border overflow-y-auto p-4 bg-secondary",
-              isMobile
-                ? "fixed inset-y-0 left-0 z-40 w-[280px]"
-                : "transition-[width] duration-200",
-              !isMobile && isDragging && "!transition-none"
-            )}
-            style={isMobile ? undefined : { width: sidebarWidth }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <img
-                  src="/favicon.png"
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="rounded-full"
-                />
-                <h1 className="text-lg font-bold">specv</h1>
-              </div>
-              {isMobile && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleCloseSidebar}
-                  title="Close sidebar"
-                >
-                  <PanelLeftClose size={16} />
-                </Button>
-              )}
-            </div>
-            <FileTree
-              files={files}
-              selectedPath={selectedPath}
-              onSelect={handleSelect}
-            />
-          </aside>
-          {!isMobile && (
-            <div
-              role="separator"
-              aria-orientation="vertical"
-              className={cn(
-                "relative w-1 shrink-0 cursor-col-resize hover:bg-ring transition-colors",
-                "before:absolute before:inset-y-0 before:-left-1 before:-right-1",
-                isDragging && "bg-ring"
-              )}
-              onDoubleClick={onDoubleClick}
-              onMouseDown={onMouseDown}
-            />
-          )}
-        </>
-      )}
+      <Sidebar collapsible="offcanvas">
+        <SidebarHeader className="p-4">
+          <h1 className="text-lg font-bold">specv</h1>
+        </SidebarHeader>
+        <SidebarContent className="overflow-y-auto px-4 pt-2 pb-4">
+          <FileTree
+            files={files}
+            selectedPath={selectedPath}
+            onSelect={handleSelect}
+          />
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
 
       {/* メインエリア */}
       <main className="flex-1 flex flex-col overflow-hidden">
@@ -285,25 +192,20 @@ export const App = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleToggleSidebar}
-            title={`${sidebarOpen ? "Hide sidebar" : "Show sidebar"} (⌘B)`}
+            onClick={toggleSidebar}
+            title={`${open ? "Hide sidebar" : "Show sidebar"} (⌘B)`}
           >
-            {sidebarOpen ? (
-              <PanelLeftClose size={16} />
-            ) : (
-              <PanelLeftOpen size={16} />
-            )}
+            {open ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
           </Button>
-          <div
-            className="flex rounded-lg overflow-hidden border border-border"
+          <ButtonGroup
             role="tablist"
+            className="rounded-lg border border-border"
           >
             <Button
               variant={viewMode === "preview" ? "default" : "ghost"}
               size="sm"
               role="tab"
               aria-selected={viewMode === "preview"}
-              className="rounded-none"
               onClick={handleSetPreview}
             >
               Preview
@@ -313,12 +215,11 @@ export const App = () => {
               size="sm"
               role="tab"
               aria-selected={viewMode === "source"}
-              className="rounded-none"
               onClick={handleSetSource}
             >
               Source
             </Button>
-          </div>
+          </ButtonGroup>
           <div className="flex-1" />
           <span className="text-sm text-muted-foreground truncate hidden md:inline">
             {selectedPath}
@@ -340,6 +241,23 @@ export const App = () => {
         onClose={handleCloseQuickOpen}
         onSelect={handleSelect}
       />
-    </div>
+    </>
+  );
+};
+
+export const App = () => {
+  useLifecycle();
+
+  return (
+    <SidebarProvider
+      className="h-screen bg-background text-foreground"
+      style={
+        {
+          "--sidebar-width": `${String(SIDEBAR_DEFAULT_WIDTH)}px`,
+        } as React.CSSProperties
+      }
+    >
+      <AppContent />
+    </SidebarProvider>
   );
 };

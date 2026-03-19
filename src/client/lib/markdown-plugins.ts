@@ -4,6 +4,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import rehypeSlug from "rehype-slug";
 import remarkEmoji from "remark-emoji";
+import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
@@ -48,6 +49,7 @@ const SANITIZE_SCHEMA = {
 export const REMARK_PLUGINS: PluggableList = [
   remarkAlert,
   remarkEmoji,
+  remarkFrontmatter,
   remarkGfm,
   remarkMath,
 ];

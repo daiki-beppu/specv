@@ -11,6 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Kbd } from "@/components/ui/kbd";
+import { Separator } from "@/components/ui/separator";
 
 // eslint-disable-next-line no-empty-function
 const noop = () => {};
@@ -134,7 +135,7 @@ export const QuickOpen = ({
             />
             <Kbd className="ml-2">ESC</Kbd>
           </div>
-          <div className="border-t border-border" />
+          <Separator />
           <CommandList>
             <CommandEmpty>No matching files</CommandEmpty>
             <CommandGroup>
