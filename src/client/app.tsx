@@ -255,7 +255,7 @@ export const App = () => {
 
   return (
     <SidebarProvider
-      className="h-screen bg-background text-foreground"
+      className="h-screen overflow-hidden bg-background text-foreground"
       style={
         {
           "--sidebar-width": `${String(SIDEBAR_DEFAULT_WIDTH)}px`,
