@@ -8,7 +8,9 @@ import { program } from "commander";
 import { Hono } from "hono";
 
 import { createApiRouter } from "./api";
+import { getLocalIpAddress } from "./network";
 import { openInBrowser } from "./open-browser";
+import { displayQrCode } from "./qr-display";
 
 const currentDir = import.meta.dirname;
 
@@ -76,16 +78,23 @@ const createApp = (
   return app;
 };
 
+export const getNetworkConfig = (options: { host: boolean }) => ({
+  enableNetwork: options.host,
+  hostname: options.host ? "0.0.0.0" : "127.0.0.1",
+});
+
 program
   .name("specv")
   .description("Local Markdown preview with GitHub-style rendering")
   .version("0.2.0")
   .option("-p, --port <number>", "Port number", "4649")
+  .option("--host", "Expose to local network (enables QR code)")
   .option("--no-auto-close", "Disable auto-close on client disconnect")
   .action((options) => {
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
     const clientDir = path.join(currentDir, "../client");
+    const networkConfig = getNetworkConfig({ host: !!options.host });
     const app = createApp(
       baseDir,
       clientDir,
@@ -99,17 +108,39 @@ program
 
     const tryListen = (port: number): void => {
       const server = serve(
-        { fetch: app.fetch, hostname: "127.0.0.1", port },
+        { fetch: app.fetch, hostname: networkConfig.hostname, port },
         async (info) => {
-          const url = `http://localhost:${info.port}`;
-          console.log(`specv running at ${url}`);
-          console.log(`Serving: ${baseDir}`);
-          console.log("Press Ctrl+C to stop");
+          const localUrl = `http://localhost:${info.port}`;
+          console.log("");
+          console.log(`  specv v${program.version()}`);
+          console.log("");
+          console.log(`  ➜  Local:   ${localUrl}`);
+
+          const ip = networkConfig.enableNetwork ? getLocalIpAddress() : null;
+          const networkUrl = ip ? `http://${ip}:${info.port}` : null;
+
+          if (networkUrl) {
+            console.log(`  ➜  Network: ${networkUrl}`);
+          } else if (!networkConfig.enableNetwork) {
+            console.log("  ➜  Network: use --host to expose to local network");
+          }
+
+          console.log("");
+          console.log(`  Serving: ${baseDir}`);
+
+          // dev:host 時は Vite プラグイン側で QR を表示するためスキップ
+          if (networkUrl && !process.env.SPECV_HOST) {
+            console.log("");
+            displayQrCode(networkUrl);
+          }
+
+          console.log("");
+          console.log("  Press Ctrl+C to stop");
 
           try {
-            await openInBrowser(url);
+            await openInBrowser(localUrl);
           } catch {
-            console.log(`Open ${url} in your browser`);
+            console.log(`  Open ${localUrl} in your browser`);
           }
         }
       );

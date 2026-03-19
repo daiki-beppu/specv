@@ -118,7 +118,7 @@ export const QuickOpen = ({
     >
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- dialog container */}
       <div
-        className="w-[600px] h-fit max-h-[50vh] flex flex-col bg-popover border border-border rounded-md shadow-2xl overflow-hidden"
+        className="w-[calc(100vw-2rem)] max-w-[600px] h-fit max-h-[50vh] flex flex-col bg-popover border border-border rounded-md shadow-2xl overflow-hidden"
         onClick={handleDialogClick}
         onKeyDown={noop}
       >
