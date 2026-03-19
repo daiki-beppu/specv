@@ -22,7 +22,7 @@ const dragHandle = async (
 };
 
 const getSidebarWidth = async (page: Page) => {
-  const box = await getBox(page.locator("aside"));
+  const box = await getBox(page.locator('[data-slot="sidebar-container"]'));
   return box.width;
 };
 

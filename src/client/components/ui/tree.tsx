@@ -8,7 +8,7 @@ interface TreeProps {
 }
 
 const Tree = ({ children, className }: TreeProps) => (
-  <ul className={cn("space-y-0.5", className)} role="tree">
+  <ul className={cn("flex flex-col gap-0.5", className)} role="tree">
     {children}
   </ul>
 );
@@ -40,7 +40,7 @@ const TreeItem = ({
       <span className="truncate">{name}</span>
     </button>
     {expanded && children && (
-      <ul className="ml-4 space-y-0.5" role="group">
+      <ul className="ml-4 flex flex-col gap-0.5" role="group">
         {children}
       </ul>
     )}

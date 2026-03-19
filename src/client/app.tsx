@@ -11,10 +11,18 @@ import { QuickOpen } from "./components/quick-open";
 import { Source } from "./components/source";
 import { ThemeToggle } from "./components/theme-toggle";
 import { Button } from "./components/ui/button";
-import { useResizable } from "./hooks/use-resizable";
+import { ButtonGroup } from "./components/ui/button-group";
+import {
+  SIDEBAR_DEFAULT_WIDTH,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarProvider,
+  SidebarRail,
+  useSidebar,
+} from "./components/ui/sidebar";
 import { useScrollRestore } from "./hooks/use-scroll-restore";
 import { useWatch } from "./hooks/use-watch";
-import { cn } from "./lib/utils";
 import { findFirstFile } from "./utils/auto-expand";
 
 type ViewMode = "preview" | "source";
@@ -94,31 +102,9 @@ const useAppHandlers = (
 });
 
 const useHotkeys = (
-  setQuickOpenVisible: React.Dispatch<React.SetStateAction<boolean>>,
-  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setQuickOpenVisible: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   useHotkey("Mod+P", () => setQuickOpenVisible(true));
-  useHotkey("Mod+B", () => setSidebarOpen((v) => !v));
-};
-
-const useSidebar = (
-  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-  const sidebarRef = useRef<HTMLElement>(null);
-  const { isDragging, onDoubleClick, onMouseDown, width } =
-    useResizable(sidebarRef);
-
-  return {
-    handleToggleSidebar: useCallback(
-      () => setSidebarOpen((v) => !v),
-      [setSidebarOpen]
-    ),
-    isDragging,
-    onDoubleClick,
-    onMouseDown,
-    sidebarRef,
-    sidebarWidth: width,
-  };
 };
 
 const useLifecycle = () => {
@@ -144,23 +130,21 @@ const useContentState = () => {
 
 const useAppState = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [quickOpenVisible, setQuickOpenVisible] = useState(false);
 
-  useHotkeys(setQuickOpenVisible, setSidebarOpen);
+  useHotkeys(setQuickOpenVisible);
 
   return {
     ...useAppHandlers(setViewMode, setQuickOpenVisible),
     ...useContentState(),
-    ...useSidebar(setSidebarOpen),
     quickOpenVisible,
-    sidebarOpen,
     viewMode,
   };
 };
 
-export const App = () => {
-  useLifecycle();
+const AppContent = () => {
+  const { isMobile, open, openMobile, toggleSidebar } = useSidebar();
+  const isOpen = isMobile ? openMobile : open;
 
   const {
     content,
@@ -168,58 +152,39 @@ export const App = () => {
     handleCloseQuickOpen,
     handleSetPreview,
     handleSetSource,
-    handleToggleSidebar,
-    isDragging,
-    onDoubleClick,
-    onMouseDown,
     quickOpenVisible,
     scrollRef,
     selectedPath,
     setSelectedPath,
-    sidebarOpen,
-    sidebarRef,
-    sidebarWidth,
     viewMode,
   } = useAppState();
 
+  const handleSelect = useCallback(
+    (path: string) => {
+      setSelectedPath(path);
+      if (isMobile) {
+        toggleSidebar();
+      }
+    },
+    [setSelectedPath, isMobile, toggleSidebar]
+  );
+
   return (
-    <div
-      className={cn(
-        "flex h-screen bg-background text-foreground",
-        isDragging && "select-none cursor-col-resize"
-      )}
-    >
+    <>
       {/* サイドバー */}
-      {sidebarOpen && (
-        <>
-          <aside
-            ref={sidebarRef}
-            className={cn(
-              "shrink-0 border-r border-border overflow-y-auto p-4 bg-secondary transition-[width] duration-200",
-              isDragging && "!transition-none"
-            )}
-            style={{ width: sidebarWidth }}
-          >
-            <h1 className="text-lg font-bold mb-4">specv</h1>
-            <FileTree
-              files={files}
-              selectedPath={selectedPath}
-              onSelect={setSelectedPath}
-            />
-          </aside>
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            className={cn(
-              "relative w-1 shrink-0 cursor-col-resize hover:bg-ring transition-colors",
-              "before:absolute before:inset-y-0 before:-left-1 before:-right-1",
-              isDragging && "bg-ring"
-            )}
-            onDoubleClick={onDoubleClick}
-            onMouseDown={onMouseDown}
+      <Sidebar collapsible="offcanvas">
+        <SidebarHeader className="p-4">
+          <h1 className="text-lg font-bold">specv</h1>
+        </SidebarHeader>
+        <SidebarContent className="overflow-y-auto px-4 pt-2 pb-4">
+          <FileTree
+            files={files}
+            selectedPath={selectedPath}
+            onSelect={handleSelect}
           />
-        </>
-      )}
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
 
       {/* メインエリア */}
       <main className="flex-1 flex flex-col overflow-hidden">
@@ -228,25 +193,24 @@ export const App = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleToggleSidebar}
-            title={`${sidebarOpen ? "Hide sidebar" : "Show sidebar"} (⌘B)`}
+            onClick={toggleSidebar}
+            title={`${isOpen ? "Hide sidebar" : "Show sidebar"} (⌘B)`}
           >
-            {sidebarOpen ? (
+            {isOpen ? (
               <PanelLeftClose size={16} />
             ) : (
               <PanelLeftOpen size={16} />
             )}
           </Button>
-          <div
-            className="flex rounded-lg overflow-hidden border border-border"
+          <ButtonGroup
             role="tablist"
+            className="rounded-lg border border-border"
           >
             <Button
               variant={viewMode === "preview" ? "default" : "ghost"}
               size="sm"
               role="tab"
               aria-selected={viewMode === "preview"}
-              className="rounded-none"
               onClick={handleSetPreview}
             >
               Preview
@@ -256,19 +220,23 @@ export const App = () => {
               size="sm"
               role="tab"
               aria-selected={viewMode === "source"}
-              className="rounded-none"
               onClick={handleSetSource}
             >
               Source
             </Button>
-          </div>
+          </ButtonGroup>
           <div className="flex-1" />
-          <span className="text-sm text-muted-foreground">{selectedPath}</span>
+          <span className="text-sm text-muted-foreground truncate hidden md:inline">
+            {selectedPath}
+          </span>
           <ThemeToggle />
         </header>
 
         {/* コンテンツ */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-8 py-8">
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto px-4 py-4 md:px-8 md:py-8"
+        >
           {renderContent(selectedPath, viewMode, content, setSelectedPath)}
         </div>
       </main>
@@ -276,8 +244,25 @@ export const App = () => {
         files={files}
         open={quickOpenVisible}
         onClose={handleCloseQuickOpen}
-        onSelect={setSelectedPath}
+        onSelect={handleSelect}
       />
-    </div>
+    </>
+  );
+};
+
+export const App = () => {
+  useLifecycle();
+
+  return (
+    <SidebarProvider
+      className="h-screen overflow-hidden bg-background text-foreground"
+      style={
+        {
+          "--sidebar-width": `${String(SIDEBAR_DEFAULT_WIDTH)}px`,
+        } as React.CSSProperties
+      }
+    >
+      <AppContent />
+    </SidebarProvider>
   );
 };

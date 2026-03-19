@@ -1,16 +1,17 @@
 import type { FileNode } from "@shared/types";
 import { Fzf } from "fzf";
-import { FileText } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import type { FlatFile } from "@/components/search-result-item";
+import { SearchResultItem } from "@/components/search-result-item";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandItem,
   CommandList,
 } from "@/components/ui/command";
 import { Kbd } from "@/components/ui/kbd";
+import { Separator } from "@/components/ui/separator";
 
 // eslint-disable-next-line no-empty-function
 const noop = () => {};
@@ -25,23 +26,6 @@ interface QuickOpenProps {
   onClose: () => void;
   onSelect: (path: string) => void;
 }
-
-interface FlatFile {
-  path: string;
-  name: string;
-  dir: string;
-}
-
-const namePositions = (file: FlatFile, positions: Set<number>): Set<number> => {
-  const nameStart = file.path.length - file.name.length;
-  const result = new Set<number>();
-  for (const pos of positions) {
-    if (pos >= nameStart) {
-      result.add(pos - nameStart);
-    }
-  }
-  return result;
-};
 
 const flattenFiles = (nodes: FileNode[]): FlatFile[] => {
   const result: FlatFile[] = [];
@@ -58,44 +42,6 @@ const flattenFiles = (nodes: FileNode[]): FlatFile[] => {
     }
   }
   return result;
-};
-
-const groupCharsByHighlight = (str: string, indices: Set<number>) => {
-  const spans: { highlighted: boolean; text: string }[] = [];
-  for (let i = 0; i < str.length; i += 1) {
-    const highlighted = indices.has(i);
-    const prev = spans.at(-1);
-    if (prev && prev.highlighted === highlighted) {
-      prev.text += str[i];
-    } else {
-      spans.push({ highlighted, text: str[i] });
-    }
-  }
-  return spans;
-};
-
-const HighlightChars = ({
-  str,
-  indices,
-}: {
-  str: string;
-  indices: Set<number>;
-}) => {
-  const spans = groupCharsByHighlight(str, indices);
-
-  return (
-    <>
-      {spans.map((span, i) =>
-        span.highlighted ? (
-          <span key={i} className="text-foreground font-semibold">
-            {span.text}
-          </span>
-        ) : (
-          <span key={i}>{span.text}</span>
-        )
-      )}
-    </>
-  );
 };
 
 const useQuickOpenSearch = (files: FileNode[], query: string) => {
@@ -173,7 +119,7 @@ export const QuickOpen = ({
     >
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- dialog container */}
       <div
-        className="w-[600px] h-fit max-h-[50vh] flex flex-col bg-popover border border-border rounded-md shadow-2xl overflow-hidden"
+        className="w-[calc(100vw-2rem)] max-w-[600px] h-fit max-h-[50vh] flex flex-col bg-popover border border-border rounded-md shadow-2xl overflow-hidden"
         onClick={handleDialogClick}
         onKeyDown={noop}
       >
@@ -189,33 +135,18 @@ export const QuickOpen = ({
             />
             <Kbd className="ml-2">ESC</Kbd>
           </div>
-          <div className="border-t border-border" />
+          <Separator />
           <CommandList>
             <CommandEmpty>No matching files</CommandEmpty>
             <CommandGroup>
               {results.map(({ item: file, positions }) => (
-                <CommandItem
+                <SearchResultItem
                   key={file.path}
-                  value={file.path}
+                  file={file}
+                  positions={positions}
+                  query={query}
                   onSelect={handleSelect}
-                >
-                  <FileText size={14} className="shrink-0 text-blue-500" />
-                  <span className="truncate text-muted-foreground">
-                    {query ? (
-                      <HighlightChars
-                        str={file.name}
-                        indices={namePositions(file, positions)}
-                      />
-                    ) : (
-                      file.name
-                    )}
-                  </span>
-                  {file.dir && (
-                    <span className="truncate text-xs text-muted-foreground ml-auto">
-                      {file.dir}
-                    </span>
-                  )}
-                </CommandItem>
+                />
               ))}
             </CommandGroup>
           </CommandList>

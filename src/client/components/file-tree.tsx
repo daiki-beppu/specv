@@ -1,15 +1,19 @@
 import type { FileNode } from "@shared/types";
 import {
-  Search,
-  ChevronRight,
   ChevronDown,
+  ChevronRight,
+  FileText,
   Folder,
   FolderOpen,
-  FileText,
+  Search,
 } from "lucide-react";
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Kbd } from "@/components/ui/kbd";
 import { Tree, TreeItem, TreeLeaf } from "@/components/ui/tree";
 import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand";
@@ -187,23 +191,22 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
 
   return (
     <div>
-      <div className="relative mb-3">
-        <Search
-          size={14}
-          className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
-        />
-        <Input
+      <InputGroup className="mb-3">
+        <InputGroupAddon align="inline-start">
+          <Search size={14} />
+        </InputGroupAddon>
+        <InputGroupInput
           type="text"
           value={query}
           onChange={handleQueryChange}
           placeholder="Search files..."
-          className="pl-7 pr-12 py-1 text-sm"
+          className="py-1 text-sm"
         />
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 text-xs text-muted-foreground">
+        <InputGroupAddon align="inline-end">
           <Kbd>⌘</Kbd>
           <Kbd>P</Kbd>
-        </div>
-      </div>
+        </InputGroupAddon>
+      </InputGroup>
       <Tree>
         {filtered.map((node) => (
           <FileTreeNode

@@ -1,21 +1,23 @@
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight } from "prism-react-renderer";
 
-import { useTheme } from "@/hooks/use-theme";
+import { usePrismTheme } from "@/hooks/use-prism-theme";
+import { cn } from "@/lib/utils";
 
 interface SourceProps {
   content: string;
 }
 
 export const Source = ({ content }: SourceProps) => {
-  const { theme } = useTheme();
-  const prismTheme = theme === "dark" ? themes.vsDark : themes.github;
+  const prismTheme = usePrismTheme();
 
   return (
     <Highlight theme={prismTheme} code={content} language="markdown">
-      {({ className, style, tokens, getLineProps, getTokenProps }) => (
+      {({ className, tokens, getLineProps, getTokenProps }) => (
         <pre
-          className={`${className} p-4 rounded-lg overflow-x-auto text-sm`}
-          style={style}
+          className={cn(
+            className,
+            "p-4 rounded-lg overflow-x-auto text-sm border border-border bg-code-bg text-foreground"
+          )}
         >
           {tokens.map((line, i) => (
             <div key={`line-${String(i)}`} {...getLineProps({ line })}>

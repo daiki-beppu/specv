@@ -5,13 +5,15 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+import { qrcodePlugin } from "./vite-plugin-qrcode";
+
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   build: {
     outDir: "dist/client",
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), qrcodePlugin()],
   resolve: {
     alias: {
       "@": path.resolve(currentDir, "./src/client"),
@@ -20,13 +22,14 @@ export default defineConfig({
     },
   },
   server: {
+    host: !!process.env.SPECV_HOST,
     proxy: {
       "/api": "http://localhost:4649",
     },
   },
   test: {
     environment: "node",
-    exclude: ["e2e/**", "node_modules/**"],
+    exclude: ["e2e/**", "node_modules/**", ".worktrees/**"],
     globals: true,
   },
 });

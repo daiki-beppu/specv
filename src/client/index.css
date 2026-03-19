@@ -7,15 +7,15 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
+  --background: #f8fafc;
   --foreground: #1f2328;
-  --card: #ffffff;
+  --card: #f8fafc;
   --card-foreground: #1f2328;
-  --popover: #ffffff;
+  --popover: #f8fafc;
   --popover-foreground: #1f2328;
   --primary: #1f2328;
   --primary-foreground: #ffffff;
-  --secondary: #f6f8fa;
+  --secondary: #eff1f3;
   --secondary-foreground: #1f2328;
   --muted: #f6f8fa;
   --muted-foreground: #656d76;
@@ -34,6 +34,7 @@
   --sidebar-accent-foreground: #1f2328;
   --sidebar-border: #d0d7de;
   --sidebar-ring: #0969da;
+  --code-bg: #eff1f3;
 }
 
 .dark {
@@ -63,6 +64,7 @@
   --sidebar-accent-foreground: #f0f6fc;
   --sidebar-border: #30363d;
   --sidebar-ring: #388bfd;
+  --code-bg: #161b22;
 }
 
 @theme inline {
@@ -94,6 +96,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-foreground: var(--foreground);
+  --color-code-bg: var(--code-bg);
   --color-background: var(--background);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -107,6 +110,9 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  html {
+    @apply overflow-hidden;
   }
   body {
     @apply bg-background text-foreground;

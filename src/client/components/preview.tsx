@@ -1,19 +1,15 @@
 import "katex/dist/katex.min.css";
 import "remark-github-blockquote-alert/alert.css";
-import { Check, Clipboard } from "lucide-react";
-import { Highlight, themes } from "prism-react-renderer";
-import type { ComponentPropsWithoutRef, MouseEvent } from "react";
-import { lazy, Suspense, useCallback, useState } from "react";
+import type { ComponentPropsWithoutRef } from "react";
+import { useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 
-import { Button } from "@/components/ui/button";
-import { useTheme } from "@/hooks/use-theme";
+import { CodeBlock } from "@/components/code-block";
+import { MarkdownImage } from "@/components/markdown-image";
+import { MarkdownPre } from "@/components/markdown-pre";
+import { MarkdownTable } from "@/components/markdown-table";
+import { MdLink } from "@/components/md-link";
 import { REHYPE_PLUGINS, REMARK_PLUGINS } from "@/lib/markdown-plugins";
-import { resolveImageSrc, resolvePath } from "@/lib/path-utils";
-
-const MermaidBlock = lazy(() => import("@/components/mermaid-block"));
-
-const MERMAID_CLASS_RE = /language-mermaid/;
 
 interface PreviewProps {
   content: string;
@@ -21,69 +17,11 @@ interface PreviewProps {
   onNavigate: (path: string) => void;
 }
 
-const CopyButton = ({ text }: { text: string }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }, [text]);
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={handleCopy}
-      className="absolute top-2 right-2 bg-muted opacity-0 group-hover:opacity-100 transition-opacity"
-      title={copied ? "Copied!" : "Copy"}
-    >
-      {copied ? <Check size={16} /> : <Clipboard size={16} />}
-    </Button>
-  );
-};
-
-const MdLink = ({
-  href,
-  children,
-  selectedPath,
-  onNavigate,
-  ...props
-}: ComponentPropsWithoutRef<"a"> & {
-  selectedPath: string | null;
-  onNavigate: (path: string) => void;
-}) => {
-  const handleClick = useCallback(
-    (e: MouseEvent<HTMLAnchorElement>) => {
-      e.preventDefault();
-      if (selectedPath && href) {
-        onNavigate(resolvePath(selectedPath, href));
-      }
-    },
-    [selectedPath, href, onNavigate]
-  );
-
-  if (href?.endsWith(".md") && selectedPath) {
-    return (
-      <a {...props} href={href} onClick={handleClick}>
-        {children}
-      </a>
-    );
-  }
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
-      {children}
-    </a>
-  );
-};
-
 export const Preview = ({
   content,
   selectedPath,
   onNavigate,
 }: PreviewProps) => {
-  const { theme } = useTheme();
-
   const renderLink = useCallback(
     (props: ComponentPropsWithoutRef<"a">) => (
       <MdLink {...props} selectedPath={selectedPath} onNavigate={onNavigate} />
@@ -91,107 +29,24 @@ export const Preview = ({
     [selectedPath, onNavigate]
   );
 
+  const renderImage = useCallback(
+    (props: ComponentPropsWithoutRef<"img">) => (
+      <MarkdownImage {...props} selectedPath={selectedPath} />
+    ),
+    [selectedPath]
+  );
+
   return (
-    <div className="prose dark:prose-invert max-w-[960px] mx-auto prose-pre:bg-[#f6f8fa] dark:prose-pre:bg-[#161b22] prose-pre:p-4 prose-code:before:content-none prose-code:after:content-none prose-h1:border-b prose-h1:border-border prose-h1:pb-2 prose-h2:border-b prose-h2:border-border prose-h2:pb-2">
+    <div className="prose dark:prose-invert max-w-[960px] mx-auto prose-pre:bg-code-bg prose-pre:border prose-pre:border-border prose-pre:rounded-md prose-pre:p-4 prose-pre:text-foreground prose-code:before:content-none prose-code:after:content-none prose-h1:border-b prose-h1:border-border prose-h1:pb-2 prose-h2:border-b prose-h2:border-border prose-h2:pb-2">
       <ReactMarkdown
         remarkPlugins={REMARK_PLUGINS}
         rehypePlugins={REHYPE_PLUGINS}
         components={{
           a: renderLink,
-          code({
-            className,
-            children,
-            ...props
-          }: ComponentPropsWithoutRef<"code">) {
-            const match = /language-(\w+)/.exec(className || "");
-            const code = String(children).replace(/\n$/, "");
-
-            if (!match) {
-              return (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            }
-
-            if (match[1] === "mermaid") {
-              return (
-                <Suspense>
-                  <MermaidBlock code={code} />
-                </Suspense>
-              );
-            }
-
-            const prismTheme = theme === "dark" ? themes.vsDark : themes.github;
-
-            return (
-              <Highlight theme={prismTheme} code={code} language={match[1]}>
-                {({
-                  className: hlClassName,
-                  style,
-                  tokens,
-                  getLineProps,
-                  getTokenProps,
-                }) => (
-                  <code
-                    className={hlClassName}
-                    style={{ ...style, background: "transparent" }}
-                  >
-                    {tokens.map((line, i) => (
-                      <span
-                        key={`line-${String(i)}`}
-                        {...getLineProps({ line })}
-                      >
-                        {line.map((token, j) => (
-                          <span
-                            key={`token-${String(j)}`}
-                            {...getTokenProps({ token })}
-                          />
-                        ))}
-                        {"\n"}
-                      </span>
-                    ))}
-                  </code>
-                )}
-              </Highlight>
-            );
-          },
-          img({ src, alt, ...props }: ComponentPropsWithoutRef<"img">) {
-            const resolvedSrc = src ? resolveImageSrc(src, selectedPath) : "";
-            return <img src={resolvedSrc} alt={alt ?? ""} {...props} />;
-          },
-          pre({ children, ...props }: ComponentPropsWithoutRef<"pre">) {
-            const codeEl = Array.isArray(children) ? children[0] : children;
-
-            const isMermaid =
-              codeEl &&
-              typeof codeEl === "object" &&
-              "props" in codeEl &&
-              MERMAID_CLASS_RE.test(codeEl.props.className || "");
-
-            if (isMermaid) {
-              return children;
-            }
-
-            const code =
-              codeEl && typeof codeEl === "object" && "props" in codeEl
-                ? String(codeEl.props.children).replace(/\n$/, "")
-                : "";
-
-            return (
-              <div className="group relative">
-                <CopyButton text={code} />
-                <pre {...props}>{children}</pre>
-              </div>
-            );
-          },
-          table({ children, ...props }: ComponentPropsWithoutRef<"table">) {
-            return (
-              <div className="overflow-x-auto">
-                <table {...props}>{children}</table>
-              </div>
-            );
-          },
+          code: CodeBlock,
+          img: renderImage,
+          pre: MarkdownPre,
+          table: MarkdownTable,
         }}
       >
         {content}
