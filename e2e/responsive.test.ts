@@ -8,42 +8,43 @@ test.describe("モバイルビューポート", () => {
 
   test("サイドバーが初期非表示", async ({ page }) => {
     await page.goto("/");
-    // サイドバーのタイトルが見えない
-    await expect(page.getByText("specv")).not.toBeVisible();
+    // モバイルではサイドバーヘッダーが見えない
+    await expect(
+      page.getByRole("heading", { name: "specv", exact: true })
+    ).not.toBeVisible();
     // Show sidebar ボタンが見える
     await expect(page.getByTitle(/Show sidebar/i)).toBeVisible();
   });
 
-  test("トグルでオーバーレイドロワー表示", async ({ page }) => {
+  test("トグルでモバイルシート表示", async ({ page }) => {
     await page.goto("/");
     await page.getByTitle(/Show sidebar/i).click();
 
-    // サイドバーが表示される
-    await expect(page.getByText("specv")).toBeVisible();
-    // バックドロップが表示される
-    await expect(
-      page.locator("[data-testid='sidebar-backdrop']")
-    ).toBeVisible();
+    // shadcn Sidebar のモバイルシートが表示される
+    await expect(page.locator("[data-mobile='true']")).toBeVisible();
   });
 
-  test("バックドロップクリックで閉じる", async ({ page }) => {
+  test("シート外クリックで閉じる", async ({ page }) => {
     await page.goto("/");
     await page.getByTitle(/Show sidebar/i).click();
-    await expect(page.getByText("specv")).toBeVisible();
+    await expect(page.locator("[data-mobile='true']")).toBeVisible();
 
-    // バックドロップをクリック
-    await page.locator("[data-testid='sidebar-backdrop']").click();
-    await expect(page.getByText("specv")).not.toBeVisible();
+    // シートの外側（オーバーレイ）をクリックして閉じる
+    // サイドバーは左側 w-3/4 を占有するため、右端をクリック
+    const overlay = page.locator("[data-slot='sheet-overlay']");
+    const box = await overlay.boundingBox();
+    await page.mouse.click(box!.x + box!.width - 10, box!.y + box!.height / 2);
+    await expect(page.locator("[data-mobile='true']")).not.toBeVisible();
   });
 
   test("ファイル選択でサイドバーが閉じる", async ({ page }) => {
     await page.goto("/");
     await page.getByTitle(/Show sidebar/i).click();
-    await expect(page.getByText("specv")).toBeVisible();
+    await expect(page.locator("[data-mobile='true']")).toBeVisible();
 
     // ファイルを選択
-    await page.getByText("README.md").click();
-    await expect(page.getByText("specv")).not.toBeVisible();
+    await page.getByText("README.md").first().click();
+    await expect(page.locator("[data-mobile='true']")).not.toBeVisible();
   });
 
   test("Quick Open がモバイル幅に収まる", async ({ page }) => {
@@ -65,12 +66,15 @@ test.describe("デスクトップビューポート", () => {
 
   test("サイドバーが初期表示される", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("specv")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "specv", exact: true })
+    ).toBeVisible();
     await expect(page.getByTitle(/Hide sidebar/i)).toBeVisible();
   });
 
-  test("リサイズセパレーターが表示される", async ({ page }) => {
+  test("リサイズレールが表示される", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("separator")).toBeVisible();
+    // shadcn SidebarRail は button[data-sidebar="rail"]
+    await expect(page.locator("[data-sidebar='rail']")).toBeVisible();
   });
 });
