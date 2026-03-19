@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("初期表示時に一本道ディレクトリが自動展開される", async ({ page }) => {
   await page.goto("/");
-  const sidebar = page.locator("aside");
+  const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
   // docs はルートの唯一のディレクトリなので自動展開
   await expect(sidebar.getByText("docs").first()).toBeVisible();
@@ -12,7 +12,7 @@ test("初期表示時に一本道ディレクトリが自動展開される", as
 
 test("分岐点で展開が停止している", async ({ page }) => {
   await page.goto("/");
-  const sidebar = page.locator("aside");
+  const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
   // docs は展開されている（ルートの唯一のディレクトリ）
   await expect(sidebar.getByText("linked.md")).toBeVisible();
@@ -33,7 +33,7 @@ test("分岐点で展開が停止している", async ({ page }) => {
 
 test("クリック展開で深い一本道が自動展開される", async ({ page }) => {
   await page.goto("/");
-  const sidebar = page.locator("aside");
+  const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
   // guide をクリック → guide 内は一本道（advanced → plugins）なので全て自動展開
   await sidebar.getByText("guide").click();
@@ -48,7 +48,7 @@ test("クリック展開で深い一本道が自動展開される", async ({ pa
 
 test("折りたたみで子孫パスも全て閉じる", async ({ page }) => {
   await page.goto("/");
-  const sidebar = page.locator("aside");
+  const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
   // guide を展開
   await sidebar.getByText("guide").click();
@@ -67,7 +67,7 @@ test("折りたたみで子孫パスも全て閉じる", async ({ page }) => {
 
 test(".md を含まないディレクトリはツリーに表示されない", async ({ page }) => {
   await page.goto("/");
-  const sidebar = page.locator("aside");
+  const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
   // assets/ は .css のみ → ツリーに出ない
   await expect(sidebar.getByText("assets")).not.toBeVisible();
@@ -79,7 +79,7 @@ test(".md を含まないディレクトリはツリーに表示されない", a
 
 test("検索時の全展開が引き続き動作する", async ({ page }) => {
   await page.goto("/");
-  const sidebar = page.locator("aside");
+  const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
   // 深い階層のファイルを検索
   const searchInput = sidebar.getByPlaceholder("Search files...");

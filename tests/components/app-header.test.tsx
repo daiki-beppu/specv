@@ -30,6 +30,21 @@ vi.mock(import("@tanstack/react-hotkeys"), () => ({
   useHotkey: vi.fn(),
 }));
 
+// matchMedia モック（useIsMobile で必要）
+Object.defineProperty(window, "matchMedia", {
+  value: vi.fn().mockImplementation((query: string) => ({
+    addEventListener: vi.fn(),
+    addListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+    matches: false,
+    media: query,
+    onchange: null,
+    removeEventListener: vi.fn(),
+    removeListener: vi.fn(),
+  })),
+  writable: true,
+});
+
 describe("app ヘッダー", () => {
   // eslint-disable-next-line jest/no-hooks -- jsdom cleanup required
   afterEach(() => {
