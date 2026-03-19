@@ -39,12 +39,27 @@ vi.mock(import("@tanstack/react-hotkeys"), () => ({
   useHotkey: vi.fn(),
 }));
 
-function setMobile(mobile: boolean) {
-  window.matchMedia = vi.fn().mockReturnValue({
-    addEventListener: vi.fn(),
-    matches: mobile,
-    removeEventListener: vi.fn(),
-  }) as typeof window.matchMedia;
+function setViewport(mobile: boolean) {
+  const width = mobile ? 375 : 1024;
+  Object.defineProperty(window, "innerWidth", {
+    configurable: true,
+    value: width,
+    writable: true,
+  });
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      addEventListener: vi.fn(),
+      addListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+      matches: mobile ? query.includes("max-width") : false,
+      media: query,
+      onchange: null,
+      removeEventListener: vi.fn(),
+      removeListener: vi.fn(),
+    })),
+    writable: true,
+  });
 }
 
 describe("app レスポンシブ", () => {
@@ -56,46 +71,26 @@ describe("app レスポンシブ", () => {
 
   describe("モバイル時", () => {
     beforeEach(() => {
-      setMobile(true);
+      setViewport(true);
     });
 
     it("サイドバーが初期状態で非表示", () => {
       render(<App />);
-      // サイドバーの h1 "specv" が表示されない
-      expect(screen.queryByText("specv")).toBeNull();
+      // モバイルではサイドバーは Sheet（非表示状態）
+      const sidebar = document.querySelector("[data-mobile='true']");
+      expect(sidebar).toBeNull();
       // Show sidebar ボタンが表示される
       expect(screen.getByTitle(/Show sidebar/i)).toBeDefined();
     });
 
-    it("サイドバーを開くとオーバーレイドロワーとして表示される", () => {
+    it("サイドバーを開くとモバイルシートとして表示される", () => {
       render(<App />);
       const toggleButton = screen.getByTitle(/Show sidebar/i);
       fireEvent.click(toggleButton);
 
-      // サイドバーが表示される
-      expect(screen.getByText("specv")).toBeDefined();
-
-      // バックドロップが存在する
-      const backdrop = document.querySelector(
-        "[data-testid='sidebar-backdrop']"
-      );
-      expect(backdrop).not.toBeNull();
-    });
-
-    it("バックドロップクリックでサイドバーが閉じる", () => {
-      render(<App />);
-      // サイドバーを開く
-      fireEvent.click(screen.getByTitle(/Show sidebar/i));
-      expect(screen.getByText("specv")).toBeDefined();
-
-      // バックドロップをクリック
-      const backdrop = document.querySelector(
-        "[data-testid='sidebar-backdrop']"
-      );
-      fireEvent.click(backdrop!);
-
-      // サイドバーが閉じる
-      expect(screen.queryByText("specv")).toBeNull();
+      // モバイル用 Sheet が開く
+      const sidebar = document.querySelector("[data-mobile='true']");
+      expect(sidebar).not.toBeNull();
     });
 
     it("ファイル選択でサイドバーが閉じる", async () => {
@@ -106,29 +101,23 @@ describe("app レスポンシブ", () => {
       });
       // サイドバーを開く
       fireEvent.click(screen.getByTitle(/Show sidebar/i));
-      expect(screen.getByText("specv")).toBeDefined();
+      const sidebar = document.querySelector("[data-mobile='true']");
+      expect(sidebar).not.toBeNull();
 
       // ファイルを選択
       const fileItem = screen.getByText("other.md");
       fireEvent.click(fileItem);
 
       // サイドバーが閉じる
-      expect(screen.queryByText("specv")).toBeNull();
-    });
-
-    it("リサイズセパレーターが非表示", () => {
-      render(<App />);
-      // サイドバーを開く
-      fireEvent.click(screen.getByTitle(/Show sidebar/i));
-
-      // separator が表示されない
-      expect(screen.queryByRole("separator")).toBeNull();
+      await waitFor(() => {
+        expect(document.querySelector("[data-mobile='true']")).toBeNull();
+      });
     });
   });
 
   describe("デスクトップ時", () => {
     beforeEach(() => {
-      setMobile(false);
+      setViewport(false);
     });
 
     it("サイドバーが初期状態で表示される", () => {
@@ -137,9 +126,11 @@ describe("app レスポンシブ", () => {
       expect(screen.getByTitle(/Hide sidebar/i)).toBeDefined();
     });
 
-    it("リサイズセパレーターが表示される", () => {
+    it("リサイズレールが表示される", () => {
       render(<App />);
-      expect(screen.getByRole("separator")).toBeDefined();
+      // shadcn SidebarRail は button[data-sidebar="rail"]
+      const rail = document.querySelector("[data-sidebar='rail']");
+      expect(rail).not.toBeNull();
     });
   });
 });

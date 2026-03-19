@@ -143,7 +143,8 @@ const useAppState = () => {
 };
 
 const AppContent = () => {
-  const { isMobile, open, toggleSidebar } = useSidebar();
+  const { isMobile, open, openMobile, toggleSidebar } = useSidebar();
+  const isOpen = isMobile ? openMobile : open;
 
   const {
     content,
@@ -193,9 +194,13 @@ const AppContent = () => {
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            title={`${open ? "Hide sidebar" : "Show sidebar"} (⌘B)`}
+            title={`${isOpen ? "Hide sidebar" : "Show sidebar"} (⌘B)`}
           >
-            {open ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+            {isOpen ? (
+              <PanelLeftClose size={16} />
+            ) : (
+              <PanelLeftOpen size={16} />
+            )}
           </Button>
           <ButtonGroup
             role="tablist"
