@@ -48,7 +48,7 @@ describe("tree", () => {
     );
 
     fireEvent.click(screen.getByText("docs"));
-    expect(onToggle).toHaveBeenCalledOnce();
+    expect(onToggle).toHaveBeenCalledTimes(1);
   });
 
   it("ファイルノードをクリックすると onSelect が呼ばれる", () => {
@@ -61,13 +61,13 @@ describe("tree", () => {
     );
 
     fireEvent.click(screen.getByText("README.md"));
-    expect(onSelect).toHaveBeenCalledOnce();
+    expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
   it("展開中のディレクトリは aria-expanded='true' で子要素が表示される", () => {
     render(
       <Tree>
-        <TreeItem expanded={true} name="docs" onToggle={noop}>
+        <TreeItem expanded name="docs" onToggle={noop}>
           <TreeLeaf name="guide.md" selected={false} onSelect={noop} />
         </TreeItem>
       </Tree>
@@ -95,7 +95,7 @@ describe("tree", () => {
   it("選択中のファイルは aria-selected='true' で区別できる", () => {
     render(
       <Tree>
-        <TreeLeaf name="README.md" selected={true} onSelect={noop} />
+        <TreeLeaf name="README.md" selected onSelect={noop} />
         <TreeLeaf name="other.md" selected={false} onSelect={noop} />
       </Tree>
     );
@@ -115,7 +115,7 @@ describe("tree", () => {
   it("ディレクトリ名・ファイル名がテキストとして表示される", () => {
     render(
       <Tree>
-        <TreeItem expanded={true} name="src" onToggle={noop}>
+        <TreeItem expanded name="src" onToggle={noop}>
           <TreeLeaf name="index.ts" selected={false} onSelect={noop} />
         </TreeItem>
       </Tree>

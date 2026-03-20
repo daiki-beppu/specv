@@ -75,7 +75,7 @@ const setupWatcher = (
             event: "tree-changed",
           });
         } catch {
-          // scan failure is non-fatal
+          // Scan failure is non-fatal
         }
       }, TREE_DEBOUNCE_MS);
     }

@@ -19,7 +19,7 @@ const renderMarkdown = async (input: string): Promise<string> => {
   return String(file);
 };
 
-describe("remarkFrontmatterTable", () => {
+describe(remarkFrontmatterTable, () => {
   it("frontmatter がテーブルとして出力される", async () => {
     const html = await renderMarkdown("---\ntitle: Hello\n---\n");
     expect(html).toContain("<table>");

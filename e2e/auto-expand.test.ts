@@ -4,9 +4,9 @@ test("初期表示時に一本道ディレクトリが自動展開される", as
   await page.goto("/");
   const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
-  // docs はルートの唯一のディレクトリなので自動展開
+  // Docs はルートの唯一のディレクトリなので自動展開
   await expect(sidebar.getByText("docs").first()).toBeVisible();
-  // docs 内のファイルが見えている = docs が展開済み
+  // Docs 内のファイルが見えている = docs が展開済み
   await expect(sidebar.getByText("linked.md")).toBeVisible();
 });
 
@@ -14,16 +14,16 @@ test("分岐点で展開が停止している", async ({ page }) => {
   await page.goto("/");
   const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
-  // docs は展開されている（ルートの唯一のディレクトリ）
+  // Docs は展開されている（ルートの唯一のディレクトリ）
   await expect(sidebar.getByText("linked.md")).toBeVisible();
 
-  // guide と api のサブディレクトリ名は見える（docs が展開済み）
+  // Guide と api のサブディレクトリ名は見える（docs が展開済み）
   await expect(sidebar.getByText("guide")).toBeVisible();
   await expect(sidebar.getByRole("button", { name: "api" })).toBeVisible();
 
   // しかし guide 内のファイルは見えない（分岐で停止）
   await expect(sidebar.getByText("getting-started.md")).not.toBeVisible();
-  // api 内のファイルも見えない
+  // Api 内のファイルも見えない
   await expect(sidebar.getByText("endpoints.md")).not.toBeVisible();
 
   // 深い階層（advanced/plugins/setup.md）も見えない
@@ -35,12 +35,12 @@ test("クリック展開で深い一本道が自動展開される", async ({ pa
   await page.goto("/");
   const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
-  // guide をクリック → guide 内は一本道（advanced → plugins）なので全て自動展開
+  // Guide をクリック → guide 内は一本道（advanced → plugins）なので全て自動展開
   await sidebar.getByText("guide").click();
 
-  // getting-started.md が見える
+  // Getting-started.md が見える
   await expect(sidebar.getByText("getting-started.md")).toBeVisible();
-  // advanced が展開されて plugins も展開、setup.md まで見える
+  // Advanced が展開されて plugins も展開、setup.md まで見える
   await expect(sidebar.getByText("advanced")).toBeVisible();
   await expect(sidebar.getByText("plugins")).toBeVisible();
   await expect(sidebar.getByText("setup.md")).toBeVisible();
@@ -50,11 +50,11 @@ test("折りたたみで子孫パスも全て閉じる", async ({ page }) => {
   await page.goto("/");
   const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
-  // guide を展開
+  // Guide を展開
   await sidebar.getByText("guide").click();
   await expect(sidebar.getByText("setup.md")).toBeVisible();
 
-  // guide を折りたたむ → 子孫も全て非表示
+  // Guide を折りたたむ → 子孫も全て非表示
   await sidebar.getByText("guide").click();
   await expect(sidebar.getByText("getting-started.md")).not.toBeVisible();
   await expect(sidebar.getByText("advanced")).not.toBeVisible();
@@ -69,11 +69,11 @@ test(".md を含まないディレクトリはツリーに表示されない", a
   await page.goto("/");
   const sidebar = page.locator('[data-slot="sidebar-inner"]');
 
-  // assets/ は .css のみ → ツリーに出ない
+  // Assets/ は .css のみ → ツリーに出ない
   await expect(sidebar.getByText("assets")).not.toBeVisible();
-  // empty-dir/ は空 → ツリーに出ない
+  // Empty-dir/ は空 → ツリーに出ない
   await expect(sidebar.getByText("empty-dir")).not.toBeVisible();
-  // images/ は .png のみ → ツリーに出ない
+  // Images/ は .png のみ → ツリーに出ない
   await expect(sidebar.getByText("images")).not.toBeVisible();
 });
 

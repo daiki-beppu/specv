@@ -10,7 +10,7 @@ test.describe("モバイルビューポート", () => {
     await page.goto("/");
     // モバイルではサイドバーヘッダーが見えない
     await expect(
-      page.getByRole("heading", { name: "specv", exact: true })
+      page.getByRole("heading", { exact: true, name: "specv" })
     ).not.toBeVisible();
     // Show sidebar ボタンが見える
     await expect(page.getByTitle(/Show sidebar/i)).toBeVisible();
@@ -20,7 +20,7 @@ test.describe("モバイルビューポート", () => {
     await page.goto("/");
     await page.getByTitle(/Show sidebar/i).click();
 
-    // shadcn Sidebar のモバイルシートが表示される
+    // Shadcn Sidebar のモバイルシートが表示される
     await expect(page.locator("[data-mobile='true']")).toBeVisible();
   });
 
@@ -67,14 +67,14 @@ test.describe("デスクトップビューポート", () => {
   test("サイドバーが初期表示される", async ({ page }) => {
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: "specv", exact: true })
+      page.getByRole("heading", { exact: true, name: "specv" })
     ).toBeVisible();
     await expect(page.getByTitle(/Hide sidebar/i)).toBeVisible();
   });
 
   test("リサイズレールが表示される", async ({ page }) => {
     await page.goto("/");
-    // shadcn SidebarRail は button[data-sidebar="rail"]
+    // Shadcn SidebarRail は button[data-sidebar="rail"]
     await expect(page.locator("[data-sidebar='rail']")).toBeVisible();
   });
 });

@@ -25,12 +25,12 @@ class EventSourceMock {
 }
 global.EventSource = EventSourceMock as unknown as typeof EventSource;
 
-// useHotkey モック
+// UseHotkey モック
 vi.mock(import("@tanstack/react-hotkeys"), () => ({
   useHotkey: vi.fn(),
 }));
 
-// matchMedia モック（useIsMobile で必要）
+// MatchMedia モック（useIsMobile で必要）
 Object.defineProperty(window, "matchMedia", {
   value: vi.fn().mockImplementation((query: string) => ({
     addEventListener: vi.fn(),
