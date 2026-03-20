@@ -1,6 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import type {
+  ApiError,
+  FileChangedEvent,
+  FilesResponse,
+  TreeChangedEvent,
+} from "@shared/types";
 import { Hono } from "hono";
 
 import { scanMarkdownFiles } from "./files";
@@ -59,8 +65,9 @@ const setupWatcher = (
 
   factory(baseDir, (event) => {
     if (event.type === "change") {
+      const payload: FileChangedEvent = { path: event.path };
       broadcast({
-        data: JSON.stringify({ path: event.path }),
+        data: JSON.stringify(payload),
         event: "file-changed",
       });
     } else {
@@ -70,8 +77,9 @@ const setupWatcher = (
       treeDebounceTimer = setTimeout(async () => {
         try {
           const files = await scanMarkdownFiles(baseDir);
+          const payload: TreeChangedEvent = { files };
           broadcast({
-            data: JSON.stringify({ files }),
+            data: JSON.stringify(payload),
             event: "tree-changed",
           });
         } catch {
@@ -105,16 +113,19 @@ export const createApiRouter = (
   api.get("/api/files", async (c) => {
     try {
       const files = await scanMarkdownFiles(baseDir);
-      return c.json({ files });
+      return c.json({ files } satisfies FilesResponse);
     } catch {
-      return c.json({ error: "Failed to scan files" }, 500);
+      return c.json({ error: "Failed to scan files" } satisfies ApiError, 500);
     }
   });
 
   api.get("/api/file", async (c) => {
     const filePath = c.req.query("path");
     if (!filePath) {
-      return c.json({ error: "path query parameter is required" }, 400);
+      return c.json(
+        { error: "path query parameter is required" } satisfies ApiError,
+        400
+      );
     }
 
     try {
@@ -122,16 +133,19 @@ export const createApiRouter = (
       return c.text(content);
     } catch (error) {
       if (error instanceof SecurityError) {
-        return c.json({ error: error.message }, 400);
+        return c.json({ error: error.message } satisfies ApiError, 400);
       }
-      return c.json({ error: "File not found" }, 404);
+      return c.json({ error: "File not found" } satisfies ApiError, 404);
     }
   });
 
   api.get("/api/image", async (c) => {
     const filePath = c.req.query("path");
     if (!filePath) {
-      return c.json({ error: "path query parameter is required" }, 400);
+      return c.json(
+        { error: "path query parameter is required" } satisfies ApiError,
+        400
+      );
     }
 
     try {
@@ -139,9 +153,9 @@ export const createApiRouter = (
       return c.body(new Uint8Array(data), 200, { "Content-Type": contentType });
     } catch (error) {
       if (error instanceof SecurityError) {
-        return c.json({ error: error.message }, 400);
+        return c.json({ error: error.message } satisfies ApiError, 400);
       }
-      return c.json({ error: "Image not found" }, 404);
+      return c.json({ error: "Image not found" } satisfies ApiError, 404);
     }
   });
 

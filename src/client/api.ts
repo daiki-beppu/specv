@@ -1,11 +1,11 @@
-import type { FileNode } from "@shared/types";
+import type { FileNode, FilesResponse } from "@shared/types";
 
 export const fetchFiles = async (): Promise<FileNode[]> => {
   const res = await fetch("/api/files");
   if (!res.ok) {
     throw new Error("Failed to fetch file list");
   }
-  const data = await res.json();
+  const data: FilesResponse = await res.json();
   return data.files;
 };
 
