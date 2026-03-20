@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
 import { QuickOpen } from "@/components/quick-open";
 
-// jsdom に ResizeObserver がないのでモック
+// Jsdom に ResizeObserver がないのでモック
 class ResizeObserverMock {
   // eslint-disable-next-line class-methods-use-this, no-empty-function
   disconnect() {}
@@ -29,7 +29,7 @@ const sampleFiles = [
   },
 ];
 
-// jsdom に scrollIntoView がないのでモック
+// Jsdom に scrollIntoView がないのでモック
 // eslint-disable-next-line no-empty-function
 Element.prototype.scrollIntoView = () => {};
 
@@ -42,12 +42,7 @@ describe("quick-open", () => {
 
   it("open=true でダイアログが表示される", () => {
     render(
-      <QuickOpen
-        files={sampleFiles}
-        open={true}
-        onClose={noop}
-        onSelect={noop}
-      />
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
     );
 
     expect(screen.getByPlaceholderText("Go to File")).toBeDefined();
@@ -68,18 +63,13 @@ describe("quick-open", () => {
 
   it("テキスト入力でファイルリストがフィルタされる", () => {
     render(
-      <QuickOpen
-        files={sampleFiles}
-        open={true}
-        onClose={noop}
-        onSelect={noop}
-      />
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
     );
 
     const input = screen.getByPlaceholderText("Go to File");
     fireEvent.change(input, { target: { value: "index" } });
 
-    // cmdk の CommandItem は div[cmdk-item] としてレンダリングされる
+    // Cmdk の CommandItem は div[cmdk-item] としてレンダリングされる
     const items = document.querySelectorAll("[cmdk-item]");
     const hasIndex = [...items].some((el) =>
       el.textContent?.includes("index.ts")
@@ -94,12 +84,7 @@ describe("quick-open", () => {
 
   it("ファジーマッチで候補が絞り込まれる", () => {
     render(
-      <QuickOpen
-        files={sampleFiles}
-        open={true}
-        onClose={noop}
-        onSelect={noop}
-      />
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
     );
 
     const input = screen.getByPlaceholderText("Go to File");
@@ -115,12 +100,7 @@ describe("quick-open", () => {
 
   it("マッチした文字がハイライト表示される", () => {
     render(
-      <QuickOpen
-        files={sampleFiles}
-        open={true}
-        onClose={noop}
-        onSelect={noop}
-      />
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
     );
 
     const input = screen.getByPlaceholderText("Go to File");
@@ -138,13 +118,13 @@ describe("quick-open", () => {
     render(
       <QuickOpen
         files={sampleFiles}
-        open={true}
+        open
         onClose={onClose}
         onSelect={onSelect}
       />
     );
 
-    // cmdk の CommandItem は div[cmdk-item] なのでテキストで探してクリック
+    // Cmdk の CommandItem は div[cmdk-item] なのでテキストで探してクリック
     const items = document.querySelectorAll("[cmdk-item]");
     const readme = [...items].find((el) =>
       el.textContent?.includes("README.md")
@@ -153,38 +133,28 @@ describe("quick-open", () => {
     fireEvent.click(readme!);
 
     expect(onSelect).toHaveBeenCalledWith("README.md");
-    expect(onClose).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("eSC キーでダイアログが閉じる", () => {
     const onClose = vi.fn();
 
     render(
-      <QuickOpen
-        files={sampleFiles}
-        open={true}
-        onClose={onClose}
-        onSelect={noop}
-      />
+      <QuickOpen files={sampleFiles} open onClose={onClose} onSelect={noop} />
     );
 
     const input = screen.getByPlaceholderText("Go to File");
     fireEvent.keyDown(input, { key: "Escape" });
 
-    expect(onClose).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  // jsdom では cmdk のキーボードナビゲーション + focus 管理が
+  // Jsdom では cmdk のキーボードナビゲーション + focus 管理が
   // 実ブラウザと異なるため E2E でカバー
   // eslint-disable-next-line jest/no-disabled-tests
   it.skip("↑↓キーで選択が移動する", () => {
     render(
-      <QuickOpen
-        files={sampleFiles}
-        open={true}
-        onClose={noop}
-        onSelect={noop}
-      />
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
     );
 
     const input = screen.getByPlaceholderText("Go to File");
@@ -206,7 +176,7 @@ describe("quick-open", () => {
     render(
       <QuickOpen
         files={sampleFiles}
-        open={true}
+        open
         onClose={onClose}
         onSelect={onSelect}
       />
@@ -216,17 +186,12 @@ describe("quick-open", () => {
     fireEvent.keyDown(input, { key: "Enter" });
 
     expect(onSelect).toHaveBeenCalledWith("README.md");
-    expect(onClose).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("結果が0件のとき 'No matching files' が表示される", () => {
     render(
-      <QuickOpen
-        files={sampleFiles}
-        open={true}
-        onClose={noop}
-        onSelect={noop}
-      />
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
     );
 
     const input = screen.getByPlaceholderText("Go to File");

@@ -34,7 +34,7 @@ class EventSourceMock {
 }
 global.EventSource = EventSourceMock as unknown as typeof EventSource;
 
-// useHotkey モック
+// UseHotkey モック
 vi.mock(import("@tanstack/react-hotkeys"), () => ({
   useHotkey: vi.fn(),
 }));
@@ -128,7 +128,7 @@ describe("app レスポンシブ", () => {
 
     it("リサイズレールが表示される", () => {
       render(<App />);
-      // shadcn SidebarRail は button[data-sidebar="rail"]
+      // Shadcn SidebarRail は button[data-sidebar="rail"]
       const rail = document.querySelector("[data-sidebar='rail']");
       expect(rail).not.toBeNull();
     });

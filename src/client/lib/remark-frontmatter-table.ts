@@ -40,7 +40,7 @@ export const remarkFrontmatterTable: Plugin<[], Root> = () => (tree) => {
   try {
     parsed = parse(firstNode.value);
   } catch {
-    // invalid YAML
+    // Invalid YAML
   }
 
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {

@@ -8,7 +8,7 @@ test.describe("スクロール封じ込め", () => {
       page.getByRole("heading", { name: "specv E2E テストドキュメント" })
     ).toBeVisible();
 
-    // html に overflow: hidden が設定されていること
+    // Html に overflow: hidden が設定されていること
     const htmlOverflow = await page.evaluate(
       () => getComputedStyle(document.documentElement).overflow
     );

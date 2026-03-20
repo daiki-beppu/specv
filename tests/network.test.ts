@@ -2,9 +2,9 @@ import os from "node:os";
 
 import { getLocalIpAddress } from "@server/network";
 
-vi.mock("node:os");
+vi.mock(import("node:os"));
 
-describe("getLocalIpAddress", () => {
+describe(getLocalIpAddress, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });

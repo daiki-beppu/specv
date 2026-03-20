@@ -1,7 +1,7 @@
-import type { Plugin } from "vite";
+import type { Plugin } from "vite-plus";
 
-import { getLocalIpAddress } from "./src/server/network";
-import { displayQrCode } from "./src/server/qr-display";
+import { getLocalIpAddress } from "./src/server/network.ts";
+import { displayQrCode } from "./src/server/qr-display.ts";
 
 export const qrcodePlugin = (): Plugin => ({
   apply: "serve",

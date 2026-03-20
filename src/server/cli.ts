@@ -103,7 +103,7 @@ program
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
     const clientDir = path.join(currentDir, "../client");
-    const networkConfig = getNetworkConfig({ host: !!options.host });
+    const networkConfig = getNetworkConfig({ host: Boolean(options.host) });
     const app = createApp(
       baseDir,
       clientDir,
@@ -137,7 +137,7 @@ program
           console.log("");
           console.log(`  Serving: ${baseDir}`);
 
-          // dev:host 時は Vite プラグイン側で QR を表示するためスキップ
+          // Dev:host 時は Vite プラグイン側で QR を表示するためスキップ
           if (networkUrl && !process.env.SPECV_HOST) {
             console.log("");
             displayQrCode(networkUrl);

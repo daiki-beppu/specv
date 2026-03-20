@@ -1,9 +1,9 @@
 import { displayQrCode } from "@server/qr-display";
 import qrcode from "qrcode-terminal";
 
-vi.mock("qrcode-terminal");
+vi.mock(import("qrcode-terminal"));
 
-describe("displayQrCode", () => {
+describe(displayQrCode, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });

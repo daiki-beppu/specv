@@ -10,7 +10,7 @@ test("ローカル画像が表示される", async ({ page }) => {
   const img = page.locator('img[alt="Test Image"]');
   await expect(img).toBeVisible();
 
-  // src が /api/image?path= を含むことを確認
+  // Src が /api/image?path= を含むことを確認
   const src = await img.getAttribute("src");
   expect(src).toContain("/api/image?path=");
 });

@@ -3,7 +3,7 @@ import path from "node:path";
 import { defineConfig } from "@playwright/test";
 
 const fixturesDir = path.resolve(import.meta.dirname, "e2e/fixtures");
-const cliPath = path.resolve(import.meta.dirname, "dist/server/cli.js");
+const cliPath = path.resolve(import.meta.dirname, "dist/server/cli.mjs");
 
 export default defineConfig({
   projects: [

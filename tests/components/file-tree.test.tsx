@@ -35,10 +35,10 @@ describe("file-tree", () => {
       <FileTree files={sampleFiles} selectedPath={null} onSelect={noop} />
     );
 
-    // docs は computeAutoExpandPaths によりデフォルト展開される
+    // Docs は computeAutoExpandPaths によりデフォルト展開される
     expect(screen.getByText("guide.md")).toBeDefined();
 
-    // docs をクリックして折畳む
+    // Docs をクリックして折畳む
     fireEvent.click(screen.getByText("docs"));
     expect(screen.queryByText("guide.md")).toBeNull();
 

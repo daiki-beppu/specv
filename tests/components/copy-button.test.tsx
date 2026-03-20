@@ -45,7 +45,7 @@ describe("copyButton", () => {
     fireEvent.click(screen.getByTitle("Copy"));
 
     await waitFor(() => {
-      expect(writeText).toHaveBeenCalledOnce();
+      expect(writeText).toHaveBeenCalledTimes(1);
     });
   });
 

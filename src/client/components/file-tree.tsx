@@ -60,7 +60,7 @@ const FileTreeNode = ({
   onExpand: (dirPath: string) => void;
   onCollapse: (dirPath: string) => void;
 }) => {
-  const isDir = !!node.children;
+  const isDir = Boolean(node.children);
   const isOpen = forceExpand || expandedPaths.has(node.path);
 
   const handleToggleExpand = useCallback(() => {
@@ -214,7 +214,7 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
             node={node}
             selectedPath={selectedPath}
             onSelect={onSelect}
-            forceExpand={!!query}
+            forceExpand={Boolean(query)}
             expandedPaths={expandedPaths}
             onExpand={onExpand}
             onCollapse={onCollapse}

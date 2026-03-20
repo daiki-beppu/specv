@@ -1,6 +1,6 @@
 import { Highlight } from "prism-react-renderer";
 import type { ComponentPropsWithoutRef } from "react";
-import { lazy, Suspense } from "react";
+import { Suspense, lazy } from "react";
 
 import { usePrismTheme } from "@/hooks/use-prism-theme";
 
