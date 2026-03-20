@@ -35,7 +35,7 @@ describe("mermaidBlock", () => {
   it("mermaid.render を呼び出して svg を表示する", async () => {
     const mermaid = await import("mermaid");
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     render(<MermaidBlock code="graph TD; A-->B" />);
 
@@ -54,7 +54,7 @@ describe("mermaidBlock", () => {
     mockTheme = "light";
     const mermaid = await import("mermaid");
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     render(<MermaidBlock code="graph TD; A-->B" />);
 
@@ -75,7 +75,7 @@ describe("mermaidBlock", () => {
 
     const mermaid = await import("mermaid");
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     render(<MermaidBlock code="graph TD; A-->B" />);
 
@@ -92,7 +92,7 @@ describe("mermaidBlock", () => {
       new Error("parse error")
     );
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     render(<MermaidBlock code="invalid mermaid" />);
 

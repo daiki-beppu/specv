@@ -10,7 +10,7 @@ import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import type { PluggableList } from "unified";
 
-import { remarkFrontmatterTable } from "@/lib/remark-frontmatter-table";
+import { remarkFrontmatterTable } from "@/components/markdown/remark-frontmatter-table";
 
 const SANITIZE_SCHEMA = {
   ...defaultSchema,

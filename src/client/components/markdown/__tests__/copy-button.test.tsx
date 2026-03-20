@@ -7,7 +7,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 
-import { Preview } from "@/components/preview";
+import { Preview } from "@/components/markdown/preview";
 
 vi.mock(import("@/hooks/use-theme"), () => ({
   useTheme: () => ({ theme: "light" as const, toggle: vi.fn() }),

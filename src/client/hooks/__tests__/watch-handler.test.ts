@@ -1,6 +1,6 @@
 import type { FileNode } from "@shared/types";
 
-import { handleFileChanged, handleTreeChanged } from "@/utils/watch-handler";
+import { handleFileChanged, handleTreeChanged } from "@/hooks/watch-handler";
 
 describe("watch-handler: handleFileChanged", () => {
   it("eventPath === selectedPath → fetchAndSetContent が呼ばれる", () => {

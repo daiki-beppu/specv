@@ -27,30 +27,37 @@ nr fix               # Auto-fix lint/format issues (vp check --fix)
 
 ```
 src/
-├── client/           # React frontend
-│   ├── api.ts        # API client (fetch wrapper)
-│   ├── components/   # UI components (file-tree, preview, quick-open)
-│   │   ├── ui/       # Base UI components (button)
-│   │   ├── mermaid-block.tsx  # Mermaid diagram renderer (lazy loaded)
-│   │   ├── source.tsx
-│   │   └── theme-toggle.tsx
-│   ├── hooks/        # Custom React hooks
-│   ├── utils/        # Client utilities (auto-expand, etc.)
-│   ├── lib/          # Path resolution utilities
-│   ├── main.tsx      # Entry point
-│   └── app.tsx       # Main App component
+├── client/                # React frontend
+│   ├── api.ts             # API client (fetch wrapper)
+│   ├── components/
+│   │   ├── markdown/      # Markdown レンダリング関連
+│   │   │   ├── preview.tsx, code-block.tsx, mermaid-block.tsx
+│   │   │   ├── markdown-image.tsx, markdown-table.tsx, markdown-pre.tsx, md-link.tsx
+│   │   │   ├── markdown-plugins.ts, remark-frontmatter-table.ts, path-utils.ts
+│   │   │   └── __tests__/
+│   │   ├── ui/            # Base UI components (shadcn)
+│   │   ├── file-tree.tsx, quick-open.tsx, source.tsx, theme-toggle.tsx, ...
+│   │   └── __tests__/
+│   ├── hooks/             # Custom React hooks + watch-handler
+│   │   └── __tests__/
+│   ├── utils/             # Shared utilities (cn, auto-expand)
+│   │   └── __tests__/
+│   ├── main.tsx           # Entry point
+│   └── app.tsx            # Main App component
 ├── server/
-│   ├── cli.ts        # CLI entry (Hono + Node server)
-│   ├── api.ts        # API routes (/api/files, /api/file, /api/image, /api/watch)
-│   ├── files.ts      # scanMarkdownFiles (recursive .md scanner)
-│   ├── security.ts   # Path traversal protection
-│   └── watcher.ts    # File watcher (hot reload)
+│   ├── cli.ts             # CLI entry (Hono + Node server)
+│   ├── api.ts             # API routes (/api/files, /api/file, /api/image, /api/watch)
+│   ├── files.ts           # scanMarkdownFiles (recursive .md scanner)
+│   ├── security.ts        # Path traversal protection
+│   ├── watcher.ts         # File watcher (hot reload)
+│   └── __tests__/
 ├── shared/
-│   └── types.ts      # Shared types (FileNode)
-tests/                # Unit tests (Vitest)
-e2e/                  # E2E tests (Playwright)
-fixtures/             # Manual testing markdown files
+│   └── types.ts           # Shared types (FileNode)
+e2e/                       # E2E tests (Playwright)
+fixtures/                  # Manual testing markdown files
 ```
+
+テストはコロケーションパターンで配置。各ディレクトリの `__tests__/` に対応するテストを格納。
 
 ## Path Aliases
 

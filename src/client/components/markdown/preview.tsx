@@ -4,12 +4,15 @@ import type { ComponentPropsWithoutRef } from "react";
 import { useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 
-import { CodeBlock } from "@/components/code-block";
-import { MarkdownImage } from "@/components/markdown-image";
-import { MarkdownPre } from "@/components/markdown-pre";
-import { MarkdownTable } from "@/components/markdown-table";
-import { MdLink } from "@/components/md-link";
-import { REHYPE_PLUGINS, REMARK_PLUGINS } from "@/lib/markdown-plugins";
+import { CodeBlock } from "@/components/markdown/code-block";
+import { MarkdownImage } from "@/components/markdown/markdown-image";
+import {
+  REHYPE_PLUGINS,
+  REMARK_PLUGINS,
+} from "@/components/markdown/markdown-plugins";
+import { MarkdownPre } from "@/components/markdown/markdown-pre";
+import { MarkdownTable } from "@/components/markdown/markdown-table";
+import { MdLink } from "@/components/markdown/md-link";
 
 interface PreviewProps {
   content: string;

@@ -5,7 +5,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
-import { remarkFrontmatterTable } from "@/lib/remark-frontmatter-table";
+import { remarkFrontmatterTable } from "@/components/markdown/remark-frontmatter-table";
 
 const renderMarkdown = async (input: string): Promise<string> => {
   const file = await unified()

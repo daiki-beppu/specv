@@ -3,7 +3,10 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
-import { REHYPE_PLUGINS, REMARK_PLUGINS } from "@/lib/markdown-plugins";
+import {
+  REHYPE_PLUGINS,
+  REMARK_PLUGINS,
+} from "@/components/markdown/markdown-plugins";
 
 const renderMarkdown = async (input: string): Promise<string> => {
   const file = await unified()

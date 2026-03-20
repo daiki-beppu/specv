@@ -4,7 +4,7 @@ import { Suspense, lazy } from "react";
 
 import { usePrismTheme } from "@/hooks/use-prism-theme";
 
-const MermaidBlock = lazy(() => import("@/components/mermaid-block"));
+const MermaidBlock = lazy(() => import("@/components/markdown/mermaid-block"));
 
 export const CodeBlock = ({
   className,

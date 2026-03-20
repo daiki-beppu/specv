@@ -1,6 +1,6 @@
 import type { FileNode } from "@shared/types";
 
-import { findFirstFile, findNode } from "./auto-expand";
+import { findFirstFile, findNode } from "@/utils/auto-expand";
 
 interface WatchActions {
   fetchAndSetContent: (path: string) => void;

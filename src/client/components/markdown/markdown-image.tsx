@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from "react";
 
-import { resolveImageSrc } from "@/lib/path-utils";
+import { resolveImageSrc } from "@/components/markdown/path-utils";
 
 export const MarkdownImage = ({
   src,

@@ -2,7 +2,7 @@ import type { FileNode } from "@shared/types";
 import { useEffect, useRef } from "react";
 
 import { fetchFile } from "@/api";
-import { handleFileChanged, handleTreeChanged } from "@/utils/watch-handler";
+import { handleFileChanged, handleTreeChanged } from "@/hooks/watch-handler";
 
 export const useWatch = (
   selectedPath: string | null,

@@ -1,7 +1,7 @@
 import { Highlight } from "prism-react-renderer";
 
 import { usePrismTheme } from "@/hooks/use-prism-theme";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 interface SourceProps {
   content: string;

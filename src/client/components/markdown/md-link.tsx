@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 import { useCallback } from "react";
 
-import { resolvePath } from "@/lib/path-utils";
+import { resolvePath } from "@/components/markdown/path-utils";
 
 export const MdLink = ({
   href,
