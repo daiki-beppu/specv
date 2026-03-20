@@ -10,6 +10,8 @@ import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import type { PluggableList } from "unified";
 
+import { remarkFrontmatterTable } from "@/lib/remark-frontmatter-table";
+
 const SANITIZE_SCHEMA = {
   ...defaultSchema,
   attributes: {
@@ -50,6 +52,7 @@ export const REMARK_PLUGINS: PluggableList = [
   remarkAlert,
   remarkEmoji,
   remarkFrontmatter,
+  remarkFrontmatterTable,
   remarkGfm,
   remarkMath,
 ];
