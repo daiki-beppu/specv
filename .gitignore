@@ -8,3 +8,6 @@ dist/
 # Playwright
 test-results/
 playwright-report/
+
+# Coverage
+coverage/

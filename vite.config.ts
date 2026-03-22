@@ -99,5 +99,19 @@ export default defineConfig({
     environment: "node",
     exclude: ["e2e/**", "node_modules/**", ".worktrees/**"],
     globals: true,
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/client/components/ui/**",
+        "src/client/main.tsx",
+        "src/server/cli.ts",
+        "src/shared/types.ts",
+        "src/**/__tests__/**",
+        "src/**/*.d.ts",
+      ],
+      reporter: ["text"],
+      reportsDirectory: "coverage",
+    },
   },
 });

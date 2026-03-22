@@ -149,8 +149,8 @@ describe("quick-open", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  // Jsdom では cmdk のキーボードナビゲーション + focus 管理が
-  // 実ブラウザと異なるため E2E でカバー
+  // jsdom では cmdk のキーボードナビゲーション + focus 管理が
+  // 実ブラウザと異なるため skip（E2E テスト未実装 — 別 issue で対応）
   // eslint-disable-next-line jest/no-disabled-tests
   it.skip("↑↓キーで選択が移動する", () => {
     render(

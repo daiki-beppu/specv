@@ -5,3 +5,5 @@ pre-commit:
       stage_fixed: true
     - name: knip
       run: pnpm knip
+    - name: test
+      run: pnpm exec vp test run --changed
