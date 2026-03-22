@@ -31,8 +31,12 @@ const renderContent = (
   selectedPath: string | null,
   viewMode: ViewMode,
   content: string,
+  error: string | null,
   onNavigate: (path: string) => void
 ) => {
+  if (error) {
+    return <p className="text-destructive">{error}</p>;
+  }
   if (!selectedPath) {
     return <p className="text-muted-foreground">ファイルを選択してください</p>;
   }
@@ -50,43 +54,63 @@ const renderContent = (
 
 const useLoadFiles = (
   setFiles: (f: FileNode[]) => void,
-  setSelectedPath: (p: string | null) => void
+  setSelectedPath: (p: string | null) => void,
+  setError: (e: string | null) => void
 ) => {
   useEffect(() => {
     const load = async () => {
       try {
         const f = await fetchFiles();
         setFiles(f);
+        setError(null);
         const first = findFirstFile(f);
         if (first) {
           setSelectedPath(first);
         }
       } catch (error) {
-        console.error("Failed to load files:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "ファイル一覧の読み込みに失敗しました"
+        );
       }
     };
     load();
-  }, [setFiles, setSelectedPath]);
+  }, [setFiles, setSelectedPath, setError]);
 };
 
 const useLoadContent = (
   selectedPath: string | null,
-  setContent: (c: string) => void
+  setContent: (c: string) => void,
+  setError: (e: string | null) => void
 ) => {
   useEffect(() => {
     if (!selectedPath) {
       return;
     }
+    let ignore = false;
+    setError(null);
     const load = async () => {
       try {
         const text = await fetchFile(selectedPath);
-        setContent(text);
+        if (!ignore) {
+          setContent(text);
+        }
       } catch (error) {
-        console.error("Failed to load file:", error);
+        if (!ignore) {
+          setError(
+            error instanceof Error
+              ? error.message
+              : "ファイルの読み込みに失敗しました"
+          );
+        }
       }
     };
     load();
-  }, [selectedPath, setContent]);
+    return () => {
+      ignore = true;
+    };
+  }, [selectedPath, setContent, setError]);
 };
 
 const useAppHandlers = (
@@ -118,14 +142,15 @@ const useContentState = () => {
   const [files, setFiles] = useState<FileNode[]>([]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [content, setContent] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useLoadFiles(setFiles, setSelectedPath);
-  useLoadContent(selectedPath, setContent);
-  useWatch(selectedPath, setContent, setFiles, setSelectedPath);
+  useLoadFiles(setFiles, setSelectedPath, setError);
+  useLoadContent(selectedPath, setContent, setError);
+  useWatch(selectedPath, setContent, setFiles, setSelectedPath, setError);
   useScrollRestore(scrollRef, selectedPath);
 
-  return { content, files, scrollRef, selectedPath, setSelectedPath };
+  return { content, error, files, scrollRef, selectedPath, setSelectedPath };
 };
 
 const useAppState = () => {
@@ -148,6 +173,7 @@ const AppContent = () => {
 
   const {
     content,
+    error,
     files,
     handleCloseQuickOpen,
     handleSetPreview,
@@ -237,7 +263,13 @@ const AppContent = () => {
           ref={scrollRef}
           className="flex-1 overflow-y-auto px-4 py-4 md:px-8 md:py-8"
         >
-          {renderContent(selectedPath, viewMode, content, setSelectedPath)}
+          {renderContent(
+            selectedPath,
+            viewMode,
+            content,
+            error,
+            setSelectedPath
+          )}
         </div>
       </main>
       <QuickOpen

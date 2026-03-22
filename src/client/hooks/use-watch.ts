@@ -12,7 +12,8 @@ export const useWatch = (
   selectedPath: string | null,
   setContent: (content: string) => void,
   setFiles: (files: FileNode[]) => void,
-  setSelectedPath: (path: string | null) => void
+  setSelectedPath: (path: string | null) => void,
+  setError?: (error: string | null) => void
 ): void => {
   const selectedPathRef = useRef(selectedPath);
   selectedPathRef.current = selectedPath;
@@ -25,8 +26,9 @@ export const useWatch = (
         try {
           const content = await fetchFile(path);
           setContent(content);
-        } catch (error) {
-          console.error(error);
+          setError?.(null);
+        } catch {
+          // Watch 中のエラーは非致命的（次の変更で自動リトライ）
         }
       },
       setFiles,
@@ -44,5 +46,5 @@ export const useWatch = (
     });
 
     return () => es.close();
-  }, [setContent, setFiles, setSelectedPath]);
+  }, [setContent, setFiles, setSelectedPath, setError]);
 };
