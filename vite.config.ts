@@ -91,7 +91,6 @@ export default defineConfig({
   },
   server: {
     host: Boolean(process.env.SPECV_HOST),
-    open: true,
     proxy: {
       "/api": "http://localhost:4649",
     },

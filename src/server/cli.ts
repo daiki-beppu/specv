@@ -99,7 +99,6 @@ program
   .option("-p, --port <number>", "Port number", "4649")
   .option("--host", "Expose to local network (enables QR code)")
   .option("--no-auto-close", "Disable auto-close on client disconnect")
-  .option("--no-open", "Do not open browser on startup")
   .action((options) => {
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
@@ -147,12 +146,10 @@ program
           console.log("");
           console.log("  Press Ctrl+C to stop");
 
-          if (options.open) {
-            try {
-              await openInBrowser(localUrl);
-            } catch {
-              console.log(`  Open ${localUrl} in your browser`);
-            }
+          try {
+            await openInBrowser(localUrl);
+          } catch {
+            console.log(`  Open ${localUrl} in your browser`);
           }
         }
       );

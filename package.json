@@ -27,8 +27,8 @@
   "scripts": {
     "dev": "pnpm run dev:server & pnpm run dev:client",
     "dev:client": "vp dev",
-    "dev:host": "tsx src/server/cli.ts --host --no-open & SPECV_HOST=1 vp dev",
-    "dev:server": "tsx src/server/cli.ts --no-open",
+    "dev:host": "tsx src/server/cli.ts --host & SPECV_HOST=1 vp dev",
+    "dev:server": "tsx src/server/cli.ts",
     "build:client": "vp build",
     "build:server": "vp pack",
     "build": "pnpm run build:client && pnpm run build:server",
