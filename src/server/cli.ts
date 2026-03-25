@@ -155,13 +155,13 @@ program
       );
 
       server.on("error", (err: NodeJS.ErrnoException) => {
-        if (err.code === "EADDRINUSE" && port < startPort + 10) {
-          console.log(`Port ${port} is in use, trying ${port + 1}...`);
-          tryListen(port + 1);
-        } else {
+        if (err.code !== "EADDRINUSE" || port >= startPort + 10) {
           console.error(`Failed to start server: ${err.message}`);
           process.exit(1);
+          return;
         }
+        console.log(`Port ${port} is in use, trying ${port + 1}...`);
+        tryListen(port + 1);
       });
     };
 

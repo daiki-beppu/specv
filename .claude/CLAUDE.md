@@ -53,7 +53,7 @@ src/
 │   ├── watcher.ts         # File watcher (hot reload)
 │   └── __tests__/
 ├── shared/
-│   └── types.ts           # Shared types (FileNode)
+│   └── types.ts           # Shared types (FileNode, ApiError, SSE events)
 e2e/                       # E2E tests (Playwright)
 fixtures/                  # Manual testing markdown files
 ```

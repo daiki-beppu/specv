@@ -70,23 +70,24 @@ const setupWatcher = (
         data: JSON.stringify(payload),
         event: "file-changed",
       });
-    } else {
-      if (treeDebounceTimer) {
-        clearTimeout(treeDebounceTimer);
-      }
-      treeDebounceTimer = setTimeout(async () => {
-        try {
-          const files = await scanMarkdownFiles(baseDir);
-          const payload: TreeChangedEvent = { files };
-          broadcast({
-            data: JSON.stringify(payload),
-            event: "tree-changed",
-          });
-        } catch {
-          // Scan failure is non-fatal
-        }
-      }, TREE_DEBOUNCE_MS);
+      return;
     }
+
+    if (treeDebounceTimer) {
+      clearTimeout(treeDebounceTimer);
+    }
+    treeDebounceTimer = setTimeout(async () => {
+      try {
+        const files = await scanMarkdownFiles(baseDir);
+        const payload: TreeChangedEvent = { files };
+        broadcast({
+          data: JSON.stringify(payload),
+          event: "tree-changed",
+        });
+      } catch {
+        // Scan failure is non-fatal
+      }
+    }, TREE_DEBOUNCE_MS);
   });
 };
 

@@ -32,14 +32,14 @@ const flattenFiles = (nodes: FileNode[]): FlatFile[] => {
   for (const node of nodes) {
     if (node.children) {
       result.push(...flattenFiles(node.children));
-    } else {
-      const lastSlash = node.path.lastIndexOf("/");
-      result.push({
-        dir: lastSlash > 0 ? node.path.slice(0, lastSlash) : "",
-        name: node.name,
-        path: node.path,
-      });
+      continue;
     }
+    const lastSlash = node.path.lastIndexOf("/");
+    result.push({
+      dir: lastSlash > 0 ? node.path.slice(0, lastSlash) : "",
+      name: node.name,
+      path: node.path,
+    });
   }
   return result;
 };
