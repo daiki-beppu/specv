@@ -13,27 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - uses: DeterminateSystems/nix-installer-action@v22
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - name: Update npm
-        run: npm install -g npm@latest
-
-      - run: pnpm install --frozen-lockfile
+      - run: nix develop --command pnpm install --frozen-lockfile
 
       - name: Lint + Format + Type Check
-        run: pnpm check
+        run: nix develop --command pnpm check
 
       - name: Test
-        run: pnpm test
+        run: nix develop --command pnpm test
 
       - name: Build
-        run: pnpm build
+        run: nix develop --command pnpm build
 
       - name: Publish
-        run: npm publish --provenance --access public
+        run: nix develop --command npm publish --provenance --access public

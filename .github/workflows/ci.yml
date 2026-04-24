@@ -12,32 +12,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - uses: DeterminateSystems/nix-installer-action@v22
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
+      - run: nix develop --command pnpm install --frozen-lockfile
 
       - name: Lint + Format + Type Check
-        run: pnpm check
+        run: nix develop --command pnpm check
 
       - name: Knip
-        run: pnpm knip
+        run: nix develop --command pnpm knip
 
       - name: Test
-        run: pnpm test
+        run: nix develop --command pnpm test
 
       - name: Build
-        run: pnpm build
+        run: nix develop --command pnpm build
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: nix develop --command pnpm exec playwright install --with-deps chromium
 
       - name: E2E Tests
-        run: pnpm test:e2e
+        run: nix develop --command pnpm test:e2e
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
