@@ -26,9 +26,15 @@ export const MarkdownPre = ({
       : "";
 
   return (
-    <div className="group relative">
-      <CopyButton text={code} />
-      <pre {...props}>{children}</pre>
+    <div className="not-prose group rounded-md border border-border bg-code-bg">
+      <div className="sticky top-0 z-10 h-0 pointer-events-none">
+        <div className="relative pointer-events-auto">
+          <CopyButton text={code} />
+        </div>
+      </div>
+      <pre className="p-4 text-foreground overflow-x-auto" {...props}>
+        {children}
+      </pre>
     </div>
   );
 };
