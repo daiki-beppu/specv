@@ -79,7 +79,7 @@ Vite+ 内蔵の Oxlint + Oxfmt でコード品質を管理。設定は `vite.con
 
 # takt（AI 開発ループ）
 
-[takt](https://github.com/nrslib/takt) で issue → 計画 → テスト → 実装 → AIレビュー → 並列レビュー の開発ループを駆動する。
+[takt](https://github.com/nrslib/takt) で issue → 計画 → 計画レビュー → テスト設計 → 設計レビュー → テスト実装 → テスト実装レビュー → 実装 → AIレビュー → 並列レビュー の開発ループを駆動する。設計と実装に対して対称的にレビューサイクルを設けている。
 
 ## 主要コマンド
 
@@ -93,8 +93,10 @@ takt -i <issue 番号> --auto-pr --draft  # 完了後にドラフト PR を自�
 ## 構成
 
 - `.takt/config.yaml` — プロジェクト固有のオーバーライド（`draft_pr: true` のみ）
-- `.takt/workflows/default.yaml` — builtin の `default` を eject し、各 step に `specv-conventions` policy を追加した独自版
+- `.takt/workflows/default.yaml` — builtin の `default` を eject し、各 step に `specv-conventions` policy を追加 + レビューサイクル（plan ↔ plan_review ↔ plan_fix、test_design ↔ test_design_review ↔ test_design_fix、write_tests ↔ write_tests_review ↔ write_tests_fix）を組み込んだ独自版
 - `.takt/facets/policies/specv-conventions.md` — specv の行動規範（ni 経由実行 / TDD / vp check / パスエイリアス / 日本語 Conventional Commits）
+- `.takt/facets/instructions/test-design.md` — test_design / test_design_fix step が参照する設計指示（テストケース一覧 + Unit/E2E 責務マトリクスの出力を強制）
+- `.takt/facets/instructions/test-design-review.md` — test_design_review step が参照するレビュー観点（網羅性 / 責務妥当性 / 規約整合 / 不確定要素の 4 観点）
 - `.takt/.gitignore` — runtime artifacts (`runs/`, `tasks/`, `tasks.yaml` など) を allowlist 方式で除外。ルート `.gitignore` への追加は不要
 
 ## 前提（グローバル設定）
@@ -112,5 +114,5 @@ dotfiles 側のセットアップが終わっていない場合、builtin facet 
 
 - 実 issue での試運転は dotfiles のグローバル設定を反映してから行う
 - `--auto-pr` は必ず `--draft` 付きで実行する（`draft_pr: true` で既定はドラフト）
-- builtin の default workflow を upstream で更新する場合、`.takt/workflows/default.yaml` を再 eject → specv-conventions の追加注入を反映するメンテが必要
+- builtin の default workflow を upstream で更新する場合、`.takt/workflows/default.yaml` を再 eject → specv-conventions の追加注入 + レビューサイクル（plan_review/plan_fix/test_design/test_design_review/test_design_fix/write_tests_review/write_tests_fix の 7 step と loop_monitor 3 本）の再注入を反映するメンテが必要
 - pipeline 実行（CI / GitHub Actions 連携）は今回スコープ外、追って検討
