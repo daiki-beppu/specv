@@ -11,3 +11,7 @@ playwright-report/
 
 # Coverage
 coverage/
+
+# Nix / direnv
+.direnv/
+.envrc.local
