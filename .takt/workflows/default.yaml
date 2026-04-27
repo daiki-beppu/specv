@@ -220,6 +220,7 @@ steps:
         policy:
           - review
           - specv-conventions
+          - srp
         knowledge: architecture
         provider_options:
           claude:
