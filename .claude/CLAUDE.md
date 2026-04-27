@@ -76,3 +76,41 @@ Vite+ 内蔵の Oxlint + Oxfmt でコード品質を管理。設定は `vite.con
 
 - **Check**: `nr check` (= `vp check`)
 - **Auto-fix**: `nr fix` (= `vp check --fix`)
+
+# takt（AI 開発ループ）
+
+[takt](https://github.com/nrslib/takt) で issue → 計画 → テスト → 実装 → AIレビュー → 並列レビュー の開発ループを駆動する。
+
+## 主要コマンド
+
+```bash
+takt prompt default            # default workflow のプロンプトを目視確認
+takt workflow doctor default   # workflow 定義の静的検証
+takt -i <issue 番号>            # 対話モードで issue を実装
+takt -i <issue 番号> --auto-pr --draft  # 完了後にドラフト PR を自動作成
+```
+
+## 構成
+
+- `.takt/config.yaml` — プロジェクト固有のオーバーライド（`draft_pr: true` のみ）
+- `.takt/workflows/default.yaml` — builtin の `default` を eject し、各 step に `specv-conventions` policy を追加した独自版
+- `.takt/facets/policies/specv-conventions.md` — specv の行動規範（ni 経由実行 / TDD / vp check / パスエイリアス / 日本語 Conventional Commits）
+- `.takt/.gitignore` — runtime artifacts (`runs/`, `tasks/`, `tasks.yaml` など) を allowlist 方式で除外。ルート `.gitignore` への追加は不要
+
+## 前提（グローバル設定）
+
+`~/.takt/config.yaml` を dotfiles でシンボリックリンク管理する想定（`~/.claude/CLAUDE.md` と同パターン）。最低限以下が定義されている必要がある:
+
+```yaml
+provider: claude
+language: ja
+```
+
+dotfiles 側のセットアップが終わっていない場合、builtin facet が英語で展開される（specv-conventions は project 側にあるため言語に関係なく機能する）。
+
+## 運用ルール
+
+- 実 issue での試運転は dotfiles のグローバル設定を反映してから行う
+- `--auto-pr` は必ず `--draft` 付きで実行する（`draft_pr: true` で既定はドラフト）
+- builtin の default workflow を upstream で更新する場合、`.takt/workflows/default.yaml` を再 eject → specv-conventions の追加注入を反映するメンテが必要
+- pipeline 実行（CI / GitHub Actions 連携）は今回スコープ外、追って検討
