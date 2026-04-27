@@ -8,3 +8,7 @@ dist/
 # Playwright
 test-results/
 playwright-report/
+
+# Nix / direnv
+.direnv/
+.envrc.local

@@ -63,6 +63,21 @@ pnpm test
 pnpm build
 ```
 
+### Nix users
+
+If you have Nix (with flakes) and direnv set up, Node.js 24 / pnpm / lefthook
+will be provisioned automatically on `cd` into this repository:
+
+```bash
+direnv allow   # first time only
+```
+
+Without direnv:
+
+```bash
+nix develop
+```
+
 ## CI/CD
 
 Automated via GitHub Actions:
