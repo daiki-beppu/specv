@@ -9,6 +9,9 @@ dist/
 test-results/
 playwright-report/
 
+# Vitest coverage
+/coverage/
+
 # Nix / direnv
 .direnv/
 .envrc.local
