@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { createApiRouter } from "@server/api";
 
 import { createFile, withTmpDir } from "./test-utils";
@@ -32,6 +35,24 @@ describe("gET /api/files", () => {
 
       const json = await res.json();
       expect(json.files).toStrictEqual([]);
+    });
+  });
+
+  it("scanMarkdownFiles が throw したとき 500 + Failed to scan files を返す", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const subdir = path.join(tmpDir, "base");
+      fs.mkdirSync(subdir);
+      const app = createApiRouter(subdir, {
+        createWatcher: () => ({ close: vi.fn() }),
+      });
+      fs.rmSync(subdir, { force: true, recursive: true });
+
+      const res = await app.request("/api/files");
+
+      expect(res.status).toBe(500);
+      await expect(res.json()).resolves.toEqual({
+        error: "Failed to scan files",
+      });
     });
   });
 });
@@ -118,4 +139,50 @@ describe("gET /api/image", () => {
       expect(res.status).toBe(400);
     });
   });
+
+  it.each<{ contentType: string; filename: string; payload: Buffer | string }>([
+    {
+      contentType: "image/gif",
+      filename: "img.gif",
+      payload: Buffer.from([0]),
+    },
+    {
+      contentType: "image/jpeg",
+      filename: "img.jpeg",
+      payload: Buffer.from([0]),
+    },
+    {
+      contentType: "image/jpeg",
+      filename: "img.jpg",
+      payload: Buffer.from([0]),
+    },
+    {
+      contentType: "image/svg+xml",
+      filename: "img.svg",
+      payload: "<svg/>",
+    },
+    {
+      contentType: "image/webp",
+      filename: "img.webp",
+      payload: Buffer.from([0]),
+    },
+  ])(
+    "$filename を 200 + Content-Type: $contentType で返す",
+    async ({ contentType, filename, payload }) => {
+      await withTmpDir(async (tmpDir) => {
+        createFile(tmpDir, filename, payload);
+
+        const app = createApiRouter(tmpDir);
+        const res = await app.request(`/api/image?path=${filename}`);
+
+        expect(res.status).toBe(200);
+        expect(res.headers.get("Content-Type")).toBe(contentType);
+      });
+    }
+  );
+
+  // eslint-disable-next-line vitest/warn-todo -- order.md L18 / plan R12: 到達不能分岐を仕様の所在記録として `it.todo` で残す
+  it.todo(
+    "application/octet-stream フォールバックは validateImagePath のホワイトリストにより到達不能"
+  );
 });
