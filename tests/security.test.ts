@@ -1,6 +1,9 @@
+import fs from "node:fs";
 import path from "node:path";
 
 import { validateImagePath, validatePath } from "@server/security";
+
+import { createFile, withTmpDir } from "./test-utils";
 
 const baseDir = "/home/user/project";
 
@@ -46,6 +49,23 @@ describe("validatePath function", () => {
       path.join(baseDir, "CHANGELOG.md")
     );
   });
+
+  it("symlink が baseDir 外を指すとき path traversal で拒否する", async () => {
+    await withTmpDir((outsideDir) =>
+      withTmpDir((innerBaseDir) => {
+        createFile(outsideDir, "secret.md", "secret");
+        fs.symlinkSync(
+          path.join(outsideDir, "secret.md"),
+          path.join(innerBaseDir, "link.md")
+        );
+
+        expect(() => validatePath("link.md", innerBaseDir)).toThrow(
+          /Path traversal detected/
+        );
+        return Promise.resolve();
+      })
+    );
+  });
 });
 
 describe("validateImagePath function", () => {
@@ -86,6 +106,23 @@ describe("validateImagePath function", () => {
   it("ネストされたディレクトリの画像パスを許可する", () => {
     expect(validateImagePath("docs/images/photo.png", baseDir)).toBe(
       path.join(baseDir, "docs/images/photo.png")
+    );
+  });
+
+  it("symlink が baseDir 外を指すとき path traversal で拒否する", async () => {
+    await withTmpDir((outsideDir) =>
+      withTmpDir((innerBaseDir) => {
+        createFile(outsideDir, "secret.png", "secret");
+        fs.symlinkSync(
+          path.join(outsideDir, "secret.png"),
+          path.join(innerBaseDir, "link.png")
+        );
+
+        expect(() => validateImagePath("link.png", innerBaseDir)).toThrow(
+          /Path traversal detected/
+        );
+        return Promise.resolve();
+      })
     );
   });
 });
