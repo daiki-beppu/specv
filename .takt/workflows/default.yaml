@@ -208,6 +208,7 @@ steps:
     policy:
       - testing
       - specv-conventions
+      - specv-testing
     knowledge:
       - architecture
       - unit-testing
@@ -242,6 +243,7 @@ steps:
       - review
       - testing
       - specv-conventions
+      - specv-testing
     knowledge:
       - architecture
       - unit-testing
@@ -270,6 +272,7 @@ steps:
     policy:
       - testing
       - specv-conventions
+      - specv-testing
     knowledge:
       - architecture
       - unit-testing
@@ -300,6 +303,7 @@ steps:
       - coding
       - testing
       - specv-conventions
+      - specv-testing
     knowledge:
       - architecture
       - unit-testing
@@ -342,6 +346,7 @@ steps:
       - review
       - testing
       - specv-conventions
+      - specv-testing
     knowledge:
       - architecture
       - unit-testing
@@ -372,6 +377,7 @@ steps:
       - coding
       - testing
       - specv-conventions
+      - specv-testing
     knowledge:
       - architecture
       - unit-testing

@@ -176,4 +176,106 @@ describe("server: createWatcher", () => {
       }
     });
   });
+
+  it("同一パスで add を検知した直後に change へ遷移する", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const cb = vi.fn();
+      const { close } = createWatcher(tmpDir, cb);
+
+      try {
+        await delay(100);
+        createFile(tmpDir, "transition.md", "v1");
+        await vi.waitFor(
+          () =>
+            expect(cb).toHaveBeenCalledWith(
+              expect.objectContaining({ path: "transition.md", type: "add" })
+            ),
+          { timeout: 2000 }
+        );
+
+        fs.writeFileSync(path.join(tmpDir, "transition.md"), "v2");
+        await vi.waitFor(
+          () =>
+            expect(cb).toHaveBeenCalledWith(
+              expect.objectContaining({ path: "transition.md", type: "change" })
+            ),
+          { timeout: 2000 }
+        );
+      } finally {
+        close();
+      }
+    });
+  });
+});
+
+describe("server: createWatcher (mocked fs.watch)", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("filename が null のとき onEvent を呼ばない", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const watchSpy = vi.spyOn(fs, "watch");
+      const cb = vi.fn();
+      const { close } = createWatcher(tmpDir, cb);
+
+      try {
+        const captured = watchSpy.mock.calls[0]?.[2] as (
+          event: string,
+          filename: string | null
+        ) => void;
+        captured("change", null);
+
+        await delay(500);
+        expect(cb).not.toHaveBeenCalled();
+      } finally {
+        close();
+      }
+    });
+  });
+
+  it("baseDir 外を指すパス（..）のとき onEvent を呼ばない", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const watchSpy = vi.spyOn(fs, "watch");
+      const cb = vi.fn();
+      const { close } = createWatcher(tmpDir, cb);
+
+      try {
+        const captured = watchSpy.mock.calls[0]?.[2] as (
+          event: string,
+          filename: string | null
+        ) => void;
+        captured("change", "../external.md");
+
+        await delay(500);
+        expect(cb).not.toHaveBeenCalled();
+      } finally {
+        close();
+      }
+    });
+  });
+});
+
+describe("server: createWatcher (mocked readdirSync)", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("scanExisting で readdirSync が throw しても createWatcher が例外を伝播しない", async () => {
+    await withTmpDir(async (tmpDir) => {
+      vi.spyOn(fs, "readdirSync").mockImplementationOnce(() => {
+        throw new Error("EACCES: permission denied");
+      });
+      const cb = vi.fn();
+
+      let watcher: { close: () => void } | undefined;
+      expect(() => {
+        watcher = createWatcher(tmpDir, cb);
+      }).not.toThrow();
+
+      await delay(100);
+      expect(cb).not.toHaveBeenCalled();
+      watcher?.close();
+    });
+  });
 });

@@ -96,6 +96,17 @@ export default defineConfig({
     },
   },
   test: {
+    coverage: {
+      // Vitest uses picomatch `ignore` semantics for `exclude` (no eslint-style
+      // negation). extglob `!(tree)` keeps tree.tsx in coverage while still
+      // excluding the rest of shadcn-generated ui/*.tsx — mirrors lint's
+      // `["src/client/components/ui/**", "!src/client/components/ui/tree.tsx"]`.
+      exclude: ["src/client/components/ui/!(tree).tsx", "src/client/main.tsx"],
+      include: ["src/**"],
+      provider: "v8",
+      reporter: ["text", "html", "json", "json-summary"],
+      reportsDirectory: "coverage",
+    },
     environment: "node",
     exclude: ["e2e/**", "node_modules/**", ".worktrees/**"],
     globals: true,

@@ -22,9 +22,12 @@
 
 ### 3. specv 規約整合
 
+`specv-testing` policy（Unit/E2E 判定基準・Happy/Edge/Error 区分・AAA・test-utils ヘルパー活用ガイド）に整合しているか。具体的には:
+
 - `tests/test-utils.ts` の既存ヘルパーで書ける前提が明示されているか
-- 命名 (日本語 describe / it, ファイル名 `*.test.ts(x)`) が specv 流に揃うか
-- specv-conventions の TDD サイクル (Red→Green→Refactor) を Red 段階で書ける粒度か
+- 命名（日本語 describe / it, ファイル名 `*.test.ts(x)`）が `specv-testing` policy の規定に揃うか
+- AAA 構造で書ける粒度に分解されているか（GWT 混在は不可）
+- `specv-conventions` の TDD サイクル (Red→Green→Refactor) を Red 段階で書ける粒度か
 
 ### 4. 不確定要素の取り扱い
 

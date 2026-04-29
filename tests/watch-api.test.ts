@@ -128,4 +128,48 @@ describe("gET /api/watch", () => {
       );
     });
   });
+
+  it("300ms 内に add を 2 回受信したとき tree-changed が 1 回のみ送出される（debounce）", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const { app, watchers } = setupWatchApp(tmpDir);
+      const body = await requestWatch(app);
+      const reader = body.getReader();
+      const decoder = new TextDecoder();
+      const events: string[] = [];
+
+      try {
+        await delay(50);
+        watchers[0].emit({ path: "a.md", type: "add" });
+        watchers[0].emit({ path: "b.md", type: "add" });
+
+        await readChunks(reader, decoder, events, 1);
+        const secondReadPromise = reader.read();
+        const result = await Promise.race([
+          secondReadPromise.then(() => "got-second-read" as const),
+          delay(200).then(() => "timeout" as const),
+        ]);
+
+        expect(result).toBe("timeout");
+        expect(events.length).toBe(1);
+        expect(events[0]).toContain("event: tree-changed");
+      } finally {
+        await reader.cancel();
+      }
+    });
+  });
+
+  it("listener cancel 後の emit が throw しない（sseListeners.delete 経路）", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const { app, watchers } = setupWatchApp(tmpDir);
+      const body = await requestWatch(app);
+      const reader = body.getReader();
+
+      await delay(50);
+      await reader.cancel();
+
+      expect(() =>
+        watchers[0].emit({ path: "test.md", type: "change" })
+      ).not.toThrow();
+    });
+  });
 });

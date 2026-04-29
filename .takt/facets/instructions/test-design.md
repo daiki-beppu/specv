@@ -4,13 +4,16 @@
 直前のセッションが test_design_fix の場合は、{report:test-design-review.md} のレビュー指摘も読み、
 指摘箇所を test-design.md に反映してください。
 
+specv のテスト規約（Unit/E2E 判定基準・Happy/Edge/Error 区分・AAA・test-utils ヘルパー）は
+`specv-testing` policy で注入されます。本ファイルは出力構造の指示のみを定義します。
+
 ## アウトプット要件 (test-design.md)
 
 以下 2 セクションを必ず埋めてください。情報不足で埋められない場合は ABORT 条件を選んでください。
 
 ### 1. テストケース一覧
 
-Happy / Edge / Error の 3 区分で表にしてください。describe / it レベルで日本語タイトルを記述します。
+Happy / Edge / Error の 3 区分で表にしてください。describe / it レベルでタイトルを記述します。
 
 | 区分  | describe (対象) | it (期待振る舞い)            | 想定入力 / 前提 | 期待結果 |
 | ----- | --------------- | ---------------------------- | --------------- | -------- |
@@ -18,10 +21,9 @@ Happy / Edge / Error の 3 区分で表にしてください。describe / it レ
 | Edge  | XxxService      | 境界値・極小・極大・空・並行 | ...             | ...      |
 | Error | XxxService      | 不正入力・例外パス           | ...             | ...      |
 
-- specv の命名規約に従い describe / it は **日本語**。
-- AAA (Arrange/Act/Assert) で書ける粒度に分解する。
+- describe / it タイトル・命名規約・ヘルパーの活用方針は `specv-testing` policy に従う。
 - 1 行 1 ケース。複合ケースは分ける。
-- 既存ヘルパー (`tests/test-utils.ts` の `withTmpDir` 等) で記述できる前提なら、想定入力欄に明記。
+- 既存ヘルパー (`tests/test-utils.ts`) で記述できる前提なら、想定入力欄に明記。
 
 ### 2. 責務分担マトリクス (Unit vs E2E)
 
@@ -30,21 +32,12 @@ Happy / Edge / Error の 3 区分で表にしてください。describe / it レ
 | 1                      | Unit (Vitest)    | 純粋関数のため I/O モック不要             |
 | 2                      | E2E (Playwright) | DOM レンダリング + ユーザー操作の結合確認 |
 
-判定基準:
-
-| 基準              | Unit (Vitest)                   | E2E (Playwright)                     |
-| ----------------- | ------------------------------- | ------------------------------------ |
-| 主目的            | 単一関数 / モジュールの振る舞い | ユーザー導線・統合                   |
-| DOM / Browser     | 不要、または jsdom で完結       | 実ブラウザでの描画・操作・スクロール |
-| ファイル監視・SSE | モックで代替可能                | サーバー稼働下での実通信             |
-| 配置              | `tests/**.test.ts`              | `e2e/**.test.ts`                     |
-
-両方で検証する場合は両方の行を立て、根拠欄に「Unit でロジック、E2E で結合」のように明示する。
+判定基準は `specv-testing` policy の「Unit / E2E 判定基準」表に従う。両方で検証する場合は両方の行を立て、根拠欄に「Unit でロジック、E2E で結合」のように明示する。
 
 ## 進行ルール
 
 - 既存テスト (`tests/`, `e2e/`) を Read / Grep して類似ケースを参照すること。
-- specv のテスト命名 (日本語 describe / it)・AAA・`tests/test-utils.ts` のヘルパー有無を確認してから設計する。
+- `specv-testing` policy の規約（命名・AAA・ヘルパー）を確認してから設計する。
 - 不確定要素 (例: 仕様の境界値が plan で定義されていない) は表に記載せず、末尾の「### 要ユーザー確認」セクションに列挙する。
 - I/O 契約・カバレッジ目標値は本 step では扱わない（スコープ外）。
 
