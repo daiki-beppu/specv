@@ -23,15 +23,27 @@ const selectShowcase = async (page: import("@playwright/test").Page) => {
 
 test.describe("rendering", () => {
   test.describe("KaTeX", () => {
-    test("rendering-showcase.md 選択で inline+block 数式が .katex 要素として 2 個以上 visible になる", async ({
+    test("rendering-showcase.md の inline 数式が .katex inline 要素として描画される", async ({
       page,
     }) => {
       await selectShowcase(page);
 
-      const katex = page.locator(".katex");
+      // KaTeX は block を <span class="katex-display"><span class="katex">…</span></span>
+      // の入れ子で描画する。inline span と block 内側 span の双方が .katex にマッチして
+      // strict mode 違反になるため、`.first()` で先頭 (inline) のみに固定する。
+      const inlineKatex = page.locator(".katex:not(.katex-display)").first();
 
-      await expect(katex.first()).toBeVisible({ timeout: 5000 });
-      expect(await katex.count()).toBeGreaterThanOrEqual(2);
+      await expect(inlineKatex).toBeVisible({ timeout: 5000 });
+    });
+
+    test("rendering-showcase.md の block 数式が .katex display 要素として描画される", async ({
+      page,
+    }) => {
+      await selectShowcase(page);
+
+      const blockKatex = page.locator(".katex-display");
+
+      await expect(blockKatex).toBeVisible({ timeout: 5000 });
     });
   });
 
