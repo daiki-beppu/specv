@@ -58,13 +58,24 @@ test.describe("quick-open", () => {
     ).toBeVisible();
   });
 
-  test("起動直後の空クエリで fixture 全 6 件が候補に並ぶ", async ({ page }) => {
+  test("起動直後の空クエリで fixture 全 7 件が候補に並ぶ", async ({ page }) => {
     await waitForAppReady(page);
 
     await page.keyboard.press(`${modKey}+KeyP`);
 
     await expect(page.getByPlaceholder("Go to File")).toBeVisible();
-    await expect(page.locator('[data-slot="command-item"]')).toHaveCount(6);
+    // hot-reload-clipboard.test.ts が並列ワーカーで走ると副 fixture
+    // (hot-reload-new-file.md / hot-reload-delete-target.md) が transient に出現する。
+    // 永続 fixture (hot-reload-target.md) は 7 件にカウントイン、副 fixture は除外する。
+    // SearchResultItem は name span と dir span を別要素でレンダリングするため
+    // CommandItem の textContent は "hot-reload-new-file.mddocs" のように連結される。
+    // 末尾を anchor すると filter が機能しないため、prefix 一致のみで判定する。
+    // 永続 fixture "hot-reload-target.md" は prefix が異なるため除外されない。
+    await expect(
+      page
+        .locator('[data-slot="command-item"]')
+        .filter({ hasNotText: /^hot-reload-(new-file|delete-target)\.md/ })
+    ).toHaveCount(7);
   });
 
   test("該当しないクエリで No matching files が表示される", async ({
