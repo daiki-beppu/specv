@@ -61,7 +61,7 @@ describe("quick-open", () => {
     expect(screen.queryByPlaceholderText("Go to File")).toBeNull();
   });
 
-  it("テキスト入力でファイルリストがフィルタされる", () => {
+  it("テキスト入力でマッチしたファイルが候補に表示される", () => {
     render(
       <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
     );
@@ -74,11 +74,23 @@ describe("quick-open", () => {
     const hasIndex = [...items].some((el) =>
       el.textContent?.includes("index.ts")
     );
+
+    expect(hasIndex).toBeTruthy();
+  });
+
+  it("テキスト入力でマッチしないファイルは候補に表示されない", () => {
+    render(
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
+    );
+
+    const input = screen.getByPlaceholderText("Go to File");
+    fireEvent.change(input, { target: { value: "index" } });
+
+    const items = document.querySelectorAll("[cmdk-item]");
     const hasReadme = [...items].some((el) =>
       el.textContent?.includes("README.md")
     );
 
-    expect(hasIndex).toBeTruthy();
     expect(hasReadme).toBeFalsy();
   });
 

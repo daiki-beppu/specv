@@ -30,20 +30,24 @@ describe("file-tree", () => {
     expect(screen.getByText("README.md")).toBeDefined();
   });
 
-  it("ディレクトリをクリックすると展開/折畳みが切り替わる", () => {
+  it("ディレクトリをクリックすると折畳まれる", () => {
     render(
       <FileTree files={sampleFiles} selectedPath={null} onSelect={noop} />
     );
 
-    // Docs は computeAutoExpandPaths によりデフォルト展開される
-    expect(screen.getByText("guide.md")).toBeDefined();
-
-    // Docs をクリックして折畳む
     fireEvent.click(screen.getByText("docs"));
+
     expect(screen.queryByText("guide.md")).toBeNull();
+  });
 
-    // 再度クリックして展開
+  it("折畳まれたディレクトリをクリックすると展開する", () => {
+    render(
+      <FileTree files={sampleFiles} selectedPath={null} onSelect={noop} />
+    );
     fireEvent.click(screen.getByText("docs"));
+
+    fireEvent.click(screen.getByText("docs"));
+
     expect(screen.getByText("guide.md")).toBeDefined();
   });
 
@@ -72,7 +76,7 @@ describe("file-tree", () => {
     expect(selected?.textContent).toContain("README.md");
   });
 
-  it("検索欄にテキストを入力するとツリーがフィルタされる", () => {
+  it("検索クエリにマッチしたファイルが表示される", () => {
     render(
       <FileTree files={sampleFiles} selectedPath={null} onSelect={noop} />
     );
@@ -81,6 +85,16 @@ describe("file-tree", () => {
     fireEvent.change(searchInput, { target: { value: "guide" } });
 
     expect(screen.getByText("guide.md")).toBeDefined();
+  });
+
+  it("検索クエリにマッチしないファイルは非表示になる", () => {
+    render(
+      <FileTree files={sampleFiles} selectedPath={null} onSelect={noop} />
+    );
+
+    const searchInput = screen.getByPlaceholderText("Search files...");
+    fireEvent.change(searchInput, { target: { value: "guide" } });
+
     expect(screen.queryByText("README.md")).toBeNull();
   });
 
