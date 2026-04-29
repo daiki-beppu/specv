@@ -63,8 +63,7 @@ test("リサイズハンドルをダブルクリックでデフォルト幅に�
   const handleBox = await getBox(handle);
   await dragHandle(page, handle, handleBox.x + 100);
 
-  // ダブルクリックでリセット（トランジション完了を待つ）
+  // ダブルクリックでリセット
   await handle.dblclick();
-  await page.waitForTimeout(300);
-  expect(await getSidebarWidth(page)).toBe(256);
+  await expect.poll(() => getSidebarWidth(page), { timeout: 5000 }).toBe(256);
 });
