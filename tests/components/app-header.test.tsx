@@ -51,17 +51,20 @@ describe("app ヘッダー", () => {
     cleanup();
   });
 
-  it("サイドバー開閉ボタンをクリックするとサイドバーが切り替わる", () => {
+  it("初期表示でサイドバー開閉ボタンが表示される", () => {
     render(<App />);
 
-    // サイドバーが初期表示されている
     const toggleButton = screen.getByTitle(/sidebar/i);
-    expect(toggleButton).toBeDefined();
 
-    // ⌘B で表示されるサイドバーを隠す
+    expect(toggleButton).toBeDefined();
+  });
+
+  it("サイドバー開閉ボタンをクリックすると Show sidebar 状態に切り替わる", () => {
+    render(<App />);
+    const toggleButton = screen.getByTitle(/sidebar/i);
+
     fireEvent.click(toggleButton);
 
-    // タイトルが "Show sidebar" に変わる
     expect(screen.getByTitle(/Show sidebar/i)).toBeDefined();
   });
 

@@ -64,7 +64,7 @@ describe("tree", () => {
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
-  it("展開中のディレクトリは aria-expanded='true' で子要素が表示される", () => {
+  it("展開中のディレクトリは aria-expanded='true' を持つ", () => {
     render(
       <Tree>
         <TreeItem expanded name="docs" onToggle={noop}>
@@ -74,11 +74,23 @@ describe("tree", () => {
     );
 
     const dir = screen.getByRole("treeitem", { expanded: true });
+
     expect(dir).toBeDefined();
+  });
+
+  it("展開中のディレクトリは子要素を表示する", () => {
+    render(
+      <Tree>
+        <TreeItem expanded name="docs" onToggle={noop}>
+          <TreeLeaf name="guide.md" selected={false} onSelect={noop} />
+        </TreeItem>
+      </Tree>
+    );
+
     expect(screen.getByText("guide.md")).toBeDefined();
   });
 
-  it("折畳み中のディレクトリは aria-expanded='false' で子要素が非表示", () => {
+  it("折畳み中のディレクトリは aria-expanded='false' を持つ", () => {
     render(
       <Tree>
         <TreeItem expanded={false} name="docs" onToggle={noop}>
@@ -88,11 +100,23 @@ describe("tree", () => {
     );
 
     const dir = screen.getByRole("treeitem", { expanded: false });
+
     expect(dir).toBeDefined();
+  });
+
+  it("折畳み中のディレクトリは子要素を表示しない", () => {
+    render(
+      <Tree>
+        <TreeItem expanded={false} name="docs" onToggle={noop}>
+          <TreeLeaf name="guide.md" selected={false} onSelect={noop} />
+        </TreeItem>
+      </Tree>
+    );
+
     expect(screen.queryByText("guide.md")).toBeNull();
   });
 
-  it("選択中のファイルは aria-selected='true' で区別できる", () => {
+  it("選択中のファイルは aria-selected='true' を持つ", () => {
     render(
       <Tree>
         <TreeLeaf name="README.md" selected onSelect={noop} />
@@ -104,11 +128,23 @@ describe("tree", () => {
     const selected = items.find(
       (item) => item.getAttribute("aria-selected") === "true"
     );
+
+    expect(selected).toBeDefined();
+  });
+
+  it("未選択のファイルは aria-selected='false' を持つ", () => {
+    render(
+      <Tree>
+        <TreeLeaf name="README.md" selected onSelect={noop} />
+        <TreeLeaf name="other.md" selected={false} onSelect={noop} />
+      </Tree>
+    );
+
+    const items = screen.getAllByRole("treeitem");
     const unselected = items.find(
       (item) => item.getAttribute("aria-selected") === "false"
     );
 
-    expect(selected).toBeDefined();
     expect(unselected).toBeDefined();
   });
 
