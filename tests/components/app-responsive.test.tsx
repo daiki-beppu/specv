@@ -62,7 +62,8 @@ function setViewport(mobile: boolean) {
   });
 }
 
-describe("app レスポンシブ", () => {
+// eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference
+describe(App, () => {
   // eslint-disable-next-line jest/no-hooks -- jsdom cleanup required
   afterEach(() => {
     cleanup();
@@ -94,21 +95,24 @@ describe("app レスポンシブ", () => {
     });
 
     it("ファイル選択でサイドバーが閉じる", async () => {
+      // Arrange: ファイルツリーがロードされるまで待つ
       render(<App />);
-      // ファイルツリーのロードを待つ
       await waitFor(() => {
         expect(screen.getByText("test.md")).toBeDefined();
       });
-      // サイドバーを開く
+
+      // Act: サイドバーを開く
       fireEvent.click(screen.getByTitle(/Show sidebar/i));
+
+      // Assert: モバイル Sheet が開いている
       const sidebar = document.querySelector("[data-mobile='true']");
       expect(sidebar).not.toBeNull();
 
-      // ファイルを選択
+      // Act: ファイルを選択する
       const fileItem = screen.getByText("other.md");
       fireEvent.click(fileItem);
 
-      // サイドバーが閉じる
+      // Assert: サイドバーが閉じる
       await waitFor(() => {
         expect(document.querySelector("[data-mobile='true']")).toBeNull();
       });

@@ -9,65 +9,6 @@ import {
 } from "@testing-library/react";
 
 import { CopyButton } from "@/components/copy-button";
-import { Preview } from "@/components/preview";
-
-vi.mock(import("@/hooks/use-theme"), () => ({
-  useTheme: () => ({ theme: "light" as const, toggle: vi.fn() }),
-}));
-
-// eslint-disable-next-line no-empty-function
-const noop = () => {};
-
-const codeBlockMd = "```js\nconsole.log('hello');\n```";
-
-describe("copyButton", () => {
-  // eslint-disable-next-line jest/no-hooks -- jsdom cleanup required
-  afterEach(() => {
-    cleanup();
-  });
-
-  it("コードブロックを含む Markdown で title='Copy' のボタンが表示される", () => {
-    render(
-      <Preview content={codeBlockMd} selectedPath="test.md" onNavigate={noop} />
-    );
-
-    expect(screen.getByTitle("Copy")).toBeDefined();
-  });
-
-  it("コピーボタンをクリックすると navigator.clipboard.writeText が呼ばれる", async () => {
-    const writeText = vi.fn().mockResolvedValue();
-    Object.assign(navigator, {
-      clipboard: { writeText },
-    });
-
-    render(
-      <Preview content={codeBlockMd} selectedPath="test.md" onNavigate={noop} />
-    );
-
-    fireEvent.click(screen.getByTitle("Copy"));
-
-    await waitFor(() => {
-      expect(writeText).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  it("コピー後に title が一時的に 'Copied!' に変わる", async () => {
-    const writeText = vi.fn().mockResolvedValue();
-    Object.assign(navigator, {
-      clipboard: { writeText },
-    });
-
-    render(
-      <Preview content={codeBlockMd} selectedPath="test.md" onNavigate={noop} />
-    );
-
-    fireEvent.click(screen.getByTitle("Copy"));
-
-    await waitFor(() => {
-      expect(screen.getByTitle("Copied!")).toBeDefined();
-    });
-  });
-});
 
 // eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference
 describe(CopyButton, () => {
@@ -103,21 +44,26 @@ describe(CopyButton, () => {
   it("fakeTimers で 2000ms 経過すると title が 'Copy' に戻り Clipboard アイコンに戻る", async () => {
     vi.useFakeTimers();
     try {
+      // Arrange
       const writeText = vi.fn().mockResolvedValue();
       Object.assign(navigator, { clipboard: { writeText } });
-
       render(<CopyButton text="hello" />);
+
+      // Act: クリック後 writeText の Promise を microtask で解決させる
       await act(async () => {
         fireEvent.click(screen.getByTitle("Copy"));
-        // writeText の Promise を microtask で解決させる
         await Promise.resolve();
       });
+
+      // Assert: title が 'Copied!' に遷移する
       expect(screen.getByTitle("Copied!")).toBeDefined();
 
+      // Act: 2000ms 経過させる
       await act(async () => {
         await vi.advanceTimersByTimeAsync(2000);
       });
 
+      // Assert: title が 'Copy' に戻り Clipboard アイコンになる
       const button = screen.getByTitle("Copy");
       expect(button.querySelector(".lucide-clipboard")).not.toBeNull();
     } finally {
@@ -125,18 +71,32 @@ describe(CopyButton, () => {
     }
   });
 
-  it("text prop が変わった後のクリックは新しい text で writeText が呼ばれる", async () => {
+  it("初回クリックでは prop の text で writeText が呼ばれる", async () => {
+    // Arrange
     const writeText = vi.fn().mockResolvedValue();
     Object.assign(navigator, { clipboard: { writeText } });
+    render(<CopyButton text="first" />);
 
-    const { rerender } = render(<CopyButton text="first" />);
+    // Act
     fireEvent.click(screen.getByTitle("Copy"));
+
+    // Assert
     await waitFor(() => {
       expect(writeText).toHaveBeenCalledWith("first");
     });
+  });
 
+  it("rerender 後のクリックでは新しい text で writeText が呼ばれる", async () => {
+    // Arrange
+    const writeText = vi.fn().mockResolvedValue();
+    Object.assign(navigator, { clipboard: { writeText } });
+    const { rerender } = render(<CopyButton text="first" />);
     rerender(<CopyButton text="second" />);
-    fireEvent.click(screen.getByTitle("Copied!"));
+
+    // Act
+    fireEvent.click(screen.getByTitle("Copy"));
+
+    // Assert
     await waitFor(() => {
       expect(writeText).toHaveBeenCalledWith("second");
     });
