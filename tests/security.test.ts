@@ -69,21 +69,27 @@ describe("validatePath function", () => {
 });
 
 describe("validateImagePath function", () => {
-  it("正常な画像パスを許可する (.png, .jpg, .jpeg, .gif, .svg, .webp)", () => {
-    for (const ext of [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"]) {
-      expect(validateImagePath(`image${ext}`, baseDir)).toBe(
-        path.join(baseDir, `image${ext}`)
-      );
-    }
+  it.each([
+    { ext: ".png" },
+    { ext: ".jpg" },
+    { ext: ".jpeg" },
+    { ext: ".gif" },
+    { ext: ".svg" },
+    { ext: ".webp" },
+  ])("$ext 拡張子の画像パスを許可する", ({ ext }) => {
+    expect(validateImagePath(`image${ext}`, baseDir)).toBe(
+      path.join(baseDir, `image${ext}`)
+    );
   });
 
-  it("非対応拡張子を拒否する", () => {
-    for (const ext of [".exe", ".sh", ".md"]) {
+  it.each([{ ext: ".exe" }, { ext: ".sh" }, { ext: ".md" }])(
+    "$ext を拒否する",
+    ({ ext }) => {
       expect(() => validateImagePath(`file${ext}`, baseDir)).toThrow(
         /Unsupported image format/
       );
     }
-  });
+  );
 
   it("../を含むパストラバーサルを拒否する", () => {
     expect(() => validateImagePath("../etc/image.png", baseDir)).toThrow(

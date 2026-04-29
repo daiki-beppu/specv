@@ -11,7 +11,8 @@ const TINY_PNG = Buffer.from(
   "base64"
 );
 
-describe("gET /api/files", () => {
+// eslint-disable-next-line vitest/prefer-lowercase-title -- HTTP method
+describe("GET /api/files", () => {
   it("markdown ファイル一覧を JSON で返す", async () => {
     await withTmpDir(async (tmpDir) => {
       createFile(tmpDir, "README.md", "# Hello");
@@ -57,7 +58,8 @@ describe("gET /api/files", () => {
   });
 });
 
-describe("gET /api/file", () => {
+// eslint-disable-next-line vitest/prefer-lowercase-title -- HTTP method
+describe("GET /api/file", () => {
   it("path パラメータなしで 400 を返す", async () => {
     await withTmpDir(async (tmpDir) => {
       const app = createApiRouter(tmpDir);
@@ -94,7 +96,8 @@ describe("gET /api/file", () => {
   });
 });
 
-describe("gET /api/image", () => {
+// eslint-disable-next-line vitest/prefer-lowercase-title -- HTTP method
+describe("GET /api/image", () => {
   it("path パラメータなしで 400 を返す", async () => {
     await withTmpDir(async (tmpDir) => {
       const app = createApiRouter(tmpDir);
