@@ -30,6 +30,15 @@ export const MdLink = ({
       </a>
     );
   }
+  // hash-only anchor (rehypeAutolinkHeadings が prepend する見出し anchor を含む) は
+  // 同一タブで URL hash を更新したいので target="_blank" を付与しない。
+  if (href?.startsWith("#")) {
+    return (
+      <a {...props} href={href}>
+        {children}
+      </a>
+    );
+  }
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
       {children}
