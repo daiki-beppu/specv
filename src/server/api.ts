@@ -78,7 +78,7 @@ const setupWatcher = (
         event: "file-changed",
       });
     } else {
-      if (treeDebounceTimer) {
+      if (treeDebounceTimer !== null) {
         clearTimeout(treeDebounceTimer);
       }
       treeDebounceTimer = setTimeout(async () => {
@@ -127,7 +127,7 @@ export const createApiRouter = (
 
   api.get("/api/file", async (c) => {
     const filePath = c.req.query("path");
-    if (!filePath) {
+    if (filePath === undefined || filePath === "") {
       return c.json<ApiErrorResponse>(
         { error: "path query parameter is required" },
         400
@@ -147,7 +147,7 @@ export const createApiRouter = (
 
   api.get("/api/image", async (c) => {
     const filePath = c.req.query("path");
-    if (!filePath) {
+    if (filePath === undefined || filePath === "") {
       return c.json<ApiErrorResponse>(
         { error: "path query parameter is required" },
         400
@@ -170,7 +170,7 @@ export const createApiRouter = (
 
     const stream = new ReadableStream({
       cancel() {
-        if (listener) {
+        if (listener !== null) {
           sseListeners.delete(listener);
         }
       },

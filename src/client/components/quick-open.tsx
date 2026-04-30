@@ -30,15 +30,15 @@ interface QuickOpenProps {
 const flattenFiles = (nodes: FileNode[]): FlatFile[] => {
   const result: FlatFile[] = [];
   for (const node of nodes) {
-    if (node.children) {
-      result.push(...flattenFiles(node.children));
-    } else {
+    if (node.children === undefined) {
       const lastSlash = node.path.lastIndexOf("/");
       result.push({
         dir: lastSlash > 0 ? node.path.slice(0, lastSlash) : "",
         name: node.name,
         path: node.path,
       });
+    } else {
+      result.push(...flattenFiles(node.children));
     }
   }
   return result;
@@ -53,7 +53,7 @@ const useQuickOpenSearch = (files: FileNode[], query: string) => {
   );
 
   return useMemo(() => {
-    if (!query) {
+    if (query === "") {
       return allFiles
         .slice(0, 30)
         .map((f) => ({ item: f, positions: new Set<number>() }));

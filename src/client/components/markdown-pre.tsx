@@ -10,20 +10,22 @@ export const MarkdownPre = ({
 }: ComponentPropsWithoutRef<"pre">) => {
   const codeEl = Array.isArray(children) ? children[0] : children;
 
-  const isMermaid =
-    codeEl &&
+  const isCodeElement =
+    codeEl !== null &&
+    codeEl !== undefined &&
     typeof codeEl === "object" &&
-    "props" in codeEl &&
-    MERMAID_CLASS_RE.test(codeEl.props.className || "");
+    "props" in codeEl;
+
+  const isMermaid =
+    isCodeElement && MERMAID_CLASS_RE.test(codeEl.props.className ?? "");
 
   if (isMermaid) {
     return children;
   }
 
-  const code =
-    codeEl && typeof codeEl === "object" && "props" in codeEl
-      ? String(codeEl.props.children).replace(/\n$/, "")
-      : "";
+  const code = isCodeElement
+    ? String(codeEl.props.children).replace(/\n$/, "")
+    : "";
 
   return (
     <div className="not-prose group rounded-md border border-border bg-code-bg">

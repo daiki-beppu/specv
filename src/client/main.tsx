@@ -8,7 +8,7 @@ import { App } from "./app";
 import "./index.css";
 
 const root = document.querySelector("#root");
-if (root) {
+if (root !== null) {
   createRoot(root).render(
     <StrictMode>
       <ThemeProvider>

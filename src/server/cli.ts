@@ -31,7 +31,7 @@ const registerLifecycle = (app: Hono, onDisconnect: () => void) => {
 
   app.get("/api/lifecycle", (_c) => {
     connections += 1;
-    if (graceTimer) {
+    if (graceTimer !== null) {
       clearTimeout(graceTimer);
       graceTimer = null;
     }
@@ -78,7 +78,7 @@ const createApp = (
 ) => {
   const app = new Hono();
 
-  if (onDisconnect) {
+  if (onDisconnect !== undefined) {
     registerLifecycle(app, onDisconnect);
   }
   app.route("/", createApiRouter(baseDir));
@@ -126,9 +126,9 @@ program
           console.log(`  ➜  Local:   ${localUrl}`);
 
           const ip = networkConfig.enableNetwork ? getLocalIpAddress() : null;
-          const networkUrl = ip ? `http://${ip}:${info.port}` : null;
+          const networkUrl = ip === null ? null : `http://${ip}:${info.port}`;
 
-          if (networkUrl) {
+          if (networkUrl !== null) {
             console.log(`  ➜  Network: ${networkUrl}`);
           } else if (!networkConfig.enableNetwork) {
             console.log("  ➜  Network: use --host to expose to local network");
@@ -137,8 +137,13 @@ program
           console.log("");
           console.log(`  Serving: ${baseDir}`);
 
-          // Dev:host 時は Vite プラグイン側で QR を表示するためスキップ
-          if (networkUrl && !process.env.SPECV_HOST) {
+          // Dev:host 時は Vite プラグイン側で QR を表示するためスキップ。
+          // SPECV_HOST="" は未設定と同義として扱う（`vite.config.ts:93` の Boolean(process.env.SPECV_HOST) と整合）
+          if (
+            networkUrl !== null &&
+            (process.env.SPECV_HOST === undefined ||
+              process.env.SPECV_HOST === "")
+          ) {
             console.log("");
             displayQrCode(networkUrl);
           }

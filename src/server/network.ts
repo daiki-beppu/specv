@@ -3,7 +3,7 @@ import os from "node:os";
 export const getLocalIpAddress = (): string | null => {
   const interfaces = os.networkInterfaces();
   for (const addrs of Object.values(interfaces)) {
-    if (!addrs) {
+    if (addrs === undefined) {
       continue;
     }
     for (const addr of addrs) {

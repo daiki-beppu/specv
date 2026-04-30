@@ -28,7 +28,7 @@ const filterTree = (nodes: FileNode[], query: string): FileNode[] => {
   const lower = query.toLowerCase();
   const result: FileNode[] = [];
   for (const node of nodes) {
-    if (node.children) {
+    if (node.children !== undefined) {
       const filtered = filterTree(node.children, query);
       if (filtered.length > 0) {
         result.push({ ...node, children: filtered });
@@ -60,7 +60,7 @@ const FileTreeNode = ({
   onExpand: (dirPath: string) => void;
   onCollapse: (dirPath: string) => void;
 }) => {
-  const isDir = Boolean(node.children);
+  const isDir = node.children !== undefined;
   const isOpen = forceExpand || expandedPaths.has(node.path);
 
   const handleToggleExpand = useCallback(() => {
@@ -158,9 +158,10 @@ export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
   const onExpand = useCallback(
     (dirPath: string) => {
       const node = findNode(files, dirPath);
-      const subPaths = node?.children
-        ? computeAutoExpandPaths(node.children)
-        : new Set<string>();
+      const subPaths =
+        node?.children === undefined
+          ? new Set<string>()
+          : computeAutoExpandPaths(node.children);
 
       setExpandedPaths((prev) => {
         if (prev.has(dirPath)) {

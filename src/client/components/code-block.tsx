@@ -12,7 +12,7 @@ export const CodeBlock = ({
   ...props
 }: ComponentPropsWithoutRef<"code">) => {
   const prismTheme = usePrismTheme();
-  const match = /language-(\w+)/.exec(className || "");
+  const match = /language-(\w+)/.exec(className ?? "");
   const code = String(children).replace(/\n$/, "");
 
   if (!match) {
