@@ -5,7 +5,7 @@ vi.mock(import("mermaid"));
 vi.mock(import("@/hooks/use-theme.js"));
 
 describe("MermaidBlock", () => {
-  let mockTheme: string;
+  let mockTheme: "light" | "dark";
 
   // eslint-disable-next-line jest/no-hooks -- mock setup, module reset, and jsdom cleanup required
   beforeEach(async () => {
@@ -16,12 +16,13 @@ describe("MermaidBlock", () => {
     vi.mocked(mermaid.default.initialize).mockReturnValue();
     vi.mocked(mermaid.default.render).mockResolvedValue({
       bindFunctions: vi.fn(),
+      diagramType: "flowchart",
       svg: '<svg data-testid="mermaid-svg">mock diagram</svg>',
     });
 
     const themeModule = await import("@/hooks/use-theme.js");
     vi.mocked(themeModule.useTheme).mockImplementation(() => ({
-      theme: mockTheme as "light" | "dark",
+      theme: mockTheme,
       toggle: vi.fn(),
     }));
   });

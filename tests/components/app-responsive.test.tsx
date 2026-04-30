@@ -9,6 +9,8 @@ import {
 
 import { App } from "@/app";
 
+import { installEventSourceMock } from "../test-utils";
+
 // API モック
 vi.mock(import("@/api"), () => ({
   fetchFile: vi.fn().mockResolvedValue("# Test"),
@@ -23,16 +25,8 @@ vi.mock(import("@/hooks/use-theme"), () => ({
   useTheme: () => ({ theme: "light" as const, toggle: vi.fn() }),
 }));
 
-// EventSource モック
-class EventSourceMock {
-  // eslint-disable-next-line class-methods-use-this, no-empty-function
-  addEventListener() {}
-  // eslint-disable-next-line class-methods-use-this, no-empty-function
-  close() {}
-  // eslint-disable-next-line class-methods-use-this, no-empty-function
-  removeEventListener() {}
-}
-global.EventSource = EventSourceMock as unknown as typeof EventSource;
+// EventSource モック（複数テストで使う no-op スタブ。dispatch 機能は不要）
+installEventSourceMock();
 
 // UseHotkey モック
 vi.mock(import("@tanstack/react-hotkeys"), () => ({

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
+import { isObjectRecord } from "@shared/is-object-record";
 import { program } from "commander";
 import { Hono } from "hono";
 
@@ -17,9 +18,19 @@ const packageJsonPath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../package.json"
 );
-const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as {
-  version: string;
+
+const isPkgShape = (value: unknown): value is { version: string } => {
+  if (!isObjectRecord(value)) {
+    return false;
+  }
+  return typeof value.version === "string";
 };
+
+const parsedPkg: unknown = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+if (!isPkgShape(parsedPkg)) {
+  throw new Error("Invalid package.json: missing version");
+}
+const pkg = parsedPkg;
 
 const currentDir = import.meta.dirname;
 
@@ -92,6 +103,12 @@ export const getNetworkConfig = (options: { host: boolean }) => ({
   hostname: options.host ? "0.0.0.0" : "127.0.0.1",
 });
 
+interface CliOptions {
+  port: string;
+  host?: boolean;
+  autoClose: boolean;
+}
+
 program
   .name("specv")
   .description("Local Markdown preview with GitHub-style rendering")
@@ -99,7 +116,7 @@ program
   .option("-p, --port <number>", "Port number", "4649")
   .option("--host", "Expose to local network (enables QR code)")
   .option("--no-auto-close", "Disable auto-close on client disconnect")
-  .action((options) => {
+  .action((options: CliOptions) => {
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
     const clientDir = path.join(currentDir, "../client");

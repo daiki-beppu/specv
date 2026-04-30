@@ -70,8 +70,10 @@ const setupWatchApp = (tmpDir: string) => {
 
 const requestWatch = async (app: ReturnType<typeof createApiRouter>) => {
   const res = await app.request("/api/watch");
-  expect(res.body).toBeTruthy();
-  return res.body as ReadableStream<Uint8Array>;
+  if (!res.body) {
+    throw new Error("res.body is null");
+  }
+  return res.body;
 };
 
 describe("gET /api/watch", () => {

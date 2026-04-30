@@ -35,9 +35,7 @@ function setupMatchMedia(matches: boolean) {
       // 同上
     },
   };
-  window.matchMedia = vi
-    .fn()
-    .mockReturnValue(mql) as unknown as typeof window.matchMedia;
+  vi.stubGlobal("matchMedia", vi.fn().mockReturnValue(mql));
 }
 
 const wrapper = ({ children }: { children: ReactNode }) => (
@@ -147,13 +145,22 @@ describe(ThemeProvider, () => {
     expect(storage.setItem).toHaveBeenCalledWith(STORAGE_KEY, "dark");
   });
 
-  it("localStorage に予期しない文字列があってもキャストしてそのまま使う", () => {
+  it('localStorage が "garbage" + matchMedia 一致のとき初期 theme が "dark" になる', () => {
+    setupStorage({ [STORAGE_KEY]: "garbage" });
+    setupMatchMedia(true);
+
+    const { result } = renderHook(() => useTheme(), { wrapper });
+
+    expect(result.current.theme).toBe("dark");
+  });
+
+  it('localStorage が "garbage" + matchMedia 不一致のとき初期 theme が "light" になる', () => {
     setupStorage({ [STORAGE_KEY]: "garbage" });
     setupMatchMedia(false);
 
     const { result } = renderHook(() => useTheme(), { wrapper });
 
-    expect(result.current.theme).toBe("garbage");
+    expect(result.current.theme).toBe("light");
   });
 });
 

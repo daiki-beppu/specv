@@ -37,6 +37,13 @@ class MockEventSource {
     }
   }
 
+  dispatchRaw(type: string, raw: string) {
+    const cbs = this.listeners.get(type) ?? [];
+    for (const cb of cbs) {
+      cb({ data: raw });
+    }
+  }
+
   static get last(): MockEventSource {
     const inst = MockEventSource.instances.at(-1);
     if (!inst) {
@@ -203,5 +210,61 @@ describe(useWatch, () => {
       expect(logError).toHaveBeenCalled();
     });
     expect(setContent).not.toHaveBeenCalled();
+  });
+
+  it("file-changed の e.data が不正 JSON 文字列のとき副作用が起きない", () => {
+    const setContent = vi.fn();
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
+    act(() => {
+      MockEventSource.last.dispatchRaw("file-changed", "{not-json");
+    });
+
+    expect(setContent).not.toHaveBeenCalled();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("tree-changed の e.data が不正 JSON 文字列のとき副作用が起きない", () => {
+    const setFiles = vi.fn();
+    const setSelectedPath = vi.fn();
+
+    renderHook(() =>
+      useWatch("docs/guide.md", vi.fn(), setFiles, setSelectedPath)
+    );
+    act(() => {
+      MockEventSource.last.dispatchRaw("tree-changed", "{not-json");
+    });
+
+    expect(setFiles).not.toHaveBeenCalled();
+    expect(setSelectedPath).not.toHaveBeenCalled();
+  });
+
+  it("file-changed の payload shape が不正なとき副作用が起きない", () => {
+    const setContent = vi.fn();
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
+    act(() => {
+      MockEventSource.last.dispatch("file-changed", { path: 123 });
+    });
+
+    expect(setContent).not.toHaveBeenCalled();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("tree-changed の payload shape が不正なとき副作用が起きない", () => {
+    const setFiles = vi.fn();
+    const setSelectedPath = vi.fn();
+
+    renderHook(() =>
+      useWatch("docs/guide.md", vi.fn(), setFiles, setSelectedPath)
+    );
+    act(() => {
+      MockEventSource.last.dispatch("tree-changed", { files: "x" });
+    });
+
+    expect(setFiles).not.toHaveBeenCalled();
+    expect(setSelectedPath).not.toHaveBeenCalled();
   });
 });

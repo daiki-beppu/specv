@@ -1,13 +1,24 @@
-import type {
-  FileChangedPayload,
-  FileNode,
-  TreeChangedPayload,
+import {
+  isFileChangedPayload,
+  isTreeChangedPayload,
+  type FileNode,
 } from "@shared/types";
 import { useEffect, useRef } from "react";
 
 import { fetchFile } from "@/api";
 import { logError } from "@/lib/logger";
 import { handleFileChanged, handleTreeChanged } from "@/utils/watch-handler";
+
+const safeJsonParse = (raw: unknown): unknown => {
+  if (typeof raw !== "string") {
+    return undefined;
+  }
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return undefined;
+  }
+};
 
 export const useWatch = (
   selectedPath: string | null,
@@ -35,13 +46,19 @@ export const useWatch = (
     };
 
     es.addEventListener("file-changed", (e) => {
-      const { path } = JSON.parse(e.data) as FileChangedPayload;
-      handleFileChanged(path, selectedPathRef.current, actions);
+      const payload = safeJsonParse(e.data);
+      if (!isFileChangedPayload(payload)) {
+        return;
+      }
+      handleFileChanged(payload.path, selectedPathRef.current, actions);
     });
 
     es.addEventListener("tree-changed", (e) => {
-      const { files } = JSON.parse(e.data) as TreeChangedPayload;
-      handleTreeChanged(files, selectedPathRef.current, actions);
+      const payload = safeJsonParse(e.data);
+      if (!isTreeChangedPayload(payload)) {
+        return;
+      }
+      handleTreeChanged(payload.files, selectedPathRef.current, actions);
     });
 
     return () => es.close();
