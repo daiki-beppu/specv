@@ -81,16 +81,18 @@ const setupWatcher = (
       if (treeDebounceTimer) {
         clearTimeout(treeDebounceTimer);
       }
-      treeDebounceTimer = setTimeout(async () => {
-        try {
-          const files = await scanMarkdownFiles(baseDir);
-          broadcast({
-            data: JSON.stringify({ files } satisfies TreeChangedPayload),
-            event: "tree-changed",
-          });
-        } catch {
-          // Scan failure is non-fatal
-        }
+      treeDebounceTimer = setTimeout(() => {
+        void (async () => {
+          try {
+            const files = await scanMarkdownFiles(baseDir);
+            broadcast({
+              data: JSON.stringify({ files } satisfies TreeChangedPayload),
+              event: "tree-changed",
+            });
+          } catch {
+            // Scan failure is non-fatal
+          }
+        })();
       }, TREE_DEBOUNCE_MS);
     }
   });
