@@ -39,6 +39,28 @@ describe(fetchFiles, () => {
 
     await expect(fetchFiles()).rejects.toThrow("Failed to fetch file list");
   });
+
+  it("サーバー由来の error メッセージを Error.message に伝播する", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: "Failed to scan files" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      })
+    );
+
+    await expect(fetchFiles()).rejects.toThrow("Failed to scan files");
+  });
+
+  it("error フィールドが欠落した JSON ではフォールバック文字列で throw する", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ files: [] }), {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      })
+    );
+
+    await expect(fetchFiles()).rejects.toThrow("Failed to fetch file list");
+  });
 });
 
 // eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference
@@ -85,6 +107,40 @@ describe(fetchFile, () => {
     const targetPath = "missing.md";
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
       new Response(null, { status: 500 })
+    );
+
+    await expect(fetchFile(targetPath)).rejects.toThrow(
+      `Failed to fetch: ${targetPath}`
+    );
+  });
+
+  it("サーバー由来の error メッセージを Error.message に伝播する", async () => {
+    const targetPath = "../etc/passwd";
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          code: "SECURITY",
+          error: "Path traversal detected: ../etc/passwd",
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 400,
+        }
+      )
+    );
+
+    await expect(fetchFile(targetPath)).rejects.toThrow(
+      "Path traversal detected: ../etc/passwd"
+    );
+  });
+
+  it("error フィールドが欠落した JSON ではフォールバック文字列で throw する", async () => {
+    const targetPath = "missing.md";
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ unrelated: "value" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      })
     );
 
     await expect(fetchFile(targetPath)).rejects.toThrow(

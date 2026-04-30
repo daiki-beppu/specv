@@ -1,7 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export class SecurityError extends Error {
+import { AppError } from "@shared/errors";
+
+export class SecurityError extends AppError {
+  readonly code = "SECURITY" as const;
+
   constructor(message: string) {
     super(message);
     this.name = "SecurityError";

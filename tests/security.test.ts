@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { validateImagePath, validatePath } from "@server/security";
+import {
+  SecurityError,
+  validateImagePath,
+  validatePath,
+} from "@server/security";
+import { AppError } from "@shared/errors";
 
 import { createFile, withTmpDir } from "./test-utils";
 
@@ -130,5 +135,31 @@ describe("validateImagePath function", () => {
         return Promise.resolve();
       })
     );
+  });
+});
+
+describe("SecurityError class", () => {
+  it("AppError の派生クラスである", () => {
+    const error = new SecurityError("traversal");
+
+    expect(error).toBeInstanceOf(AppError);
+  });
+
+  it('code プロパティが "SECURITY" を持つ', () => {
+    const error = new SecurityError("traversal");
+
+    expect(error.code).toBe("SECURITY");
+  });
+
+  it('name プロパティが "SecurityError" を維持する', () => {
+    const error = new SecurityError("traversal");
+
+    expect(error.name).toBe("SecurityError");
+  });
+
+  it("Error の派生クラスであり続ける", () => {
+    const error = new SecurityError("traversal");
+
+    expect(error).toBeInstanceOf(Error);
   });
 });

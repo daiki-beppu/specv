@@ -2,6 +2,7 @@ import type { FileNode } from "@shared/types";
 import { useEffect, useRef } from "react";
 
 import { fetchFile } from "@/api";
+import { logError } from "@/lib/logger";
 import { handleFileChanged, handleTreeChanged } from "@/utils/watch-handler";
 
 export const useWatch = (
@@ -22,7 +23,7 @@ export const useWatch = (
           const content = await fetchFile(path);
           setContent(content);
         } catch (error) {
-          console.error(error);
+          logError("Failed to fetch file in watcher:", error);
         }
       },
       setFiles,

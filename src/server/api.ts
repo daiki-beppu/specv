@@ -1,12 +1,18 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import { AppError, type ApiErrorResponse } from "@shared/errors";
 import { Hono } from "hono";
 
 import { scanMarkdownFiles } from "./files";
-import { SecurityError, validateImagePath, validatePath } from "./security";
+import { validateImagePath, validatePath } from "./security";
 import { createWatcher as defaultCreateWatcher } from "./watcher";
 import type { WatchCallback } from "./watcher";
+
+const buildAppErrorResponse = (error: AppError): ApiErrorResponse => ({
+  code: error.code,
+  error: error.message,
+});
 
 const IMAGE_CONTENT_TYPES: Record<string, string> = {
   ".gif": "image/gif",
@@ -107,41 +113,47 @@ export const createApiRouter = (
       const files = await scanMarkdownFiles(baseDir);
       return c.json({ files });
     } catch {
-      return c.json({ error: "Failed to scan files" }, 500);
+      return c.json<ApiErrorResponse>({ error: "Failed to scan files" }, 500);
     }
   });
 
   api.get("/api/file", async (c) => {
     const filePath = c.req.query("path");
     if (!filePath) {
-      return c.json({ error: "path query parameter is required" }, 400);
+      return c.json<ApiErrorResponse>(
+        { error: "path query parameter is required" },
+        400
+      );
     }
 
     try {
       const content = await readFile(filePath, baseDir);
       return c.text(content);
     } catch (error) {
-      if (error instanceof SecurityError) {
-        return c.json({ error: error.message }, 400);
+      if (error instanceof AppError) {
+        return c.json<ApiErrorResponse>(buildAppErrorResponse(error), 400);
       }
-      return c.json({ error: "File not found" }, 404);
+      return c.json<ApiErrorResponse>({ error: "File not found" }, 404);
     }
   });
 
   api.get("/api/image", async (c) => {
     const filePath = c.req.query("path");
     if (!filePath) {
-      return c.json({ error: "path query parameter is required" }, 400);
+      return c.json<ApiErrorResponse>(
+        { error: "path query parameter is required" },
+        400
+      );
     }
 
     try {
       const { contentType, data } = await readImage(filePath, baseDir);
       return c.body(new Uint8Array(data), 200, { "Content-Type": contentType });
     } catch (error) {
-      if (error instanceof SecurityError) {
-        return c.json({ error: error.message }, 400);
+      if (error instanceof AppError) {
+        return c.json<ApiErrorResponse>(buildAppErrorResponse(error), 400);
       }
-      return c.json({ error: "Image not found" }, 404);
+      return c.json<ApiErrorResponse>({ error: "Image not found" }, 404);
     }
   });
 
