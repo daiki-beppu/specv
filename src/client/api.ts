@@ -1,5 +1,5 @@
 import type { ApiErrorResponse } from "@shared/errors";
-import type { FileNode } from "@shared/types";
+import type { FileNode, FilesResponse } from "@shared/types";
 
 const parseApiError = async (
   res: Response,
@@ -22,7 +22,7 @@ export const fetchFiles = async (): Promise<FileNode[]> => {
   if (!res.ok) {
     throw new Error(await parseApiError(res, "Failed to fetch file list"));
   }
-  const data = await res.json();
+  const data = (await res.json()) as FilesResponse;
   return data.files;
 };
 

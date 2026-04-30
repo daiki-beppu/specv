@@ -2,6 +2,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { AppError, type ApiErrorResponse } from "@shared/errors";
+import type {
+  FileChangedPayload,
+  FilesResponse,
+  TreeChangedPayload,
+  WatchEventName,
+} from "@shared/types";
 import { Hono } from "hono";
 
 import { scanMarkdownFiles } from "./files";
@@ -52,7 +58,7 @@ const TREE_DEBOUNCE_MS = 300;
 
 interface SSEMessage {
   data: string;
-  event: string;
+  event: WatchEventName;
 }
 type SSEListener = (msg: SSEMessage) => void;
 
@@ -66,7 +72,9 @@ const setupWatcher = (
   factory(baseDir, (event) => {
     if (event.type === "change") {
       broadcast({
-        data: JSON.stringify({ path: event.path }),
+        data: JSON.stringify({
+          path: event.path,
+        } satisfies FileChangedPayload),
         event: "file-changed",
       });
     } else {
@@ -77,7 +85,7 @@ const setupWatcher = (
         try {
           const files = await scanMarkdownFiles(baseDir);
           broadcast({
-            data: JSON.stringify({ files }),
+            data: JSON.stringify({ files } satisfies TreeChangedPayload),
             event: "tree-changed",
           });
         } catch {
@@ -111,7 +119,7 @@ export const createApiRouter = (
   api.get("/api/files", async (c) => {
     try {
       const files = await scanMarkdownFiles(baseDir);
-      return c.json({ files });
+      return c.json<FilesResponse>({ files });
     } catch {
       return c.json<ApiErrorResponse>({ error: "Failed to scan files" }, 500);
     }
