@@ -1,4 +1,8 @@
-import type { FileNode } from "@shared/types";
+import type {
+  FileChangedPayload,
+  FileNode,
+  TreeChangedPayload,
+} from "@shared/types";
 import { useEffect, useRef } from "react";
 
 import { fetchFile } from "@/api";
@@ -31,12 +35,12 @@ export const useWatch = (
     };
 
     es.addEventListener("file-changed", (e) => {
-      const { path } = JSON.parse(e.data);
+      const { path } = JSON.parse(e.data) as FileChangedPayload;
       handleFileChanged(path, selectedPathRef.current, actions);
     });
 
     es.addEventListener("tree-changed", (e) => {
-      const { files } = JSON.parse(e.data);
+      const { files } = JSON.parse(e.data) as TreeChangedPayload;
       handleTreeChanged(files, selectedPathRef.current, actions);
     });
 
