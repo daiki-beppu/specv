@@ -36,7 +36,7 @@
     "test:e2e": "playwright test",
     "coverage": "vp test run --coverage",
     "prepublishOnly": "pnpm run build",
-    "check": "vp check",
+    "check": "vp check && tsc --noEmit",
     "fix": "vp check --fix",
     "knip": "knip",
     "prepare": "lefthook install"

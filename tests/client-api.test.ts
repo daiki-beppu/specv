@@ -1,5 +1,3 @@
-import type { FilesResponse } from "@shared/types";
-
 import { fetchFile, fetchFiles } from "@/api";
 
 afterEach(() => {
@@ -24,9 +22,6 @@ describe(fetchFiles, () => {
 
     expect(result).toEqual(files);
     expect(spy).toHaveBeenCalledWith("/api/files");
-    expectTypeOf<Awaited<ReturnType<typeof fetchFiles>>>().toEqualTypeOf<
-      FilesResponse["files"]
-    >();
   });
 
   it("ネットワークエラーで TypeError が呼び出し元へ伝播する", async () => {

@@ -1,9 +1,5 @@
 // @vitest-environment jsdom
-import type {
-  FileChangedPayload,
-  FileNode,
-  TreeChangedPayload,
-} from "@shared/types";
+import type { FileNode } from "@shared/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
 import { useWatch } from "@/hooks/use-watch";
@@ -93,9 +89,8 @@ describe(useWatch, () => {
     const setContent = vi.fn();
 
     renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
-    const fileChangedPayload: FileChangedPayload = { path: "docs/guide.md" };
     act(() => {
-      MockEventSource.last.dispatch("file-changed", fileChangedPayload);
+      MockEventSource.last.dispatch("file-changed", { path: "docs/guide.md" });
     });
 
     await waitFor(() => {
@@ -110,9 +105,8 @@ describe(useWatch, () => {
     const setFiles = vi.fn();
 
     renderHook(() => useWatch("docs/guide.md", vi.fn(), setFiles, vi.fn()));
-    const treeChangedPayload: TreeChangedPayload = { files: tree };
     act(() => {
-      MockEventSource.last.dispatch("tree-changed", treeChangedPayload);
+      MockEventSource.last.dispatch("tree-changed", { files: tree });
     });
 
     expect(setFiles).toHaveBeenCalledWith(tree);

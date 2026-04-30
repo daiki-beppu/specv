@@ -2,7 +2,6 @@ import { setTimeout as delay } from "node:timers/promises";
 
 import { createApiRouter } from "@server/api";
 import type { WatchCallback, WatchEvent } from "@server/watcher";
-import type { FileChangedPayload, TreeChangedPayload } from "@shared/types";
 
 import { createFile, withTmpDir } from "./test-utils";
 
@@ -97,12 +96,6 @@ describe("gET /api/watch", () => {
       expect(events.find((e) => e.includes("event: file-changed"))).toContain(
         '"path":"test.md"'
       );
-      const fileChangedEvent = events.find((e) =>
-        e.includes("event: file-changed")
-      )!;
-      JSON.parse(
-        fileChangedEvent.split("data: ")[1]
-      ) satisfies FileChangedPayload;
     });
   });
 
@@ -118,12 +111,6 @@ describe("gET /api/watch", () => {
       expect(events.find((e) => e.includes("event: tree-changed"))).toContain(
         '"files"'
       );
-      const treeChangedEvent = events.find((e) =>
-        e.includes("event: tree-changed")
-      )!;
-      JSON.parse(
-        treeChangedEvent.split("data: ")[1]
-      ) satisfies TreeChangedPayload;
     });
   });
 
