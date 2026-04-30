@@ -19,6 +19,7 @@ nr dev:server        # API server (localhost:4649)
 nr build             # Build client + server
 nr test              # Unit tests (Vitest)
 nr test:e2e          # E2E tests (Playwright, requires build first)
+nr coverage          # Unit tests + coverage report (CI warn 閾値: lines/functions/statements 80%, branches 70%)
 nr check             # Lint + Format + TypeScript check (vp check)
 nr fix               # Auto-fix lint/format issues (vp check --fix)
 ```
@@ -62,6 +63,7 @@ fixtures/             # Manual testing markdown files
 
 - TDD（テスト駆動開発）で実装する: テストを先に書き、Red → Green → Refactor のサイクルで進める
 - テスト規約: @.takt/facets/policies/specv-testing.md（Unit/E2E 判定、Happy/Edge/Error 区分、AAA、test-utils ヘルパー）
+- 行動規範: @.takt/facets/policies/specv-conventions.md（pre-commit/コミット前 test/カバレッジ閾値/TDD ペアリング）
 
 ## Gotchas
 
