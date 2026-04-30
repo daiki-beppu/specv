@@ -10,7 +10,11 @@ export const CopyButton = ({ text }: { text: string }) => {
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      // HTTP 環境（スマホからの LAN アクセス等）では clipboard API が使えないためフォールバック
+      // HTTP 環境（スマホからの LAN アクセス等）では clipboard API が使えないためフォールバック。
+      // execCommand は deprecated だが HTTP 環境向けには代替 API がないため、型キャストで deprecated 経路をローカルに隔離する。
+      const legacyDoc = document as unknown as {
+        execCommand: (command: string) => boolean;
+      };
       const textarea = document.createElement("textarea");
       textarea.value = text;
       textarea.setAttribute("readonly", "");
@@ -21,11 +25,13 @@ export const CopyButton = ({ text }: { text: string }) => {
       document.body.append(textarea);
       textarea.select();
       textarea.setSelectionRange(0, text.length);
-      document.execCommand("copy");
+      legacyDoc.execCommand("copy");
       textarea.remove();
     }
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   }, [text]);
 
   return (

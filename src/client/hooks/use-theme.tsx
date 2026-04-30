@@ -33,10 +33,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("specv-theme", theme);
   }, [theme]);
 
-  const toggle = useCallback(
-    () => setTheme((t) => (t === "light" ? "dark" : "light")),
-    []
-  );
+  const toggle = useCallback(() => {
+    setTheme((t) => (t === "light" ? "dark" : "light"));
+  }, []);
 
   const value = useMemo(() => ({ theme, toggle }), [theme, toggle]);
 

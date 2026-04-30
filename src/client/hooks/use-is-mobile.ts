@@ -13,7 +13,9 @@ export const useIsMobile = (): boolean => {
       setIsMobile(e.matches);
     };
     mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
+    return () => {
+      mql.removeEventListener("change", onChange);
+    };
   }, []);
 
   return isMobile;
