@@ -87,11 +87,34 @@ describe("GET /api/file", () => {
     });
   });
 
+  it('パストラバーサル時のレスポンス body が code: "SECURITY" を含む', async () => {
+    await withTmpDir(async (tmpDir) => {
+      const app = createApiRouter(tmpDir);
+      const res = await app.request("/api/file?path=../etc/passwd");
+
+      expect(res.status).toBe(400);
+      const json = (await res.json()) as { code?: string; error: string };
+      expect(json.code).toBe("SECURITY");
+      expect(typeof json.error).toBe("string");
+    });
+  });
+
   it("存在しないファイルで 404 を返す", async () => {
     await withTmpDir(async (tmpDir) => {
       const app = createApiRouter(tmpDir);
       const res = await app.request("/api/file?path=nonexistent.md");
       expect(res.status).toBe(404);
+    });
+  });
+
+  it("存在しないファイル時のレスポンス body は code フィールドを含まない", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const app = createApiRouter(tmpDir);
+      const res = await app.request("/api/file?path=nonexistent.md");
+
+      expect(res.status).toBe(404);
+      const json = await res.json();
+      expect(json).not.toHaveProperty("code");
     });
   });
 });
@@ -122,6 +145,18 @@ describe("GET /api/image", () => {
       const app = createApiRouter(tmpDir);
       const res = await app.request("/api/image?path=../etc/image.png");
       expect(res.status).toBe(400);
+    });
+  });
+
+  it('パストラバーサル時のレスポンス body が code: "SECURITY" を含む', async () => {
+    await withTmpDir(async (tmpDir) => {
+      const app = createApiRouter(tmpDir);
+      const res = await app.request("/api/image?path=../etc/image.png");
+
+      expect(res.status).toBe(400);
+      const json = (await res.json()) as { code?: string; error: string };
+      expect(json.code).toBe("SECURITY");
+      expect(typeof json.error).toBe("string");
     });
   });
 

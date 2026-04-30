@@ -23,6 +23,7 @@ import {
 } from "./components/ui/sidebar";
 import { useScrollRestore } from "./hooks/use-scroll-restore";
 import { useWatch } from "./hooks/use-watch";
+import { logError } from "./lib/logger";
 import { findFirstFile } from "./utils/auto-expand";
 
 type ViewMode = "preview" | "source";
@@ -62,7 +63,7 @@ const useLoadFiles = (
           setSelectedPath(first);
         }
       } catch (error) {
-        console.error("Failed to load files:", error);
+        logError("Failed to load files:", error);
       }
     };
     load();
@@ -82,7 +83,7 @@ const useLoadContent = (
         const text = await fetchFile(selectedPath);
         setContent(text);
       } catch (error) {
-        console.error("Failed to load file:", error);
+        logError("Failed to load file:", error);
       }
     };
     load();

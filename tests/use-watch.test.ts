@@ -3,6 +3,11 @@ import type { FileNode } from "@shared/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
 import { useWatch } from "@/hooks/use-watch";
+import { logError } from "@/lib/logger";
+
+vi.mock("@/lib/logger", () => ({
+  logError: vi.fn(),
+}));
 
 interface MockEventLike {
   data: string;
@@ -183,10 +188,7 @@ describe(useWatch, () => {
     expect(MockEventSource.instances).toHaveLength(1);
   });
 
-  it("fetchFile が reject したとき console.error が呼ばれ setContent は呼ばれない", async () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {
-      // catch ハンドラの出力ノイズ抑止
-    });
+  it("fetchFile が reject したとき logError が呼ばれ setContent は呼ばれない", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(
       new TypeError("Failed to fetch")
     );
@@ -198,7 +200,7 @@ describe(useWatch, () => {
     });
 
     await waitFor(() => {
-      expect(errorSpy).toHaveBeenCalled();
+      expect(logError).toHaveBeenCalled();
     });
     expect(setContent).not.toHaveBeenCalled();
   });
