@@ -68,6 +68,18 @@ describe("GET /api/file", () => {
     });
   });
 
+  it("?path=（空文字列）で 400 を返す", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const app = createApiRouter(tmpDir);
+      const res = await app.request("/api/file?path=");
+
+      expect(res.status).toBe(400);
+      await expect(res.json()).resolves.toEqual({
+        error: "path query parameter is required",
+      });
+    });
+  });
+
   it("正常な .md ファイルの内容を返す", async () => {
     await withTmpDir(async (tmpDir) => {
       createFile(tmpDir, "README.md", "# Hello World");
@@ -126,6 +138,18 @@ describe("GET /api/image", () => {
       const app = createApiRouter(tmpDir);
       const res = await app.request("/api/image");
       expect(res.status).toBe(400);
+    });
+  });
+
+  it("?path=（空文字列）で 400 を返す", async () => {
+    await withTmpDir(async (tmpDir) => {
+      const app = createApiRouter(tmpDir);
+      const res = await app.request("/api/image?path=");
+
+      expect(res.status).toBe(400);
+      await expect(res.json()).resolves.toEqual({
+        error: "path query parameter is required",
+      });
     });
   });
 
