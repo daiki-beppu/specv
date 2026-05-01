@@ -4,11 +4,11 @@ const { mockExecFile } = vi.hoisted(() => ({
   mockExecFile: vi.fn(),
 }));
 
-vi.mock(import("node:child_process"), () => ({
+vi.mock("node:child_process", () => ({
   execFile: mockExecFile,
 }));
 
-vi.mock(import("node:util"), () => ({
+vi.mock("node:util", () => ({
   promisify: () => mockExecFile,
 }));
 
