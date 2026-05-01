@@ -1,132 +1,23 @@
 import type { FileNode } from "@shared/types";
-import {
-  ChevronDown,
-  ChevronRight,
-  FileText,
-  Folder,
-  FolderOpen,
-  Search,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { FileTreeNode } from "@/components/file-tree-node";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Kbd } from "@/components/ui/kbd";
-import { Tree, TreeItem, TreeLeaf } from "@/components/ui/tree";
+import { Tree } from "@/components/ui/tree";
 import { computeAutoExpandPaths, findNode } from "@/lib/auto-expand";
+import { filterTree } from "@/lib/file-tree-filter";
 
 interface FileTreeProps {
   files: FileNode[];
   selectedPath: string | null;
   onSelect: (path: string) => void;
 }
-
-const filterTree = (nodes: FileNode[], query: string): FileNode[] => {
-  const lower = query.toLowerCase();
-  const result: FileNode[] = [];
-  for (const node of nodes) {
-    if (node.children !== undefined) {
-      const filtered = filterTree(node.children, query);
-      if (filtered.length > 0) {
-        result.push({ ...node, children: filtered });
-      }
-    } else if (
-      node.name.toLowerCase().includes(lower) ||
-      node.path.toLowerCase().includes(lower)
-    ) {
-      result.push(node);
-    }
-  }
-  return result;
-};
-
-const FileTreeNode = ({
-  node,
-  selectedPath,
-  onSelect,
-  forceExpand,
-  expandedPaths,
-  onExpand,
-  onCollapse,
-}: {
-  node: FileNode;
-  selectedPath: string | null;
-  onSelect: (path: string) => void;
-  forceExpand: boolean;
-  expandedPaths: Set<string>;
-  onExpand: (dirPath: string) => void;
-  onCollapse: (dirPath: string) => void;
-}) => {
-  const isDir = node.children !== undefined;
-  const isOpen = forceExpand || expandedPaths.has(node.path);
-
-  const handleToggleExpand = useCallback(() => {
-    if (isOpen && !forceExpand) {
-      onCollapse(node.path);
-    } else {
-      onExpand(node.path);
-    }
-  }, [isOpen, forceExpand, onCollapse, onExpand, node.path]);
-
-  const handleSelect = useCallback(() => {
-    onSelect(node.path);
-  }, [onSelect, node.path]);
-
-  if (isDir) {
-    return (
-      <TreeItem
-        expanded={isOpen}
-        icon={
-          <>
-            {isOpen ? (
-              <ChevronDown
-                size={14}
-                className="shrink-0 text-muted-foreground"
-              />
-            ) : (
-              <ChevronRight
-                size={14}
-                className="shrink-0 text-muted-foreground"
-              />
-            )}
-            {isOpen ? (
-              <FolderOpen size={14} className="shrink-0 text-amber-500" />
-            ) : (
-              <Folder size={14} className="shrink-0 text-amber-500" />
-            )}
-          </>
-        }
-        name={node.name}
-        onToggle={handleToggleExpand}
-      >
-        {node.children?.map((child) => (
-          <FileTreeNode
-            key={child.path}
-            node={child}
-            selectedPath={selectedPath}
-            onSelect={onSelect}
-            forceExpand={forceExpand}
-            expandedPaths={expandedPaths}
-            onExpand={onExpand}
-            onCollapse={onCollapse}
-          />
-        ))}
-      </TreeItem>
-    );
-  }
-
-  return (
-    <TreeLeaf
-      icon={<FileText size={14} className="shrink-0 text-blue-500" />}
-      name={node.name}
-      onSelect={handleSelect}
-      selected={node.path === selectedPath}
-    />
-  );
-};
 
 export const FileTree = ({ files, selectedPath, onSelect }: FileTreeProps) => {
   const [query, setQuery] = useState("");

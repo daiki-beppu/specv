@@ -11,6 +11,7 @@ import { program } from "commander";
 import { Hono } from "hono";
 
 import { createApiRouter } from "./api";
+import { registerLifecycleRoutes } from "./api/lifecycle-routes";
 import { getLocalIpAddress } from "./network";
 import { openInBrowser } from "./open-browser";
 import { displayQrCode } from "./qr-display";
@@ -35,45 +36,6 @@ const pkg = parsedPkg;
 
 const currentDir = import.meta.dirname;
 
-const DISCONNECT_GRACE_MS = 2000;
-
-const registerLifecycle = (app: Hono, onDisconnect: () => void) => {
-  let connections = 0;
-  let graceTimer: ReturnType<typeof setTimeout> | null = null;
-
-  app.get("/api/lifecycle", (_c) => {
-    connections += 1;
-    if (graceTimer !== null) {
-      clearTimeout(graceTimer);
-      graceTimer = null;
-    }
-
-    const stream = new ReadableStream({
-      cancel() {
-        connections -= 1;
-        if (connections === 0) {
-          graceTimer = setTimeout(() => {
-            if (connections === 0) {
-              onDisconnect();
-            }
-          }, DISCONNECT_GRACE_MS);
-        }
-      },
-      start(controller) {
-        controller.enqueue("data: connected\n\n");
-      },
-    });
-
-    return new Response(stream, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-        "Content-Type": "text/event-stream",
-      },
-    });
-  });
-};
-
 const serveClient = (app: Hono, clientDir: string) => {
   const indexHtmlPath = path.join(clientDir, "index.html");
   if (fs.existsSync(indexHtmlPath)) {
@@ -91,7 +53,7 @@ const createApp = (
   const app = new Hono();
 
   if (onDisconnect !== undefined) {
-    registerLifecycle(app, onDisconnect);
+    registerLifecycleRoutes(app, onDisconnect);
   }
   app.route("/", createApiRouter(baseDir));
   serveClient(app, clientDir);
