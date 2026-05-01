@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
+import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -115,42 +116,46 @@ program
         : undefined
     );
 
+    const announceAndOpen = async (info: AddressInfo): Promise<void> => {
+      const localUrl = `http://localhost:${info.port}`;
+      console.log("");
+      console.log(`  specv v${program.version()}`);
+      console.log("");
+      console.log(`  ➜  Local:   ${localUrl}`);
+
+      const ip = networkConfig.enableNetwork ? getLocalIpAddress() : null;
+      const networkUrl = ip ? `http://${ip}:${info.port}` : null;
+
+      if (networkUrl) {
+        console.log(`  ➜  Network: ${networkUrl}`);
+      } else if (!networkConfig.enableNetwork) {
+        console.log("  ➜  Network: use --host to expose to local network");
+      }
+
+      console.log("");
+      console.log(`  Serving: ${baseDir}`);
+
+      // Dev:host 時は Vite プラグイン側で QR を表示するためスキップ
+      if (networkUrl && !process.env.SPECV_HOST) {
+        console.log("");
+        displayQrCode(networkUrl);
+      }
+
+      console.log("");
+      console.log("  Press Ctrl+C to stop");
+
+      try {
+        await openInBrowser(localUrl);
+      } catch {
+        console.log(`  Open ${localUrl} in your browser`);
+      }
+    };
+
     const tryListen = (port: number): void => {
       const server = serve(
         { fetch: app.fetch, hostname: networkConfig.hostname, port },
-        async (info) => {
-          const localUrl = `http://localhost:${info.port}`;
-          console.log("");
-          console.log(`  specv v${program.version()}`);
-          console.log("");
-          console.log(`  ➜  Local:   ${localUrl}`);
-
-          const ip = networkConfig.enableNetwork ? getLocalIpAddress() : null;
-          const networkUrl = ip ? `http://${ip}:${info.port}` : null;
-
-          if (networkUrl) {
-            console.log(`  ➜  Network: ${networkUrl}`);
-          } else if (!networkConfig.enableNetwork) {
-            console.log("  ➜  Network: use --host to expose to local network");
-          }
-
-          console.log("");
-          console.log(`  Serving: ${baseDir}`);
-
-          // Dev:host 時は Vite プラグイン側で QR を表示するためスキップ
-          if (networkUrl && !process.env.SPECV_HOST) {
-            console.log("");
-            displayQrCode(networkUrl);
-          }
-
-          console.log("");
-          console.log("  Press Ctrl+C to stop");
-
-          try {
-            await openInBrowser(localUrl);
-          } catch {
-            console.log(`  Open ${localUrl} in your browser`);
-          }
+        (info) => {
+          void announceAndOpen(info);
         }
       );
 

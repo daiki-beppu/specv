@@ -45,7 +45,7 @@ const useMermaidRender = (code: string, theme: string) => {
       }
     };
 
-    renderDiagram();
+    void renderDiagram();
 
     return () => {
       cancelled = true;

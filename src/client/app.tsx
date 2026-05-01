@@ -66,7 +66,7 @@ const useLoadFiles = (
         logError("Failed to load files:", error);
       }
     };
-    load();
+    void load();
   }, [setFiles, setSelectedPath]);
 };
 
@@ -86,7 +86,7 @@ const useLoadContent = (
         logError("Failed to load file:", error);
       }
     };
-    load();
+    void load();
   }, [selectedPath, setContent]);
 };
 
