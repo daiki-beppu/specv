@@ -70,7 +70,7 @@ test.describe("rendering", () => {
         .getByRole("button", { name: /Switch to (dark|light) mode/ })
         .click();
 
-      // mermaid-block.tsx の renderCountRef は effect 再実行ごとに increment され
+      // markdown/mermaid-block.tsx の renderCountRef は effect 再実行ごとに increment され
       // svg の id 末尾も変化するため、id 変化で再描画を検出する。
       await expect
         .poll(() => mermaidSvg.getAttribute("id"), { timeout: 5000 })

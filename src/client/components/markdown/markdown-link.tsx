@@ -3,7 +3,7 @@ import { useCallback } from "react";
 
 import { resolvePath } from "@/lib/path-utils";
 
-export const MdLink = ({
+export const MarkdownLink = ({
   href,
   children,
   selectedPath,

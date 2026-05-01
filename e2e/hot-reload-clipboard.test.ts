@@ -22,7 +22,7 @@ const HOT_RELOAD_DELETE_TARGET_PATH = path.join(
 
 const INITIAL_CONTENT = "# Hot Reload Target\n\ninitial content\n";
 
-// `getting-started.md` の JSON コードブロック本文。`markdown-pre.tsx:25` で末尾改行が除去されるため
+// `getting-started.md` の JSON コードブロック本文。`markdown/markdown-pre.tsx:25` で末尾改行が除去されるため
 // 期待値も末尾改行なしで定義する。
 const EXPECTED_JSON = `{
   "name": "specv",
@@ -191,7 +191,7 @@ test.describe("clipboard", () => {
   });
 
   // Chromium ローカルでは `navigator.clipboard` 強制無効化のセットアップが煩雑であり、
-  // fallback (`<textarea>` + `execCommand`) は Unit (#102 / tests/components/copy-button.test.tsx)
+  // fallback (`<textarea>` + `execCommand`) は Unit (#102 / tests/client/components/copy-button.test.tsx)
   // で検証済みのため、明示記録として skip で固定する。
   test.skip("clipboard API 不可環境の fallback は Unit (#102) で検証済みのため記録のみ", () => {
     // 該当するエラーケースなし

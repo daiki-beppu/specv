@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
 import { App } from "@/app";
 
-import { installEventSourceMock } from "../test-utils";
+import { installEventSourceMock } from "../../test-utils";
 
 // API モック
 vi.mock(import("@/api"), () => ({

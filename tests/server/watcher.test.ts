@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { createWatcher } from "@server/watcher";
 
-import { createFile, delay, withTmpDir } from "./test-utils";
+import { createFile, delay, withTmpDir } from "../test-utils";
 
 const waitForEvent = async (
   cb: ReturnType<typeof vi.fn>,

@@ -5,7 +5,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { createApiRouter } from "@server/api";
 import type { WatchCallback, WatchEvent } from "@server/watcher";
 
-import { createFile, withTmpDir } from "./test-utils";
+import { createFile, withTmpDir } from "../test-utils";
 
 interface MockWatcher {
   close: ReturnType<typeof vi.fn>;
@@ -182,7 +182,7 @@ describe("gET /api/watch", () => {
   it("scanMarkdownFiles が throw したとき tree-changed が SSE に流れず後続の change は届く", async () => {
     // setupWatcher 内 setTimeout コールバックの try/catch (Scan failure is non-fatal) を担保する。
     // baseDir を subdir として作成し、watcher 登録後に subdir のみ rm することで scan を恒常失敗させる。
-    // tmpDir 自体は withTmpDir の finally に委ね、ENOENT 衝突を避ける（tests/api.test.ts:42-58 と同型）。
+    // tmpDir 自体は withTmpDir の finally に委ね、ENOENT 衝突を避ける（tests/server/api.test.ts:42-58 と同型）。
     await withTmpDir(async (tmpDir) => {
       const baseDir = path.join(tmpDir, "base");
       fs.mkdirSync(baseDir);

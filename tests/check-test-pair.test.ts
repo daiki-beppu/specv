@@ -28,7 +28,7 @@ describe(findUnpairedSourceFiles, () => {
     // Arrange
     const files = [
       "src/client/components/source.tsx",
-      "tests/components/source.test.tsx",
+      "tests/client/components/source.test.tsx",
     ];
 
     // Act

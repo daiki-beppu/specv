@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 
 import { fetchFile } from "@/api";
 import { logError } from "@/lib/logger";
-import { handleFileChanged, handleTreeChanged } from "@/utils/watch-handler";
+import { handleFileChanged, handleTreeChanged } from "@/lib/watch-handler";
 
 const safeJsonParse = (raw: unknown): unknown => {
   if (typeof raw !== "string") {

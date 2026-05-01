@@ -8,7 +8,7 @@ import {
   expectApiErrorResponse,
   expectFilesResponse,
   withTmpDir,
-} from "./test-utils";
+} from "../test-utils";
 
 // 1x1 transparent PNG
 const TINY_PNG = Buffer.from(

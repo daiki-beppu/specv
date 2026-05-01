@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 
-import { CodeBlock } from "@/components/code-block";
+import { CodeBlock } from "@/components/markdown/code-block";
 
 vi.mock(import("@/hooks/use-theme"), () => ({
   useTheme: () => ({ theme: "light" as const, toggle: vi.fn() }),
