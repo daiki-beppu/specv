@@ -15,6 +15,24 @@ const waitForEvent = async (
   });
 };
 
+// `vi.spyOn(fs, "watch")` の mock.calls から第 3 引数 (listener) を取り出すヘルパー。
+// fs.watch は overload が多く mock.calls の型が union 化されるため、
+// (event, filename) => void 形に narrow する unsafe-type-assertion が必要。
+// 同じ cast + eslint-disable コメントが複数 it ブロックで重複するのを防ぐため
+// 共有ヘルパーに集約する（architect-review: ARCH-NEW-watcher-test-callback-cast-dup）。
+// 引数は `watchSpy.mock.calls` を直接受け取る形にすることで `vi.spyOn` の戻り値型に依存しない。
+const captureWatchCallback = (
+  calls: readonly (readonly unknown[])[]
+): ((event: string, filename: string | null) => void) => {
+  // eslint-disable-next-line typescript/no-unsafe-type-assertion -- vi.spyOn(fs, "watch") の overload 解決上 callback の型を復元する必要がある
+  const args = calls[0] as unknown as readonly [
+    unknown,
+    unknown,
+    (event: string, filename: string | null) => void,
+  ];
+  return args[2];
+};
+
 describe("server: createWatcher", () => {
   it(".md ファイルの変更を検知する", async () => {
     await withTmpDir(async (tmpDir) => {
@@ -220,9 +238,7 @@ describe("server: createWatcher (mocked fs.watch)", () => {
       const { close } = createWatcher(tmpDir, cb);
 
       try {
-        const captured = (
-          watchSpy.mock.calls[0] as unknown[] | undefined
-        )?.[2] as (event: string, filename: string | null) => void;
+        const captured = captureWatchCallback(watchSpy.mock.calls);
         captured("change", null);
 
         await delay(500);
@@ -240,9 +256,7 @@ describe("server: createWatcher (mocked fs.watch)", () => {
       const { close } = createWatcher(tmpDir, cb);
 
       try {
-        const captured = (
-          watchSpy.mock.calls[0] as unknown[] | undefined
-        )?.[2] as (event: string, filename: string | null) => void;
+        const captured = captureWatchCallback(watchSpy.mock.calls);
         captured("change", "../external.md");
 
         await delay(500);

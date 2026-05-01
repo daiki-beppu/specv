@@ -61,6 +61,45 @@ describe(fetchFiles, () => {
 
     await expect(fetchFiles()).rejects.toThrow("Failed to fetch file list");
   });
+
+  it("malformed 200 ({ foo }) で Invalid /api/files response shape を throw する", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ foo: "bar" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      })
+    );
+
+    await expect(fetchFiles()).rejects.toThrow(
+      "Invalid /api/files response shape"
+    );
+  });
+
+  it("malformed 200 ({ files: 'x' }) で Invalid /api/files response shape を throw する", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ files: "x" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      })
+    );
+
+    await expect(fetchFiles()).rejects.toThrow(
+      "Invalid /api/files response shape"
+    );
+  });
+
+  it("malformed 200 ({ files: [{ path: 1 }] }) で Invalid /api/files response shape を throw する", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ files: [{ path: 1 }] }), {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      })
+    );
+
+    await expect(fetchFiles()).rejects.toThrow(
+      "Invalid /api/files response shape"
+    );
+  });
 });
 
 // eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference

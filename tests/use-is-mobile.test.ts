@@ -17,7 +17,7 @@ function createMockMatchMedia(matches: boolean) {
       }
     },
   };
-  window.matchMedia = vi.fn().mockReturnValue(mql) as typeof window.matchMedia;
+  vi.stubGlobal("matchMedia", vi.fn().mockReturnValue(mql));
   return {
     mql,
     trigger: (newMatches: boolean) => {
@@ -32,6 +32,7 @@ function createMockMatchMedia(matches: boolean) {
 describe("hook: useIsMobile", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it("デスクトップ幅 → false を返す", () => {

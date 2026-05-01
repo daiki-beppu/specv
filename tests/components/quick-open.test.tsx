@@ -4,15 +4,17 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { QuickOpen } from "@/components/quick-open";
 
 // Jsdom に ResizeObserver がないのでモック
-class ResizeObserverMock {
+class ResizeObserverMock implements ResizeObserver {
+  // eslint-disable-next-line no-useless-constructor, no-empty-function
+  constructor(_callback: ResizeObserverCallback) {}
   // eslint-disable-next-line class-methods-use-this, no-empty-function
   disconnect() {}
   // eslint-disable-next-line class-methods-use-this, no-empty-function
-  observe() {}
+  observe(_target: Element, _options?: ResizeObserverOptions) {}
   // eslint-disable-next-line class-methods-use-this, no-empty-function
-  unobserve() {}
+  unobserve(_target: Element) {}
 }
-global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+global.ResizeObserver = ResizeObserverMock;
 
 // eslint-disable-next-line no-empty-function
 const noop = () => {};

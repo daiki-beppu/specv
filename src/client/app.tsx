@@ -264,11 +264,9 @@ export const App = () => {
   return (
     <SidebarProvider
       className="h-screen overflow-hidden bg-background text-foreground"
-      style={
-        {
-          "--sidebar-width": `${String(SIDEBAR_DEFAULT_WIDTH)}px`,
-        } as React.CSSProperties
-      }
+      style={{
+        "--sidebar-width": `${String(SIDEBAR_DEFAULT_WIDTH)}px`,
+      }}
     >
       <AppContent />
     </SidebarProvider>

@@ -1,13 +1,14 @@
-import type { ApiErrorResponse } from "@shared/errors";
-import type { FileNode, FilesResponse } from "@shared/types";
+import { isApiErrorResponse } from "@shared/errors";
+import { isFilesResponse } from "@shared/types";
+import type { FileNode } from "@shared/types";
 
 const parseApiError = async (
   res: Response,
   fallback: string
 ): Promise<string> => {
   try {
-    const body = (await res.json()) as ApiErrorResponse;
-    if (typeof body.error === "string") {
+    const body: unknown = await res.json();
+    if (isApiErrorResponse(body)) {
       return body.error;
     }
     return fallback;
@@ -22,7 +23,10 @@ export const fetchFiles = async (): Promise<FileNode[]> => {
   if (!res.ok) {
     throw new Error(await parseApiError(res, "Failed to fetch file list"));
   }
-  const data = (await res.json()) as FilesResponse;
+  const data: unknown = await res.json();
+  if (!isFilesResponse(data)) {
+    throw new Error("Invalid /api/files response shape");
+  }
   return data.files;
 };
 

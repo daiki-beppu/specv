@@ -1,3 +1,4 @@
+import { isObjectRecord } from "@shared/is-object-record";
 import type { Root, Table, TableCell, TableRow, Text } from "mdast";
 import type { Plugin } from "unified";
 import { parse } from "yaml";
@@ -43,12 +44,12 @@ export const remarkFrontmatterTable: Plugin<[], Root> = () => (tree) => {
     // Invalid YAML
   }
 
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+  if (!isObjectRecord(parsed)) {
     tree.children.splice(0, 1);
     return;
   }
 
-  const entries = Object.entries(parsed as Record<string, unknown>);
+  const entries = Object.entries(parsed);
   if (entries.length === 0) {
     tree.children.splice(0, 1);
     return;

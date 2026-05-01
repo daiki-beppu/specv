@@ -72,4 +72,9 @@ describe(remarkFrontmatterTable, () => {
     const html = await renderMarkdown("---\n: invalid: yaml: [[\n---\n");
     expect(html).not.toContain("<table>");
   });
+
+  it("frontmatter が YAML 配列のときテーブルを出さない", async () => {
+    const html = await renderMarkdown("---\n- one\n- two\n---\n");
+    expect(html).not.toContain("<table>");
+  });
 });

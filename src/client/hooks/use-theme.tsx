@@ -10,6 +10,9 @@ import type { ReactNode } from "react";
 
 type Theme = "light" | "dark";
 
+const isTheme = (value: unknown): value is Theme =>
+  value === "light" || value === "dark";
+
 interface ThemeContextValue {
   theme: Theme;
   toggle: () => void;
@@ -19,8 +22,8 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem("specv-theme") as Theme | null;
-    if (saved) {
+    const saved: unknown = localStorage.getItem("specv-theme");
+    if (isTheme(saved)) {
       return saved;
     }
     return window.matchMedia("(prefers-color-scheme: dark)").matches

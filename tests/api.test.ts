@@ -3,7 +3,12 @@ import path from "node:path";
 
 import { createApiRouter } from "@server/api";
 
-import { createFile, withTmpDir } from "./test-utils";
+import {
+  createFile,
+  expectApiErrorResponse,
+  expectFilesResponse,
+  withTmpDir,
+} from "./test-utils";
 
 // 1x1 transparent PNG
 const TINY_PNG = Buffer.from(
@@ -22,8 +27,8 @@ describe("GET /api/files", () => {
       const res = await app.request("/api/files");
       expect(res.status).toBe(200);
 
-      const json = await res.json();
-      expect(json.files).toBeDefined();
+      const json: unknown = await res.json();
+      expectFilesResponse(json);
       expect(json.files.length).toBeGreaterThan(0);
     });
   });
@@ -34,7 +39,8 @@ describe("GET /api/files", () => {
       const res = await app.request("/api/files");
       expect(res.status).toBe(200);
 
-      const json = await res.json();
+      const json: unknown = await res.json();
+      expectFilesResponse(json);
       expect(json.files).toStrictEqual([]);
     });
   });
@@ -105,7 +111,8 @@ describe("GET /api/file", () => {
       const res = await app.request("/api/file?path=../etc/passwd");
 
       expect(res.status).toBe(400);
-      const json = (await res.json()) as { code?: string; error: string };
+      const json: unknown = await res.json();
+      expectApiErrorResponse(json);
       expect(json.code).toBe("SECURITY");
       expect(typeof json.error).toBe("string");
     });
@@ -125,7 +132,7 @@ describe("GET /api/file", () => {
       const res = await app.request("/api/file?path=nonexistent.md");
 
       expect(res.status).toBe(404);
-      const json = await res.json();
+      const json: unknown = await res.json();
       expect(json).not.toHaveProperty("code");
     });
   });
@@ -178,7 +185,8 @@ describe("GET /api/image", () => {
       const res = await app.request("/api/image?path=../etc/image.png");
 
       expect(res.status).toBe(400);
-      const json = (await res.json()) as { code?: string; error: string };
+      const json: unknown = await res.json();
+      expectApiErrorResponse(json);
       expect(json.code).toBe("SECURITY");
       expect(typeof json.error).toBe("string");
     });
