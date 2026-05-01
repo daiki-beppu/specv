@@ -3,6 +3,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { Suspense, lazy } from "react";
 
 import { usePrismTheme } from "@/hooks/use-prism-theme";
+import { reactNodeToString } from "@/lib/react-node-to-string";
 
 const MermaidBlock = lazy(() => import("@/components/mermaid-block"));
 
@@ -13,7 +14,7 @@ export const CodeBlock = ({
 }: ComponentPropsWithoutRef<"code">) => {
   const prismTheme = usePrismTheme();
   const match = /language-(\w+)/.exec(className ?? "");
-  const code = String(children as string).replace(/\n$/, "");
+  const code = reactNodeToString(children).replace(/\n$/, "");
 
   if (!match) {
     return (

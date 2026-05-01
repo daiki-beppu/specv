@@ -19,7 +19,9 @@ const createMockWatcherFactory = () => {
     const closeFn = vi.fn();
     const mock: MockWatcher = {
       close: closeFn,
-      emit: (event: WatchEvent) => onEvent(event),
+      emit: (event: WatchEvent) => {
+        onEvent(event);
+      },
     };
     watchers.push(mock);
     return { close: closeFn };
@@ -171,9 +173,9 @@ describe("gET /api/watch", () => {
       await delay(50);
       await reader.cancel();
 
-      expect(() =>
-        watchers[0].emit({ path: "test.md", type: "change" })
-      ).not.toThrow();
+      expect(() => {
+        watchers[0].emit({ path: "test.md", type: "change" });
+      }).not.toThrow();
     });
   });
 

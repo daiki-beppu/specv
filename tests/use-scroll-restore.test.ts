@@ -17,7 +17,9 @@ describe("hook: useScrollRestore", () => {
     const scrollRef = createScrollRef(150);
 
     const { rerender } = renderHook(
-      ({ selectedPath }) => useScrollRestore(scrollRef, selectedPath),
+      ({ selectedPath }) => {
+        useScrollRestore(scrollRef, selectedPath);
+      },
       { initialProps: { selectedPath: "a.md" } }
     );
 
@@ -29,7 +31,9 @@ describe("hook: useScrollRestore", () => {
     const scrollRef = createScrollRef(200);
 
     const { rerender } = renderHook(
-      ({ selectedPath }) => useScrollRestore(scrollRef, selectedPath),
+      ({ selectedPath }) => {
+        useScrollRestore(scrollRef, selectedPath);
+      },
       { initialProps: { selectedPath: "a.md" } }
     );
 

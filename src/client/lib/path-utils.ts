@@ -10,7 +10,10 @@ export const resolveImageSrc = (
   if (isExternalUrl(src)) {
     return src;
   }
-  const dir = selectedPath ? selectedPath.replace(/[^/]+$/, "") : "";
+  const dir =
+    selectedPath !== null && selectedPath !== ""
+      ? selectedPath.replace(/[^/]+$/, "")
+      : "";
   const imagePath = dir + src.replace(/^\.\//, "");
   return `/api/image?path=${encodeURIComponent(imagePath)}`;
 };

@@ -35,7 +35,9 @@ test.describe("スクロール封じ込め", () => {
     expect(scrollHeight).toBeGreaterThan(clientHeight);
 
     // スクロール操作が正しくコンテンツエリア内で動作する
-    await scrollContainer.evaluate((el) => el.scrollTo(0, 100));
+    await scrollContainer.evaluate((el) => {
+      el.scrollTo(0, 100);
+    });
     const scrollTop = await scrollContainer.evaluate((el) => el.scrollTop);
     expect(scrollTop).toBe(100);
 

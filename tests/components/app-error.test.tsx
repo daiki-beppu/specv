@@ -30,7 +30,7 @@ class EventSourceMock {
   // eslint-disable-next-line class-methods-use-this, no-empty-function
   removeEventListener() {}
 }
-global.EventSource = EventSourceMock as unknown as typeof EventSource;
+vi.stubGlobal("EventSource", EventSourceMock);
 
 // UseHotkey モック
 vi.mock(import("@tanstack/react-hotkeys"), () => ({

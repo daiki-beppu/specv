@@ -46,6 +46,10 @@ export default defineConfig({
       "src/client/components/ui/**",
       "!src/client/components/ui/tree.tsx",
     ],
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
     plugins: [
       "eslint",
       "typescript",

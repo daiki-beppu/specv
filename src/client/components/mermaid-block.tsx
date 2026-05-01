@@ -69,7 +69,7 @@ const MermaidBlock = ({ code }: MermaidBlockProps) => {
     );
   }
 
-  if (!svg) {
+  if (svg === null || svg === "") {
     return null;
   }
 

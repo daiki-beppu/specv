@@ -34,7 +34,7 @@ const renderContent = (
   content: string,
   onNavigate: (path: string) => void
 ) => {
-  if (!selectedPath) {
+  if (selectedPath === null || selectedPath === "") {
     return <p className="text-muted-foreground">ファイルを選択してください</p>;
   }
   if (viewMode === "preview") {
@@ -59,7 +59,7 @@ const useLoadFiles = (
         const f = await fetchFiles();
         setFiles(f);
         const first = findFirstFile(f);
-        if (first) {
+        if (first !== null) {
           setSelectedPath(first);
         }
       } catch (error) {
@@ -75,7 +75,7 @@ const useLoadContent = (
   setContent: (c: string) => void
 ) => {
   useEffect(() => {
-    if (!selectedPath) {
+    if (selectedPath === null || selectedPath === "") {
       return;
     }
     const load = async () => {

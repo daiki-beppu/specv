@@ -1,8 +1,9 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
 import { CopyButton } from "@/components/copy-button";
+import { reactNodeToString } from "@/lib/react-node-to-string";
 
-const MERMAID_CLASS_RE = /language-mermaid/;
+const MERMAID_CLASS_NAME = "language-mermaid";
 
 interface CodeElementProps {
   className?: string;
@@ -24,11 +25,11 @@ const isReactNode = (value: unknown): value is ReactNode => {
 };
 
 const getCodeElementProps = (node: unknown): CodeElementProps | null => {
-  if (!node || typeof node !== "object" || !("props" in node)) {
+  if (node === null || typeof node !== "object" || !("props" in node)) {
     return null;
   }
   const { props } = node;
-  if (!props || typeof props !== "object") {
+  if (props === null || typeof props !== "object") {
     return null;
   }
   const className =
@@ -48,13 +49,16 @@ export const MarkdownPre = ({
   const firstChild: unknown = Array.isArray(children) ? children[0] : children;
   const codeProps = getCodeElementProps(firstChild);
 
-  const isMermaid = MERMAID_CLASS_RE.test(codeProps?.className ?? "");
+  const isMermaid = (codeProps?.className ?? "").includes(MERMAID_CLASS_NAME);
 
   if (isMermaid) {
     return children;
   }
 
-  const code = codeProps ? String(codeProps.children).replace(/\n$/, "") : "";
+  const code =
+    codeProps === null
+      ? ""
+      : reactNodeToString(codeProps.children).replace(/\n$/, "");
 
   return (
     <div className="not-prose group rounded-md border border-border bg-code-bg">

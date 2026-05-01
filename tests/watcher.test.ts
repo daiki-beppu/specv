@@ -9,10 +9,15 @@ const waitForEvent = async (
   cb: ReturnType<typeof vi.fn>,
   timeout = 2000
 ): Promise<void> => {
-  await vi.waitFor(() => expect(cb.mock.calls.length).toBeGreaterThan(0), {
-    interval: 50,
-    timeout,
-  });
+  await vi.waitFor(
+    () => {
+      expect(cb.mock.calls.length).toBeGreaterThan(0);
+    },
+    {
+      interval: 50,
+      timeout,
+    }
+  );
 };
 
 // `vi.spyOn(fs, "watch")` の mock.calls から第 3 引数 (listener) を取り出すヘルパー。
@@ -204,19 +209,21 @@ describe("server: createWatcher", () => {
         await delay(100);
         createFile(tmpDir, "transition.md", "v1");
         await vi.waitFor(
-          () =>
+          () => {
             expect(cb).toHaveBeenCalledWith(
               expect.objectContaining({ path: "transition.md", type: "add" })
-            ),
+            );
+          },
           { timeout: 2000 }
         );
 
         fs.writeFileSync(path.join(tmpDir, "transition.md"), "v2");
         await vi.waitFor(
-          () =>
+          () => {
             expect(cb).toHaveBeenCalledWith(
               expect.objectContaining({ path: "transition.md", type: "change" })
-            ),
+            );
+          },
           { timeout: 2000 }
         );
       } finally {
