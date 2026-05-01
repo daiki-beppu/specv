@@ -25,9 +25,9 @@ test.describe("theme-toggle", () => {
     page,
     context,
   }) => {
-    await context.addInitScript(() =>
-      localStorage.setItem("specv-theme", "dark")
-    );
+    await context.addInitScript(() => {
+      localStorage.setItem("specv-theme", "dark");
+    });
     await page.goto("/");
     const toggle = page.getByRole("button", {
       name: /Switch to (dark|light) mode/,
@@ -70,9 +70,9 @@ test.describe("theme-toggle", () => {
     page,
     context,
   }) => {
-    await context.addInitScript(() =>
-      localStorage.setItem("specv-theme", "dark")
-    );
+    await context.addInitScript(() => {
+      localStorage.setItem("specv-theme", "dark");
+    });
 
     await page.goto("/");
 
@@ -86,9 +86,9 @@ test.describe("theme-toggle", () => {
     page,
     context,
   }) => {
-    await context.addInitScript(() =>
-      localStorage.setItem("specv-theme", "light")
-    );
+    await context.addInitScript(() => {
+      localStorage.setItem("specv-theme", "light");
+    });
 
     await page.goto("/");
 

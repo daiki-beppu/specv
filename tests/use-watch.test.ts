@@ -82,7 +82,9 @@ afterEach(() => {
 // eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference
 describe(useWatch, () => {
   it('mount で EventSource("/api/watch") が生成される', () => {
-    renderHook(() => useWatch("docs/guide.md", vi.fn(), vi.fn(), vi.fn()));
+    renderHook(() => {
+      useWatch("docs/guide.md", vi.fn(), vi.fn(), vi.fn());
+    });
 
     expect(MockEventSource.instances).toHaveLength(1);
     expect(MockEventSource.last.url).toBe("/api/watch");
@@ -95,7 +97,9 @@ describe(useWatch, () => {
       .mockResolvedValueOnce(new Response(body, { status: 200 }));
     const setContent = vi.fn();
 
-    renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
+    renderHook(() => {
+      useWatch("docs/guide.md", setContent, vi.fn(), vi.fn());
+    });
     act(() => {
       MockEventSource.last.dispatch("file-changed", { path: "docs/guide.md" });
     });
@@ -111,7 +115,9 @@ describe(useWatch, () => {
   it("tree-changed event で setFiles が新しい files で呼ばれる", () => {
     const setFiles = vi.fn();
 
-    renderHook(() => useWatch("docs/guide.md", vi.fn(), setFiles, vi.fn()));
+    renderHook(() => {
+      useWatch("docs/guide.md", vi.fn(), setFiles, vi.fn());
+    });
     act(() => {
       MockEventSource.last.dispatch("tree-changed", { files: tree });
     });
@@ -120,9 +126,9 @@ describe(useWatch, () => {
   });
 
   it("unmount で EventSource.close() が呼ばれる", () => {
-    const { unmount } = renderHook(() =>
-      useWatch("docs/guide.md", vi.fn(), vi.fn(), vi.fn())
-    );
+    const { unmount } = renderHook(() => {
+      useWatch("docs/guide.md", vi.fn(), vi.fn(), vi.fn());
+    });
     const es = MockEventSource.last;
 
     unmount();
@@ -134,7 +140,9 @@ describe(useWatch, () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const setContent = vi.fn();
 
-    renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
+    renderHook(() => {
+      useWatch("docs/guide.md", setContent, vi.fn(), vi.fn());
+    });
     act(() => {
       MockEventSource.last.dispatch("file-changed", { path: "docs/api.md" });
     });
@@ -146,9 +154,9 @@ describe(useWatch, () => {
   it("tree-changed event で selectedPath がツリー内に存在するとき setSelectedPath は呼ばれない", () => {
     const setSelectedPath = vi.fn();
 
-    renderHook(() =>
-      useWatch("docs/guide.md", vi.fn(), vi.fn(), setSelectedPath)
-    );
+    renderHook(() => {
+      useWatch("docs/guide.md", vi.fn(), vi.fn(), setSelectedPath);
+    });
     act(() => {
       MockEventSource.last.dispatch("tree-changed", { files: tree });
     });
@@ -159,7 +167,9 @@ describe(useWatch, () => {
   it("tree-changed event で selectedPath がツリー外のとき setSelectedPath(firstFile) が呼ばれる", () => {
     const setSelectedPath = vi.fn();
 
-    renderHook(() => useWatch("deleted.md", vi.fn(), vi.fn(), setSelectedPath));
+    renderHook(() => {
+      useWatch("deleted.md", vi.fn(), vi.fn(), setSelectedPath);
+    });
     act(() => {
       MockEventSource.last.dispatch("tree-changed", { files: tree });
     });
@@ -170,7 +180,9 @@ describe(useWatch, () => {
   it("tree-changed event で selectedPath が null のとき setSelectedPath(firstFile) が呼ばれる", () => {
     const setSelectedPath = vi.fn();
 
-    renderHook(() => useWatch(null, vi.fn(), vi.fn(), setSelectedPath));
+    renderHook(() => {
+      useWatch(null, vi.fn(), vi.fn(), setSelectedPath);
+    });
     act(() => {
       MockEventSource.last.dispatch("tree-changed", { files: tree });
     });
@@ -184,8 +196,9 @@ describe(useWatch, () => {
     const setFiles = vi.fn();
     const setSelectedPath = vi.fn();
     const { rerender } = renderHook(
-      ({ selectedPath }: { selectedPath: string | null }) =>
-        useWatch(selectedPath, setContent, setFiles, setSelectedPath),
+      ({ selectedPath }: { selectedPath: string | null }) => {
+        useWatch(selectedPath, setContent, setFiles, setSelectedPath);
+      },
       { initialProps: { selectedPath: "docs/guide.md" } }
     );
     expect(MockEventSource.instances).toHaveLength(1);
@@ -201,7 +214,9 @@ describe(useWatch, () => {
     );
     const setContent = vi.fn();
 
-    renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
+    renderHook(() => {
+      useWatch("docs/guide.md", setContent, vi.fn(), vi.fn());
+    });
     act(() => {
       MockEventSource.last.dispatch("file-changed", { path: "docs/guide.md" });
     });
@@ -216,7 +231,9 @@ describe(useWatch, () => {
     const setContent = vi.fn();
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 
-    renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
+    renderHook(() => {
+      useWatch("docs/guide.md", setContent, vi.fn(), vi.fn());
+    });
     act(() => {
       MockEventSource.last.dispatchRaw("file-changed", "{not-json");
     });
@@ -229,9 +246,9 @@ describe(useWatch, () => {
     const setFiles = vi.fn();
     const setSelectedPath = vi.fn();
 
-    renderHook(() =>
-      useWatch("docs/guide.md", vi.fn(), setFiles, setSelectedPath)
-    );
+    renderHook(() => {
+      useWatch("docs/guide.md", vi.fn(), setFiles, setSelectedPath);
+    });
     act(() => {
       MockEventSource.last.dispatchRaw("tree-changed", "{not-json");
     });
@@ -244,7 +261,9 @@ describe(useWatch, () => {
     const setContent = vi.fn();
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 
-    renderHook(() => useWatch("docs/guide.md", setContent, vi.fn(), vi.fn()));
+    renderHook(() => {
+      useWatch("docs/guide.md", setContent, vi.fn(), vi.fn());
+    });
     act(() => {
       MockEventSource.last.dispatch("file-changed", { path: 123 });
     });
@@ -257,9 +276,9 @@ describe(useWatch, () => {
     const setFiles = vi.fn();
     const setSelectedPath = vi.fn();
 
-    renderHook(() =>
-      useWatch("docs/guide.md", vi.fn(), setFiles, setSelectedPath)
-    );
+    renderHook(() => {
+      useWatch("docs/guide.md", vi.fn(), setFiles, setSelectedPath);
+    });
     act(() => {
       MockEventSource.last.dispatch("tree-changed", { files: "x" });
     });

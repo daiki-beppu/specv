@@ -10,6 +10,7 @@ export const MarkdownImage = ({
 }: ComponentPropsWithoutRef<"img"> & {
   selectedPath: string | null;
 }) => {
-  const resolvedSrc = src ? resolveImageSrc(src, selectedPath) : "";
+  const resolvedSrc =
+    src !== undefined && src !== "" ? resolveImageSrc(src, selectedPath) : "";
   return <img src={resolvedSrc} alt={alt ?? ""} {...props} />;
 };

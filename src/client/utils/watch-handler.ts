@@ -25,7 +25,10 @@ export const handleTreeChanged = (
 ): void => {
   actions.setFiles(files);
 
-  const stillExists = selectedPath && findNode(files, selectedPath);
+  const stillExists =
+    selectedPath !== null &&
+    selectedPath !== "" &&
+    findNode(files, selectedPath) !== undefined;
   if (!stillExists) {
     actions.setSelectedPath(findFirstFile(files));
   }

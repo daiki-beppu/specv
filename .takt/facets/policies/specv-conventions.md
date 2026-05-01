@@ -93,6 +93,22 @@ tests/files.test.ts
 
 **CI ではカバレッジを計測し、lines / functions / statements 80%、branches 70% を warn 閾値として扱う**（現状は `continue-on-error: true` で fail させない）。閾値を下回るプルリクは将来 fail に切り替える可能性があるため、新規実装はテストを伴わせて閾値を維持する。
 
+## type-aware lint の運用
+
+Vite+ (oxlint) の type-aware ルールは `vite.config.ts` の `lint.options.typeAware: true` / `typeCheck: true` で有効化済み。
+
+| ルール                                    | 運用                                                                                                                             |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| すべての type-aware ルール                | `"off"` で suppress しない（issue #126 運用ルール）                                                                              |
+| `typescript/no-confusing-void-expression` | ルール有効。ただし `nr fix`（= `vp check --fix`）適用後は diff 目視確認必須（auto-fix がブレース挿入で構文不正を起こすバグ回避） |
+
+```text
+# REJECT - type-aware ルールの suppress
+"typescript/no-unsafe-type-assertion": "off"
+
+# OK - 違反は型ガード・narrow で解消する
+```
+
 ## パス参照規約
 
 相対パスのドット連打を避け、設定済みエイリアスで参照する。

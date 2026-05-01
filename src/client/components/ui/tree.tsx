@@ -39,7 +39,7 @@ const TreeItem = ({
       {icon}
       <span className="truncate">{name}</span>
     </button>
-    {expanded && children && (
+    {expanded && children !== undefined && children !== null && (
       <ul className="ml-4 flex flex-col gap-0.5" role="group">
         {children}
       </ul>

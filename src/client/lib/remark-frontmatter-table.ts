@@ -28,12 +28,22 @@ const formatValue = (value: unknown): string => {
   if (typeof value === "object") {
     return JSON.stringify(value);
   }
-  return String(value as string);
+  if (typeof value === "string") {
+    return value;
+  }
+  if (
+    typeof value === "number" ||
+    typeof value === "bigint" ||
+    typeof value === "boolean"
+  ) {
+    return String(value);
+  }
+  return "";
 };
 
 export const remarkFrontmatterTable: Plugin<[], Root> = () => (tree) => {
   const [firstNode] = tree.children;
-  if (!firstNode || firstNode.type !== "yaml") {
+  if (firstNode === undefined || firstNode.type !== "yaml") {
     return;
   }
 
