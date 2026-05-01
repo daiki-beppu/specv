@@ -34,11 +34,15 @@ export const CopyButton = ({ text }: { text: string }) => {
     }, 2000);
   }, [text]);
 
+  const handleClick = useCallback(() => {
+    void handleCopy();
+  }, [handleCopy]);
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={handleCopy}
+      onClick={handleClick}
       className="absolute top-2 right-2 bg-muted opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
       title={copied ? "Copied!" : "Copy"}
     >
