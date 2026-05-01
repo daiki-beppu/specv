@@ -44,6 +44,8 @@ export const useWatch = (
       handleTreeChanged(files, selectedPathRef.current, actions);
     });
 
-    return () => es.close();
+    return () => {
+      es.close();
+    };
   }, [setContent, setFiles, setSelectedPath]);
 };

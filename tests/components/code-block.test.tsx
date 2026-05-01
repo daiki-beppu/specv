@@ -7,20 +7,23 @@ vi.mock(import("@/hooks/use-theme"), () => ({
   useTheme: () => ({ theme: "light" as const, toggle: vi.fn() }),
 }));
 
-vi.mock(import("mermaid"), () => ({
-  default: {
-    initialize: vi.fn(),
-    render: vi.fn().mockResolvedValue({
-      bindFunctions: vi.fn(),
-      svg: '<svg data-testid="mermaid-svg">mock</svg>',
-    }),
-  },
-}));
+vi.mock(import("mermaid"));
 
 const SAMPLE_TS = "const x = 1;";
 
 // eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference
 describe(CodeBlock, () => {
+  // eslint-disable-next-line jest/no-hooks -- mermaid mock setup and jsdom cleanup required
+  beforeEach(async () => {
+    const mermaid = await import("mermaid");
+    vi.mocked(mermaid.default.initialize).mockReturnValue();
+    vi.mocked(mermaid.default.render).mockResolvedValue({
+      bindFunctions: vi.fn(),
+      diagramType: "flowchart",
+      svg: '<svg data-testid="mermaid-svg">mock</svg>',
+    });
+  });
+
   // eslint-disable-next-line jest/no-hooks -- jsdom cleanup required
   afterEach(() => {
     cleanup();
