@@ -195,7 +195,7 @@ describe("quick-open", () => {
     // ↓キーで次のアイテムに移動
     fireEvent.keyDown(input, { key: "ArrowDown" });
 
-    const items = document.querySelectorAll("[cmdk-item]");
+    const items = document.querySelectorAll<HTMLElement>("[cmdk-item]");
     const selected = [...items].find(
       (item) => item.dataset.selected === "true"
     );
