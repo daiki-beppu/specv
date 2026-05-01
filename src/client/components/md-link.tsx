@@ -16,14 +16,14 @@ export const MdLink = ({
   const handleClick = useCallback(
     (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      if (selectedPath && href) {
+      if (selectedPath !== null && href !== undefined) {
         onNavigate(resolvePath(selectedPath, href));
       }
     },
     [selectedPath, href, onNavigate]
   );
 
-  if (href?.endsWith(".md") && selectedPath) {
+  if (href?.endsWith(".md") === true && selectedPath !== null) {
     return (
       <a {...props} href={href} onClick={handleClick}>
         {children}
@@ -32,7 +32,7 @@ export const MdLink = ({
   }
   // hash-only anchor (rehypeAutolinkHeadings が prepend する見出し anchor を含む) は
   // 同一タブで URL hash を更新したいので target="_blank" を付与しない。
-  if (href?.startsWith("#")) {
+  if (href?.startsWith("#") === true) {
     return (
       <a {...props} href={href}>
         {children}

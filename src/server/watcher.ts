@@ -70,7 +70,7 @@ export const createWatcher = (
   scanExisting(baseDir, knownFiles);
 
   const watcher = fs.watch(baseDir, { recursive: true }, (_event, filename) => {
-    if (!filename) {
+    if (filename === null || filename === "") {
       return;
     }
 

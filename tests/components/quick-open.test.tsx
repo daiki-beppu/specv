@@ -50,6 +50,27 @@ describe("quick-open", () => {
     expect(screen.getByPlaceholderText("Go to File")).toBeDefined();
   });
 
+  it("query が空のとき全ファイル候補が描画される", () => {
+    render(
+      <QuickOpen files={sampleFiles} open onClose={noop} onSelect={noop} />
+    );
+
+    const items = document.querySelectorAll("[cmdk-item]");
+    const hasReadme = [...items].some((el) =>
+      el.textContent?.includes("README.md")
+    );
+    const hasIndex = [...items].some((el) =>
+      el.textContent?.includes("index.ts")
+    );
+    const hasUtils = [...items].some((el) =>
+      el.textContent?.includes("utils.ts")
+    );
+
+    expect(hasReadme).toBeTruthy();
+    expect(hasIndex).toBeTruthy();
+    expect(hasUtils).toBeTruthy();
+  });
+
   it("open=false で何も表示されない", () => {
     render(
       <QuickOpen

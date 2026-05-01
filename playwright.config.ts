@@ -12,7 +12,8 @@ export default defineConfig({
       use: { browserName: "chromium" },
     },
   ],
-  reporter: process.env.CI ? "github" : "list",
+  reporter:
+    process.env.CI !== undefined && process.env.CI !== "" ? "github" : "list",
   retries: 0,
   testDir: "./e2e",
   timeout: 30_000,
@@ -23,6 +24,6 @@ export default defineConfig({
     command: `node ${cliPath} -p 4650 --no-auto-close`,
     cwd: fixturesDir,
     port: 4650,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: process.env.CI === undefined || process.env.CI === "",
   },
 });

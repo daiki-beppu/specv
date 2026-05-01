@@ -66,7 +66,7 @@ const useLoadFiles = (
         logError("Failed to load files:", error);
       }
     };
-    load();
+    void load();
   }, [setFiles, setSelectedPath]);
 };
 
@@ -86,7 +86,7 @@ const useLoadContent = (
         logError("Failed to load file:", error);
       }
     };
-    load();
+    void load();
   }, [selectedPath, setContent]);
 };
 
@@ -94,24 +94,31 @@ const useAppHandlers = (
   setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>,
   setQuickOpenVisible: React.Dispatch<React.SetStateAction<boolean>>
 ) => ({
-  handleCloseQuickOpen: useCallback(
-    () => setQuickOpenVisible(false),
-    [setQuickOpenVisible]
-  ),
-  handleSetPreview: useCallback(() => setViewMode("preview"), [setViewMode]),
-  handleSetSource: useCallback(() => setViewMode("source"), [setViewMode]),
+  handleCloseQuickOpen: useCallback(() => {
+    setQuickOpenVisible(false);
+  }, [setQuickOpenVisible]),
+  handleSetPreview: useCallback(() => {
+    setViewMode("preview");
+  }, [setViewMode]),
+  handleSetSource: useCallback(() => {
+    setViewMode("source");
+  }, [setViewMode]),
 });
 
 const useHotkeys = (
   setQuickOpenVisible: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  useHotkey("Mod+P", () => setQuickOpenVisible(true));
+  useHotkey("Mod+P", () => {
+    setQuickOpenVisible(true);
+  });
 };
 
 const useLifecycle = () => {
   useEffect(() => {
     const es = new EventSource("/api/lifecycle");
-    return () => es.close();
+    return () => {
+      es.close();
+    };
   }, []);
 };
 

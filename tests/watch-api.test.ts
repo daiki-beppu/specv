@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { createApiRouter } from "@server/api";
@@ -172,6 +174,43 @@ describe("gET /api/watch", () => {
       expect(() =>
         watchers[0].emit({ path: "test.md", type: "change" })
       ).not.toThrow();
+    });
+  });
+
+  it("scanMarkdownFiles が throw したとき tree-changed が SSE に流れず後続の change は届く", async () => {
+    // setupWatcher 内 setTimeout コールバックの try/catch (Scan failure is non-fatal) を担保する。
+    // baseDir を subdir として作成し、watcher 登録後に subdir のみ rm することで scan を恒常失敗させる。
+    // tmpDir 自体は withTmpDir の finally に委ね、ENOENT 衝突を避ける（tests/api.test.ts:42-58 と同型）。
+    await withTmpDir(async (tmpDir) => {
+      const baseDir = path.join(tmpDir, "base");
+      fs.mkdirSync(baseDir);
+      const { app, watchers } = setupWatchApp(baseDir);
+      const body = await requestWatch(app);
+      const reader = body.getReader();
+      const decoder = new TextDecoder();
+
+      fs.rmSync(baseDir, { force: true, recursive: true });
+
+      try {
+        await delay(50);
+        watchers[0].emit({ path: "new.md", type: "add" });
+
+        const firstRead = reader.read();
+        const raceResult = await Promise.race([
+          firstRead.then(() => "got" as const),
+          delay(400).then(() => "timeout" as const),
+        ]);
+
+        expect(raceResult).toBe("timeout");
+
+        watchers[0].emit({ path: "any", type: "change" });
+        const chunk = await firstRead;
+        const text = decoder.decode(chunk.value);
+
+        expect(text).toContain("event: file-changed");
+      } finally {
+        await reader.cancel();
+      }
     });
   });
 });

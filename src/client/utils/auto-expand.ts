@@ -4,12 +4,12 @@ export const computeAutoExpandPaths = (nodes: FileNode[]): Set<string> => {
   const paths = new Set<string>();
 
   const walk = (children: FileNode[]) => {
-    const dirs = children.filter((n) => n.children);
+    const dirs = children.filter((n) => n.children !== undefined);
     if (dirs.length !== 1) {
       return;
     }
     paths.add(dirs[0].path);
-    if (dirs[0].children) {
+    if (dirs[0].children !== undefined) {
       walk(dirs[0].children);
     }
   };
@@ -20,11 +20,11 @@ export const computeAutoExpandPaths = (nodes: FileNode[]): Set<string> => {
 
 export const findFirstFile = (nodes: FileNode[]): string | null => {
   for (const node of nodes) {
-    if (!node.children) {
+    if (node.children === undefined) {
       return node.path;
     }
     const child = findFirstFile(node.children);
-    if (child) {
+    if (child !== null) {
       return child;
     }
   }
@@ -39,9 +39,9 @@ export const findNode = (
     if (node.path === path) {
       return node;
     }
-    if (node.children) {
+    if (node.children !== undefined) {
       const found = findNode(node.children, path);
-      if (found) {
+      if (found !== undefined) {
         return found;
       }
     }

@@ -29,9 +29,9 @@ const IMAGE_CONTENT_TYPES: Record<string, string> = {
   ".webp": "image/webp",
 };
 
-const readFile = async (filePath: string, baseDir: string): Promise<string> => {
+const readFile = (filePath: string, baseDir: string): Promise<string> => {
   const resolvedPath = validatePath(filePath, baseDir);
-  return await fs.readFile(resolvedPath, "utf8");
+  return fs.readFile(resolvedPath, "utf8");
 };
 
 const readImage = async (
@@ -78,19 +78,21 @@ const setupWatcher = (
         event: "file-changed",
       });
     } else {
-      if (treeDebounceTimer) {
+      if (treeDebounceTimer !== null) {
         clearTimeout(treeDebounceTimer);
       }
-      treeDebounceTimer = setTimeout(async () => {
-        try {
-          const files = await scanMarkdownFiles(baseDir);
-          broadcast({
-            data: JSON.stringify({ files } satisfies TreeChangedPayload),
-            event: "tree-changed",
-          });
-        } catch {
-          // Scan failure is non-fatal
-        }
+      treeDebounceTimer = setTimeout(() => {
+        void (async () => {
+          try {
+            const files = await scanMarkdownFiles(baseDir);
+            broadcast({
+              data: JSON.stringify({ files } satisfies TreeChangedPayload),
+              event: "tree-changed",
+            });
+          } catch {
+            // Scan failure is non-fatal
+          }
+        })();
       }, TREE_DEBOUNCE_MS);
     }
   });
@@ -127,7 +129,7 @@ export const createApiRouter = (
 
   api.get("/api/file", async (c) => {
     const filePath = c.req.query("path");
-    if (!filePath) {
+    if (filePath === undefined || filePath === "") {
       return c.json<ApiErrorResponse>(
         { error: "path query parameter is required" },
         400
@@ -147,7 +149,7 @@ export const createApiRouter = (
 
   api.get("/api/image", async (c) => {
     const filePath = c.req.query("path");
-    if (!filePath) {
+    if (filePath === undefined || filePath === "") {
       return c.json<ApiErrorResponse>(
         { error: "path query parameter is required" },
         400
@@ -170,7 +172,7 @@ export const createApiRouter = (
 
     const stream = new ReadableStream({
       cancel() {
-        if (listener) {
+        if (listener !== null) {
           sseListeners.delete(listener);
         }
       },

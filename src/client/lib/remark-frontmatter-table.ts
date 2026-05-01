@@ -28,7 +28,7 @@ const formatValue = (value: unknown): string => {
   if (typeof value === "object") {
     return JSON.stringify(value);
   }
-  return String(value);
+  return String(value as string);
 };
 
 export const remarkFrontmatterTable: Plugin<[], Root> = () => (tree) => {

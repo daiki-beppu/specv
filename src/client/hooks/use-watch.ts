@@ -61,6 +61,8 @@ export const useWatch = (
       handleTreeChanged(payload.files, selectedPathRef.current, actions);
     });
 
-    return () => es.close();
+    return () => {
+      es.close();
+    };
   }, [setContent, setFiles, setSelectedPath]);
 };
