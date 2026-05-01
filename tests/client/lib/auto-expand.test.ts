@@ -1,6 +1,6 @@
 import type { FileNode } from "@shared/types";
 
-import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand";
+import { computeAutoExpandPaths, findNode } from "@/lib/auto-expand";
 
 // eslint-disable-next-line jest/valid-title -- oxfmt reverts string to function reference
 describe(computeAutoExpandPaths, () => {

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/input-group";
 import { Kbd } from "@/components/ui/kbd";
 import { Tree, TreeItem, TreeLeaf } from "@/components/ui/tree";
-import { computeAutoExpandPaths, findNode } from "@/utils/auto-expand";
+import { computeAutoExpandPaths, findNode } from "@/lib/auto-expand";
 
 interface FileTreeProps {
   files: FileNode[];

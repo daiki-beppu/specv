@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
 
-import { MarkdownPre } from "@/components/markdown-pre";
+import { MarkdownPre } from "@/components/markdown/markdown-pre";
 
 // eslint-disable-next-line eslint-plugin-jest/valid-title -- prefer-describe-function-title requires function reference
 describe(MarkdownPre, () => {

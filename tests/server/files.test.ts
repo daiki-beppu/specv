@@ -1,6 +1,6 @@
 import { scanMarkdownFiles } from "@server/files";
 
-import { createFile, withTmpDir } from "./test-utils";
+import { createFile, withTmpDir } from "../test-utils";
 
 describe(scanMarkdownFiles, () => {
   it("ルートの .md ファイルを返す", async () => {

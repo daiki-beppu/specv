@@ -37,7 +37,7 @@ describe("MermaidBlock", () => {
     // Arrange
     const mermaid = await import("mermaid");
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     // Act
     render(<MermaidBlock code="graph TD; A-->B" />);
@@ -58,7 +58,7 @@ describe("MermaidBlock", () => {
     mockTheme = "light";
     const mermaid = await import("mermaid");
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     // Act
     render(<MermaidBlock code="graph TD; A-->B" />);
@@ -81,7 +81,7 @@ describe("MermaidBlock", () => {
     });
     const mermaid = await import("mermaid");
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     // Act
     render(<MermaidBlock code="graph TD; A-->B" />);
@@ -100,7 +100,7 @@ describe("MermaidBlock", () => {
       new Error("parse error")
     );
     const { default: MermaidBlock } =
-      await import("@/components/mermaid-block.js");
+      await import("@/components/markdown/mermaid-block.js");
 
     render(<MermaidBlock code="invalid mermaid" />);
 

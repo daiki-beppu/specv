@@ -30,14 +30,20 @@ nr fix               # Auto-fix lint/format issues (vp check --fix)
 src/
 ├── client/           # React frontend
 │   ├── api.ts        # API client (fetch wrapper)
-│   ├── components/   # UI components (file-tree, preview, quick-open)
+│   ├── components/   # UI components (file-tree, quick-open)
 │   │   ├── ui/       # Base UI components (button)
-│   │   ├── mermaid-block.tsx  # Mermaid diagram renderer (lazy loaded)
+│   │   ├── markdown/ # Markdown rendering chain
+│   │   │   ├── code-block.tsx
+│   │   │   ├── markdown-image.tsx
+│   │   │   ├── markdown-link.tsx
+│   │   │   ├── markdown-pre.tsx
+│   │   │   ├── markdown-table.tsx
+│   │   │   ├── mermaid-block.tsx  # Mermaid diagram renderer (lazy loaded)
+│   │   │   └── preview.tsx
 │   │   ├── source.tsx
 │   │   └── theme-toggle.tsx
 │   ├── hooks/        # Custom React hooks
-│   ├── utils/        # Client utilities (auto-expand, etc.)
-│   ├── lib/          # Path resolution utilities
+│   ├── lib/          # Client utilities (path resolution, auto-expand, watch-handler)
 │   ├── main.tsx      # Entry point
 │   └── app.tsx       # Main App component
 ├── server/

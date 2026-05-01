@@ -1,7 +1,7 @@
 import type { ApiErrorResponse } from "@shared/errors";
 import type { FilesResponse } from "@shared/types";
 
-import { expectApiErrorResponse, expectFilesResponse } from "./test-utils";
+import { expectApiErrorResponse, expectFilesResponse } from "../test-utils";
 
 // 再発防止: api テストの asserts ヘルパーが `FilesResponse` / `ApiErrorResponse`
 // を文字列レベルで再宣言しないこと、および各テストファイルで再実装されないことを保証する。

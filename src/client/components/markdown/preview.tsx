@@ -4,11 +4,11 @@ import type { ComponentPropsWithoutRef } from "react";
 import { useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 
-import { CodeBlock } from "@/components/code-block";
-import { MarkdownImage } from "@/components/markdown-image";
-import { MarkdownPre } from "@/components/markdown-pre";
-import { MarkdownTable } from "@/components/markdown-table";
-import { MdLink } from "@/components/md-link";
+import { CodeBlock } from "@/components/markdown/code-block";
+import { MarkdownImage } from "@/components/markdown/markdown-image";
+import { MarkdownLink } from "@/components/markdown/markdown-link";
+import { MarkdownPre } from "@/components/markdown/markdown-pre";
+import { MarkdownTable } from "@/components/markdown/markdown-table";
 import { REHYPE_PLUGINS, REMARK_PLUGINS } from "@/lib/markdown-plugins";
 
 interface PreviewProps {
@@ -24,7 +24,11 @@ export const Preview = ({
 }: PreviewProps) => {
   const renderLink = useCallback(
     (props: ComponentPropsWithoutRef<"a">) => (
-      <MdLink {...props} selectedPath={selectedPath} onNavigate={onNavigate} />
+      <MarkdownLink
+        {...props}
+        selectedPath={selectedPath}
+        onNavigate={onNavigate}
+      />
     ),
     [selectedPath, onNavigate]
   );

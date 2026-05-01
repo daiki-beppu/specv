@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchFile, fetchFiles } from "./api";
 import { FileTree } from "./components/file-tree";
-import { Preview } from "./components/preview";
+import { Preview } from "./components/markdown/preview";
 import { QuickOpen } from "./components/quick-open";
 import { Source } from "./components/source";
 import { ThemeToggle } from "./components/theme-toggle";
@@ -23,8 +23,8 @@ import {
 } from "./components/ui/sidebar";
 import { useScrollRestore } from "./hooks/use-scroll-restore";
 import { useWatch } from "./hooks/use-watch";
+import { findFirstFile } from "./lib/auto-expand";
 import { logError } from "./lib/logger";
-import { findFirstFile } from "./utils/auto-expand";
 
 type ViewMode = "preview" | "source";
 

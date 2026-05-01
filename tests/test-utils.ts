@@ -56,7 +56,7 @@ export function expectApiErrorResponse(
 
 // jsdom 環境向けの no-op `EventSource` 実装。
 // `useWatch` が `new EventSource(...)` する経路でレンダリングが落ちないようにするためだけのもので、
-// 実際の SSE 動作はテストしない。SSE 振る舞いをテストする側は `tests/use-watch.test.ts` の
+// 実際の SSE 動作はテストしない。SSE 振る舞いをテストする側は `tests/client/hooks/use-watch.test.ts` の
 // `MockEventSource`（dispatch/dispatchRaw 付き）を使う。
 export class EventSourceMock implements EventSource {
   static readonly CONNECTING = 0;

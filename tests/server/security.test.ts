@@ -8,7 +8,7 @@ import {
 } from "@server/security";
 import { AppError } from "@shared/errors";
 
-import { createFile, withTmpDir } from "./test-utils";
+import { createFile, withTmpDir } from "../test-utils";
 
 const baseDir = "/home/user/project";
 
