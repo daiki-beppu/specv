@@ -19,6 +19,7 @@ describe(getLocalIpAddress, () => {
           internal: false,
           mac: "00:00:00:00:00:00",
           netmask: "ffff:ffff:ffff:ffff::",
+          scopeid: 0,
         },
         {
           address: "192.168.1.10",

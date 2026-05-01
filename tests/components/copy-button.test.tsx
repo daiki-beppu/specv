@@ -19,7 +19,7 @@ describe(CopyButton, () => {
   });
 
   it("クリックで navigator.clipboard.writeText(text) が呼ばれる", async () => {
-    const writeText = vi.fn().mockResolvedValue();
+    const writeText = vi.fn(() => Promise.resolve());
     Object.assign(navigator, { clipboard: { writeText } });
 
     render(<CopyButton text="hello world" />);
@@ -31,7 +31,7 @@ describe(CopyButton, () => {
   });
 
   it("writeText 解決後に title が 'Copied!' になり Check アイコンが表示される", async () => {
-    const writeText = vi.fn().mockResolvedValue();
+    const writeText = vi.fn(() => Promise.resolve());
     Object.assign(navigator, { clipboard: { writeText } });
 
     render(<CopyButton text="hello" />);
@@ -45,7 +45,7 @@ describe(CopyButton, () => {
     vi.useFakeTimers();
     try {
       // Arrange
-      const writeText = vi.fn().mockResolvedValue();
+      const writeText = vi.fn(() => Promise.resolve());
       Object.assign(navigator, { clipboard: { writeText } });
       render(<CopyButton text="hello" />);
 
@@ -73,7 +73,7 @@ describe(CopyButton, () => {
 
   it("初回クリックでは prop の text で writeText が呼ばれる", async () => {
     // Arrange
-    const writeText = vi.fn().mockResolvedValue();
+    const writeText = vi.fn(() => Promise.resolve());
     Object.assign(navigator, { clipboard: { writeText } });
     render(<CopyButton text="first" />);
 
@@ -88,7 +88,7 @@ describe(CopyButton, () => {
 
   it("rerender 後のクリックでは新しい text で writeText が呼ばれる", async () => {
     // Arrange
-    const writeText = vi.fn().mockResolvedValue();
+    const writeText = vi.fn(() => Promise.resolve());
     Object.assign(navigator, { clipboard: { writeText } });
     const { rerender } = render(<CopyButton text="first" />);
     rerender(<CopyButton text="second" />);

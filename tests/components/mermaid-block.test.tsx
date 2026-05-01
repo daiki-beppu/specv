@@ -16,6 +16,7 @@ describe("MermaidBlock", () => {
     vi.mocked(mermaid.default.initialize).mockReturnValue();
     vi.mocked(mermaid.default.render).mockResolvedValue({
       bindFunctions: vi.fn(),
+      diagramType: "flowchart",
       svg: '<svg data-testid="mermaid-svg">mock diagram</svg>',
     });
 

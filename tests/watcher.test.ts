@@ -220,10 +220,9 @@ describe("server: createWatcher (mocked fs.watch)", () => {
       const { close } = createWatcher(tmpDir, cb);
 
       try {
-        const captured = watchSpy.mock.calls[0]?.[2] as (
-          event: string,
-          filename: string | null
-        ) => void;
+        const captured = (
+          watchSpy.mock.calls[0] as unknown[] | undefined
+        )?.[2] as (event: string, filename: string | null) => void;
         captured("change", null);
 
         await delay(500);
@@ -241,10 +240,9 @@ describe("server: createWatcher (mocked fs.watch)", () => {
       const { close } = createWatcher(tmpDir, cb);
 
       try {
-        const captured = watchSpy.mock.calls[0]?.[2] as (
-          event: string,
-          filename: string | null
-        ) => void;
+        const captured = (
+          watchSpy.mock.calls[0] as unknown[] | undefined
+        )?.[2] as (event: string, filename: string | null) => void;
         captured("change", "../external.md");
 
         await delay(500);

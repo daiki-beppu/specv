@@ -8,14 +8,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "rootDir": "src",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "baseUrl": ".",
+    "types": ["vitest/globals", "node"],
     "paths": {
       "@/*": ["./src/client/*"],
       "@server/*": ["./src/server/*"],
       "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "tests"]
 }
