@@ -14,7 +14,7 @@ export const MarkdownPre = ({
     codeEl &&
     typeof codeEl === "object" &&
     "props" in codeEl &&
-    MERMAID_CLASS_RE.test(codeEl.props.className || "");
+    MERMAID_CLASS_RE.test(codeEl.props.className ?? "");
 
   if (isMermaid) {
     return children;

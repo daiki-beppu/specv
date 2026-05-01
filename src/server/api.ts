@@ -29,9 +29,9 @@ const IMAGE_CONTENT_TYPES: Record<string, string> = {
   ".webp": "image/webp",
 };
 
-const readFile = async (filePath: string, baseDir: string): Promise<string> => {
+const readFile = (filePath: string, baseDir: string): Promise<string> => {
   const resolvedPath = validatePath(filePath, baseDir);
-  return await fs.readFile(resolvedPath, "utf8");
+  return fs.readFile(resolvedPath, "utf8");
 };
 
 const readImage = async (
