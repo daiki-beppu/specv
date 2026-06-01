@@ -3,3 +3,11 @@
 
 # 自動 PR を作成する場合はドラフトとして作成（試運転段階の安全運用）
 draft_pr: true
+
+# coder persona を Claude opus に固定する。
+# global では coder のみ Codex に振っているが、specv では vp check / Vite+ の lint・format で
+# Codex がアボートするケースがあったため、プロジェクト単位で Claude opus に揃える。
+persona_providers:
+  coder:
+    provider: claude
+    model: opus

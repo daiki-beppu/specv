@@ -97,7 +97,7 @@ takt -i <issue 番号> --auto-pr --draft        # 完了後にドラフト PR �
 
 ## 構成
 
-- `.takt/config.yaml` — プロジェクト固有のオーバーライド（`draft_pr: true` のみ）
+- `.takt/config.yaml` — プロジェクト固有のオーバーライド（`draft_pr: true` と `persona_providers.coder` を Claude opus に固定）
 - `.takt/.gitignore` — runtime artifacts (`runs/`, `tasks/`, `tasks.yaml` など) を allowlist 方式で除外。ルート `.gitignore` への追加は不要
 
 ## 前提（グローバル設定）
