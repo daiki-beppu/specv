@@ -26,6 +26,14 @@ npx specv@latest -p 3000
 
 A browser window opens automatically, rendering your Markdown files with GitHub-style formatting.
 
+### Multiple instances
+
+Running `specv` in more than one directory at the same time is supported. Each
+instance is independent: if the requested port is already in use, specv falls
+back to the next free port instead of taking over the existing one. The actual
+URL is printed in the `➜  Local:` line and the matching browser tab is opened,
+so each window keeps showing its own directory.
+
 ## Keyboard Shortcuts
 
 | Shortcut           | Action              |
