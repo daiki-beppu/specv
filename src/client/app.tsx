@@ -8,6 +8,7 @@ import { fetchFile, fetchFiles } from "./api";
 import { FileTree } from "./components/file-tree";
 import { Preview } from "./components/markdown/preview";
 import { QuickOpen } from "./components/quick-open";
+import { ServerDownBanner } from "./components/server-down-banner";
 import { Source } from "./components/source";
 import { ThemeToggle } from "./components/theme-toggle";
 import { Button } from "./components/ui/button";
@@ -22,8 +23,10 @@ import {
   useSidebar,
 } from "./components/ui/sidebar";
 import { useScrollRestore } from "./hooks/use-scroll-restore";
+import { type ServerStatus, useServerStatus } from "./hooks/use-server-status";
 import { useWatch } from "./hooks/use-watch";
 import { findFirstFile } from "./lib/auto-expand";
+import { isNetworkError } from "./lib/is-network-error";
 import { logError } from "./lib/logger";
 
 type ViewMode = "preview" | "source";
@@ -51,7 +54,8 @@ const renderContent = (
 
 const useLoadFiles = (
   setFiles: (f: FileNode[]) => void,
-  setSelectedPath: (p: string | null) => void
+  setSelectedPath: (p: string | null) => void,
+  onServerDown: () => void
 ) => {
   useEffect(() => {
     const load = async () => {
@@ -63,11 +67,14 @@ const useLoadFiles = (
           setSelectedPath(first);
         }
       } catch (error) {
+        if (isNetworkError(error)) {
+          onServerDown();
+        }
         logError("Failed to load files:", error);
       }
     };
     void load();
-  }, [setFiles, setSelectedPath]);
+  }, [setFiles, setSelectedPath, onServerDown]);
 };
 
 const useLoadContent = (
@@ -113,22 +120,29 @@ const useHotkeys = (
   });
 };
 
-const useLifecycle = () => {
-  useEffect(() => {
-    const es = new EventSource("/api/lifecycle");
-    return () => {
-      es.close();
-    };
+// SSE ライフサイクル監視に加え、初回 API のネットワークエラーも
+// 「サーバー停止」とみなして disconnected に倒す。停止状態は
+// リロードでのみ復帰させる（バナーのリロードボタンが復帰手段）。
+const useServerHealth = () => {
+  const sseStatus = useServerStatus();
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  const markServerDown = useCallback(() => {
+    setLoadFailed(true);
   }, []);
+
+  const status: ServerStatus = loadFailed ? "disconnected" : sseStatus;
+
+  return { markServerDown, status };
 };
 
-const useContentState = () => {
+const useContentState = (onServerDown: () => void) => {
   const [files, setFiles] = useState<FileNode[]>([]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useLoadFiles(setFiles, setSelectedPath);
+  useLoadFiles(setFiles, setSelectedPath, onServerDown);
   useLoadContent(selectedPath, setContent);
   useWatch(selectedPath, setContent, setFiles, setSelectedPath);
   useScrollRestore(scrollRef, selectedPath);
@@ -136,7 +150,7 @@ const useContentState = () => {
   return { content, files, scrollRef, selectedPath, setSelectedPath };
 };
 
-const useAppState = () => {
+const useAppState = (onServerDown: () => void) => {
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [quickOpenVisible, setQuickOpenVisible] = useState(false);
 
@@ -144,13 +158,13 @@ const useAppState = () => {
 
   return {
     ...useAppHandlers(setViewMode, setQuickOpenVisible),
-    ...useContentState(),
+    ...useContentState(onServerDown),
     quickOpenVisible,
     viewMode,
   };
 };
 
-const AppContent = () => {
+const AppContent = ({ onServerDown }: { onServerDown: () => void }) => {
   const { isMobile, open, openMobile, toggleSidebar } = useSidebar();
   const isOpen = isMobile ? openMobile : open;
 
@@ -165,7 +179,7 @@ const AppContent = () => {
     selectedPath,
     setSelectedPath,
     viewMode,
-  } = useAppState();
+  } = useAppState(onServerDown);
 
   const handleSelect = useCallback(
     (path: string) => {
@@ -259,7 +273,7 @@ const AppContent = () => {
 };
 
 export const App = () => {
-  useLifecycle();
+  const { markServerDown, status } = useServerHealth();
 
   return (
     <SidebarProvider
@@ -268,7 +282,8 @@ export const App = () => {
         "--sidebar-width": `${String(SIDEBAR_DEFAULT_WIDTH)}px`,
       }}
     >
-      <AppContent />
+      <ServerDownBanner status={status} />
+      <AppContent onServerDown={markServerDown} />
     </SidebarProvider>
   );
 };

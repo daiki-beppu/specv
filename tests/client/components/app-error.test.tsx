@@ -5,6 +5,8 @@ import { fetchFile, fetchFiles } from "@/api";
 import { App } from "@/app";
 import { logError } from "@/lib/logger";
 
+import { EventSourceMock } from "../../test-utils";
+
 // API モック（per-test に挙動を差し替えるため初期実装は空）
 vi.mock(import("@/api"), () => ({
   fetchFile: vi.fn(),
@@ -21,15 +23,7 @@ vi.mock(import("@/hooks/use-theme"), () => ({
   useTheme: () => ({ theme: "light" as const, toggle: vi.fn() }),
 }));
 
-// EventSource モック（useWatch / useLifecycle で使われる）
-class EventSourceMock {
-  // eslint-disable-next-line class-methods-use-this, no-empty-function
-  addEventListener() {}
-  // eslint-disable-next-line class-methods-use-this, no-empty-function
-  close() {}
-  // eslint-disable-next-line class-methods-use-this, no-empty-function
-  removeEventListener() {}
-}
+// EventSource モック（useWatch / useServerStatus で使われる）
 vi.stubGlobal("EventSource", EventSourceMock);
 
 // UseHotkey モック
