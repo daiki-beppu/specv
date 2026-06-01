@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 import fs from "node:fs";
-import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { isObjectRecord } from "@shared/is-object-record";
 import { program } from "commander";
@@ -12,9 +10,7 @@ import { Hono } from "hono";
 
 import { createApiRouter } from "./api";
 import { registerLifecycle } from "./lifecycle";
-import { getLocalIpAddress } from "./network";
-import { openInBrowser } from "./open-browser";
-import { displayQrCode } from "./qr-display";
+import { announceAndOpen, listenWithFallback } from "./listen";
 
 const packageJsonPath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -81,7 +77,7 @@ program
   .option("-p, --port <number>", "Port number", "4649")
   .option("--host", "Expose to local network (enables QR code)")
   .option("--no-auto-close", "Disable auto-close on client disconnect")
-  .action((options: CliOptions) => {
+  .action(async (options: CliOptions) => {
     const baseDir = process.cwd();
     const startPort = Number.parseInt(options.port, 10);
     const clientDir = path.join(currentDir, "../client");
@@ -97,65 +93,23 @@ program
         : undefined
     );
 
-    const announceAndOpen = async (info: AddressInfo): Promise<void> => {
-      const localUrl = `http://localhost:${info.port}`;
-      console.log("");
-      console.log(`  specv v${program.version()}`);
-      console.log("");
-      console.log(`  ➜  Local:   ${localUrl}`);
-
-      const ip = networkConfig.enableNetwork ? getLocalIpAddress() : null;
-      const networkUrl = ip === null ? null : `http://${ip}:${info.port}`;
-
-      if (networkUrl !== null) {
-        console.log(`  ➜  Network: ${networkUrl}`);
-      } else if (!networkConfig.enableNetwork) {
-        console.log("  ➜  Network: use --host to expose to local network");
-      }
-
-      console.log("");
-      console.log(`  Serving: ${baseDir}`);
-
-      // Dev:host 時は Vite プラグイン側で QR を表示するためスキップ。
-      // SPECV_HOST="" は未設定と同義として扱う（`vite.config.ts:93` の Boolean(process.env.SPECV_HOST) と整合）
-      if (
-        networkUrl !== null &&
-        (process.env.SPECV_HOST === undefined || process.env.SPECV_HOST === "")
-      ) {
-        console.log("");
-        displayQrCode(networkUrl);
-      }
-
-      console.log("");
-      console.log("  Press Ctrl+C to stop");
-
-      try {
-        await openInBrowser(localUrl);
-      } catch {
-        console.log(`  Open ${localUrl} in your browser`);
-      }
-    };
-
-    const tryListen = (port: number): void => {
-      const server = serve(
-        { fetch: app.fetch, hostname: networkConfig.hostname, port },
-        (info) => {
-          void announceAndOpen(info);
-        }
+    try {
+      const { port } = await listenWithFallback(
+        app,
+        networkConfig.hostname,
+        startPort
       );
-
-      server.on("error", (err: NodeJS.ErrnoException) => {
-        if (err.code === "EADDRINUSE" && port < startPort + 10) {
-          console.log(`Port ${port} is in use, trying ${port + 1}...`);
-          tryListen(port + 1);
-        } else {
-          console.error(`Failed to start server: ${err.message}`);
-          process.exit(1);
-        }
+      await announceAndOpen({
+        port,
+        baseDir,
+        enableNetwork: networkConfig.enableNetwork,
+        version: pkg.version,
       });
-    };
-
-    tryListen(startPort);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`Failed to start server: ${message}`);
+      process.exit(1);
+    }
   });
 
 program.parse();
