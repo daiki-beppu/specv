@@ -1,6 +1,6 @@
 {
   "name": "specv",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Local Markdown preview with GitHub-style rendering",
   "keywords": [
     "cli",
