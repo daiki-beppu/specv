@@ -4,31 +4,20 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { serveStatic } from "@hono/node-server/serve-static";
-import { isObjectRecord } from "@shared/is-object-record";
 import { program } from "commander";
 import { Hono } from "hono";
 
 import { createApiRouter } from "./api";
 import { registerLifecycle } from "./lifecycle";
 import { announceAndOpen, listenWithFallback } from "./listen";
+import { readPackageJson } from "./package-info";
 
 const packageJsonPath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../package.json"
 );
 
-const isPkgShape = (value: unknown): value is { version: string } => {
-  if (!isObjectRecord(value)) {
-    return false;
-  }
-  return typeof value.version === "string";
-};
-
-const parsedPkg: unknown = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-if (!isPkgShape(parsedPkg)) {
-  throw new Error("Invalid package.json: missing version");
-}
-const pkg = parsedPkg;
+const pkg = readPackageJson(packageJsonPath);
 
 const currentDir = import.meta.dirname;
 
