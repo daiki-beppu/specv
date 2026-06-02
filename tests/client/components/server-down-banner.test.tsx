@@ -1,7 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
-import { ServerDownBanner } from "@/components/server-down-banner";
+import {
+  RESTART_COMMAND,
+  ServerDownBanner,
+} from "@/components/server-down-banner";
 
 const originalLocation = window.location;
 let reloadMock: ReturnType<typeof vi.fn>;
@@ -34,6 +37,12 @@ describe(ServerDownBanner, () => {
     render(<ServerDownBanner status="disconnected" />);
 
     expect(screen.getByRole("alert").textContent).toMatch(/サーバー/);
+  });
+
+  it("status=disconnected のとき再起動コマンドの案内を表示する", () => {
+    render(<ServerDownBanner status="disconnected" />);
+
+    expect(screen.getByRole("alert").textContent).toContain(RESTART_COMMAND);
   });
 
   it("status=disconnected のときリロードボタンのクリックで location.reload を呼ぶ", () => {
