@@ -1,0 +1,63 @@
+# specv 用 takt runtime 設定（provider / model の割り当て）
+#
+# coder persona を Claude opus に固定する。
+# global では coder を Codex に振っているが、specv では vp check / Vite+ の lint・format で
+# Codex がアボートするケースがあったため、プロジェクト単位で Claude opus に揃える。
+#
+# takt は project の targets で global の targets を丸ごと置き換える（profiles は名前単位で
+# 合成されるが targets は合成されない。takt 0.66.1 の loader 実装）。coder だけを上書きしたくても
+# 残りの persona と companion の割り当てを全量ここに写す必要がある。
+# 写し元は dotfiles の config/.takt/runtime.yaml（~/.takt/runtime.yaml）。向こうを変えたらここも追従させる。
+# profile 定義（sol / luna / terra / codex-default）と companion の有効化は global から継承する。
+
+version: 1
+
+provider:
+  profiles:
+    opus:
+      provider: claude
+      model: opus
+
+  # 各 runtime.yaml は単体でも検証され、provider セクションには defaults が必須。global と同じものを指す
+  defaults:
+    profile: codex-default
+
+  targets:
+    personas:
+      coder:
+        profile: opus
+      planner:
+        profile: sol
+      diagnoser:
+        profile: sol
+      ai-antipattern-reviewer:
+        profile: terra
+      architecture-reviewer:
+        profile: terra
+      coding-reviewer:
+        profile: terra
+      cqrs-es-reviewer:
+        profile: terra
+      frontend-reviewer:
+        profile: terra
+      implementation-semantics-reviewer:
+        profile: terra
+      merge-readiness-reviewer:
+        profile: terra
+      qa-reviewer:
+        profile: terra
+      requirements-reviewer:
+        profile: terra
+      security-reviewer:
+        profile: terra
+      terraform-reviewer:
+        profile: terra
+      testing-reviewer:
+        profile: terra
+    companions:
+      ai-antipattern-review-companion:
+        profile: terra
+      testing-review-companion:
+        profile: terra
+      review-companion-moderator:
+        profile: terra
