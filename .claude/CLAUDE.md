@@ -98,12 +98,11 @@ takt -i <issue 番号> --auto-pr --draft        # 完了後にドラフト PR �
 ## 構成
 
 - `.takt/config.yaml` — プロジェクト固有のオーバーライド（`draft_pr: true`）。provider 系のキーは書かない
-- `.takt/runtime.yaml` — provider / model の割り当て。coder を Claude opus に固定する。takt は project の `targets` で global の `targets` を丸ごと置き換えるため、global の persona・companion 割り当ても全量写してある
 - `.takt/.gitignore` — runtime artifacts (`runs/`, `tasks/`, `tasks.yaml` など) を allowlist 方式で除外。ルート `.gitignore` への追加は不要
 
 ## 前提（グローバル設定）
 
-`~/.takt/config.yaml` と `~/.takt/runtime.yaml` を dotfiles でシンボリックリンク管理する想定（`~/.claude/CLAUDE.md` と同パターン）。`.takt/runtime.yaml` が参照する profile（`sol` / `terra` など）と `provider.defaults`、companion の有効化は global の `runtime.yaml` が定義する。global の割り当てを変えたら `.takt/runtime.yaml` の `targets` も追従させる。
+`~/.takt/config.yaml` と `~/.takt/runtime.yaml` を dotfiles でシンボリックリンク管理する想定（`~/.claude/CLAUDE.md` と同パターン）。provider / model の割り当てと companion の有効化は global の `runtime.yaml` だけが定義し、specv は上書きしない。project に `.takt/runtime.yaml` の `targets` を置くと global の `targets` が丸ごと置き換わり、global の変更に追従させる必要が生じる。
 
 ## 運用ルール
 

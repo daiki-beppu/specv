@@ -4,6 +4,6 @@
 # 自動 PR を作成する場合はドラフトとして作成（試運転段階の安全運用）
 draft_pr: true
 
-# provider / model の割り当て（coder の Claude opus 固定を含む）は .takt/runtime.yaml が持つ。
+# provider / model の割り当ては global の ~/.takt/runtime.yaml が持つ（specv では上書きしない）。
 # ここに provider 系のキー（provider / model / provider_routing / persona_providers）を書くと
 # runtime.yaml と混在して "Mixed provider configuration" で agent 実行前に止まる。
