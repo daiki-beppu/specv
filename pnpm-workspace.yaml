@@ -1,0 +1,25 @@
+overrides:
+  vite: npm:@voidzero-dev/vite-plus-core@latest
+  vitest: npm:@voidzero-dev/vite-plus-test@latest
+
+allowBuilds:
+  esbuild: false
+  lefthook: false
+  msw: false
+
+minimumReleaseAgeExclude:
+  - "@pnpm/exe.android-arm64@12.11.2"
+  - "@pnpm/exe.android-x64@12.11.2"
+  - "@pnpm/exe.darwin-arm64@12.11.2"
+  - "@pnpm/exe.darwin-x64@12.11.2"
+  - "@pnpm/exe.freebsd-x64@12.11.2"
+  - "@pnpm/exe.linux-arm64-musl@12.11.2"
+  - "@pnpm/exe.linux-arm64@12.11.2"
+  - "@pnpm/exe.linux-ppc64@12.11.2"
+  - "@pnpm/exe.linux-riscv64@12.11.2"
+  - "@pnpm/exe.linux-s390x@12.11.2"
+  - "@pnpm/exe.linux-x64-musl@12.11.2"
+  - "@pnpm/exe.linux-x64@12.11.2"
+  - "@pnpm/exe.win32-arm64@12.11.2"
+  - "@pnpm/exe.win32-x64@12.11.2"
+  - pnpm@12.11.2
