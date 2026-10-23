@@ -16,6 +16,9 @@ Thank you for your interest in contributing to specv! This guide will help you g
 git clone https://github.com/<your-username>/specv.git
 cd specv
 
+# Node.js (.node-version) and pnpm (packageManager) are provided by Vite+ (vp)
+# See https://viteplus.dev/guide/env
+
 # Install dependencies
 pnpm install
 

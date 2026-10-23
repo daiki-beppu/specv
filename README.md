@@ -57,7 +57,15 @@ Hono Server (API) ─── React SPA (Vite build)
 
 ## Development
 
+Node.js and pnpm are managed by [Vite+](https://viteplus.dev/) (`vp`). The
+Node.js version is declared in `.node-version` and the pnpm version in
+`package.json#packageManager`; with `vp` installed, `node` and `pnpm` resolve
+to those versions automatically.
+
 ```bash
+# Install dependencies
+pnpm install
+
 # Client dev server (HMR)
 pnpm dev:client
 
@@ -73,8 +81,9 @@ pnpm build
 
 ### Nix users
 
-If you have Nix (with flakes) and direnv set up, Node.js 24 / pnpm / lefthook
-will be provisioned automatically on `cd` into this repository:
+The Nix dev shell only provides lefthook and git (Node.js and pnpm still come
+from `vp`). If you have Nix (with flakes) and direnv set up, it is loaded
+automatically on `cd` into this repository:
 
 ```bash
 direnv allow   # first time only

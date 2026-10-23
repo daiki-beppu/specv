@@ -12,21 +12,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: voidzero-dev/setup-vp@v1.21.2
+        with:
+          node-version-file: .node-version
+          cache: true
+          run-install: false
 
-      - run: nix develop --command pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
       - name: Lint + Format + Type Check
-        run: nix develop --command pnpm check
+        run: pnpm check
 
       - name: Knip
-        run: nix develop --command pnpm knip
+        run: pnpm knip
 
       - name: Test
-        run: nix develop --command pnpm test
+        run: pnpm test
 
       - name: Coverage
-        run: nix develop --command pnpm coverage
+        run: pnpm coverage
         continue-on-error: true
 
       - name: Upload Coverage Report
@@ -38,13 +42,13 @@ jobs:
           retention-days: 30
 
       - name: Build
-        run: nix develop --command pnpm build
+        run: pnpm build
 
       - name: Install Playwright Browsers
-        run: nix develop --command pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: E2E Tests
-        run: nix develop --command pnpm test:e2e
+        run: pnpm test:e2e
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4

@@ -13,18 +13,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: voidzero-dev/setup-vp@v1.21.2
+        with:
+          node-version-file: .node-version
+          cache: true
+          run-install: false
 
-      - run: nix develop --command pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
       - name: Lint + Format + Type Check
-        run: nix develop --command pnpm check
+        run: pnpm check
 
       - name: Test
-        run: nix develop --command pnpm test
+        run: pnpm test
 
       - name: Build
-        run: nix develop --command pnpm build
+        run: pnpm build
 
       - name: Publish
-        run: nix develop --command npm publish --provenance --access public
+        run: npm publish --provenance --access public

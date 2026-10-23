@@ -11,9 +11,8 @@
       let pkgs = import nixpkgs { inherit system; };
       in {
         devShells.default = pkgs.mkShell {
+          # Node.js and pnpm come from Vite+ (vp); see .node-version and packageManager.
           packages = with pkgs; [
-            nodejs_24
-            pnpm
             lefthook
             git
           ];
